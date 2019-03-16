@@ -1,0 +1,12 @@
+{
+	"id": "mousewheelie",
+	"name": "Mouse Wheelie",
+	"description": "Improves mouse wheel actions in some guis.",
+	"version": "${version}",
+	"side": "client",
+	"requires": {
+	},
+	"mixins": {
+		"client": "de.siphalor.mousewheelie.client.json"
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "de.siphalor.mousewheelie.client.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinAbstractFurnaceScreen",
+		"MixinContainerScreen",
+		"MixinCraftingTableScreen",
+		"MixinCreativePlayerInventoryScreen",
+		"MixinPlayerInventoryScreen",
+		"MixinRecipeBookGui"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
