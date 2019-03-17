@@ -1,6 +1,8 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.util.FabricCreativeGuiHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.ingame.AbstractPlayerInventoryScreen;
 import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,7 +32,17 @@ public abstract class MixinCreativePlayerInventoryScreen extends AbstractPlayerI
 		//if(mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28))) {
 		// Rough matching:
 		if(mouseY < this.top + 4 || mouseY >= this.top + this.height - 4) {
-			setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (this.selectedTab + Math.round(amount * Core.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+			if(FabricLoader.getInstance().isModLoaded("fabric")) {
+				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativePlayerInventoryScreen)(Object) this);
+				int newIndex = MathHelper.clamp(this.selectedTab + (int) Math.round(amount * Core.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
+				int newPage = helper.getPageForTabIndex(newIndex);
+                if(newPage < helper.getCurrentPage())
+                    helper.previousPage();
+                if(newPage > helper.getCurrentPage())
+                    helper.nextPage();
+				setSelectedTab(ItemGroup.GROUPS[newIndex]);
+			} else
+				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (this.selectedTab + Math.round(amount * Core.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
             callbackInfoReturnable.setReturnValue(true);
 		}
 	}
