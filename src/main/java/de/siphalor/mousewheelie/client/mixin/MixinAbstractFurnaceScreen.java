@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.util.IRecipeBookGui;
+import de.siphalor.mousewheelie.util.IScrollableRecipeBook;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.container.AbstractFurnaceRecipeBookScreen;
 import net.minecraft.client.gui.container.AbstractFurnaceScreen;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractFurnaceScreen.class)
-public abstract class MixinAbstractFurnaceScreen extends ContainerScreen {
+public abstract class MixinAbstractFurnaceScreen extends ContainerScreen implements IScrollableRecipeBook {
 
 	@Shadow @Final public AbstractFurnaceRecipeBookScreen recipeBook;
 
@@ -21,9 +22,7 @@ public abstract class MixinAbstractFurnaceScreen extends ContainerScreen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double double_1, double double_2, double double_3) {
-		if(super.mouseScrolled(double_1, double_2, double_3))
-			return true;
-		return ((IRecipeBookGui) recipeBook).mouseWheelie_scroll(double_1, double_2, double_3);
+	public boolean mouseWheelie_onMouseScrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
+		return ((IRecipeBookGui) recipeBook).mouseWheelie_scrollRecipeBook(mouseX, mouseY, scrollAmount);
 	}
 }

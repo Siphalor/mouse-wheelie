@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.util.IContainerScreen;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.container.Container;
@@ -13,19 +14,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ContainerScreen.class)
-public abstract class MixinContainerScreen extends Screen {
+public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
 	@Shadow protected abstract Slot getSlotAt(double double_1, double double_2);
 
 	@Shadow protected abstract void onMouseClick(Slot slot_1, int int_1, int int_2, SlotActionType slotActionType_1);
 
-	@Shadow private ItemStack field_2791;
-
 	@Shadow @Final protected Container container;
 
-	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
-		if(super.mouseScrolled(mouseX, mouseY, scrollAmount))
-			return true;
+	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		Slot hoveredSlot = getSlotAt(mouseX, mouseY);
 		if(hoveredSlot == null)
 			return false;

@@ -32,7 +32,7 @@ public abstract class MixinRecipeBookGui extends DrawableHelper implements Input
 	@Shadow private int parentHeight;
 
 	@Override
-	public boolean mouseWheelie_scroll(double mouseX, double mouseY, double scrollAmount) {
+	public boolean mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
 		int top = (this.parentHeight - 166) / 2;
 		if(mouseY < top || mouseY >= top + 166)
 			return false;

@@ -1,5 +1,5 @@
 package de.siphalor.mousewheelie.util;
 
 public interface IRecipeBookGui {
-	public boolean mouseWheelie_scroll(double mouseX, double mouseY, double scrollAmount);
+	public boolean mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount);
 }
