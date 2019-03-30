@@ -3,7 +3,7 @@ package de.siphalor.mousewheelie.client.mixin;
 import de.siphalor.mousewheelie.Core;
 import de.siphalor.mousewheelie.util.IRecipeBookGui;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.InputListener;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.recipebook.GroupButtonWidget;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.recipebook.RecipeBookGuiResults;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.List;
 
 @Mixin(RecipeBookGui.class)
-public abstract class MixinRecipeBookGui extends DrawableHelper implements InputListener, IRecipeBookGui {
+public abstract class MixinRecipeBookGui extends DrawableHelper implements Element, IRecipeBookGui {
 
 	@Shadow protected RecipeBookGuiResults recipesArea;
 

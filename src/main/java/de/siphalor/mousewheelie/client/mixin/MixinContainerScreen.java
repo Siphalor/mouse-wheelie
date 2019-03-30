@@ -13,6 +13,9 @@ import net.minecraft.text.TextComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
@@ -26,6 +29,15 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 
 	@Shadow @Final protected Container container;
 
+	@Inject(method = "mouseDragged", at = @At("RETURN"))
+	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if(button == 0 && hasShiftDown()) {
+			Slot hoveredSlot = getSlotAt(x2, y2);
+			if(hoveredSlot != null)
+				onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
+		}
+	}
+
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		Slot hoveredSlot = getSlotAt(mouseX, mouseY);
 		if(hoveredSlot == null)
@@ -35,9 +47,10 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 		boolean moveUp = scrollAmount * Core.scrollFactor < 0;
 		if((isPlayerSlot && moveUp) || (!isPlayerSlot && !moveUp)) {
 			if(hasControlDown()) {
+				ItemStack referenceStack = hoveredStack.copy();
 				for(Slot slot : container.slotList) {
 					if(slot.inventory == hoveredSlot.inventory) {
-						if(slot.getStack().isEqualIgnoreTags(hoveredStack))
+						if(slot.getStack().isEqualIgnoreTags(referenceStack))
 							onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
 					}
 				}

@@ -19,7 +19,7 @@ public class MixinMouse {
 	@Shadow @Final private MinecraftClient client;
 
 	// Thanks to Danielshe
-	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Screen;mouseScrolled(DDD)Z", ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Screen;mouseScrolled(DDD)Z", ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onMouseScrolled(long long_1, double double_1, double double_2, CallbackInfo callbackInfo, double scrollAmount, double mouseX, double mouseY) {
         if(this.client.currentScreen instanceof IContainerScreen) {
 	        if(((IContainerScreen) this.client.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
