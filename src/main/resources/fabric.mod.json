@@ -1,13 +1,40 @@
 {
+	"schemaVersion": 1,
 	"id": "mousewheelie",
+	"version": "${version}",
+
 	"name": "Mouse Wheelie",
 	"description": "Improves mouse wheel actions in some guis.",
-	"version": "${version}",
-	"side": "client",
+
+	"authors": [
+		"Siphalor"
+	],
+	"contact": {
+		"email": "xyx0125@gmail.com",
+		"issues": "https://github.com/Siphalor/mouse-wheelie/issues",
+		"sources": "https://github.com/Siphalor/mouse-wheelie"
+	},
+
+	"license": "CC0-1.0",
+	"icon": "assets/mousewheelie/icon.png",
+
+	"environment": "client",
+	"mixins": [
+		{
+			"config": "de.siphalor.mousewheelie.client.json",
+			"environment": "client"
+		}
+	],
+
     "suggests": {
 		"fabric": "*"
 	},
-	"mixins": {
-		"client": "de.siphalor.mousewheelie.client.json"
+
+	"requires": {
+		"fabricloader": ">=0.4.0"
+	},
+
+	"custom": {
+		"modmenu:clientsideOnly": true
 	}
 }
