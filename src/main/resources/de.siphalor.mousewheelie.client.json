@@ -9,7 +9,8 @@
 		"MixinCreativePlayerInventoryScreen",
 		"MixinMouse",
 		"MixinPlayerInventoryScreen",
-		"MixinRecipeBookGui"
+		"MixinRecipeBookGui",
+		"RecipeBookGuiResultsAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
