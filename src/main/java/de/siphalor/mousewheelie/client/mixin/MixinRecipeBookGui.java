@@ -29,15 +29,20 @@ public abstract class MixinRecipeBookGui implements IRecipeBookGui {
 
 	@Shadow private int parentHeight;
 
+	@Shadow public abstract boolean isOpen();
+
 	@Override
 	public boolean mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
+		if(!this.isOpen())
+			return false;
 		int top = (this.parentHeight - 166) / 2;
 		if(mouseY < top || mouseY >= top + 166)
 			return false;
 		int left = (this.parentWidth - 147) / 2 - this.leftOffset;
 		if(mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
-			((RecipeBookGuiResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookGuiResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Core.scrollFactor)), 0, ((RecipeBookGuiResultsAccessor) recipesArea).getPageCount() - 1));
+			int maxPage = ((RecipeBookGuiResultsAccessor) recipesArea).getPageCount() - 1;
+			((RecipeBookGuiResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookGuiResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Core.scrollFactor)), 0, maxPage < 0 ? 0 : maxPage));
 			((RecipeBookGuiResultsAccessor) recipesArea).callRefreshResultButtons();
 			return true;
 		} else if(mouseX >= left - 30 && mouseX < left) {
