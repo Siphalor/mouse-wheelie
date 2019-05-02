@@ -5,6 +5,8 @@
 	"mixins": [
 		"MixinAbstractFurnaceScreen",
 		"MixinContainerScreen",
+		"MixinClientPlayerEntity",
+		"MixinClientPlayNetworkHandler",
 		"MixinCraftingTableScreen",
 		"MixinCreativePlayerInventoryScreen",
 		"MixinMouse",
