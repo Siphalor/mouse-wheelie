@@ -14,10 +14,9 @@ public class Core {
 	public static boolean sending = false;
 
 	public static void push(InteractionEvent interactionEvent) {
-        if(!sending)
-        	interactionEvent.send();
-        else
-        	interactionEventQueue.push(interactionEvent);
+		interactionEventQueue.add(interactionEvent);
+		if(!sending)
+			triggerSend();
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
@@ -26,17 +25,15 @@ public class Core {
 	}
 
 	public static void triggerSend() {
-		if(interactionEventQueue.size() > 0 && sending) {
-			while(interactionEventQueue.removeLast().send()) {
+		if(interactionEventQueue.size() > 0) {
+			while(interactionEventQueue.pop().send()) {
 				if(interactionEventQueue.isEmpty()) {
 					sending = false;
 					break;
 				}
 			}
-		} else {
-			if(sending)
-				sending = false;
-		}
+		} else
+			sending = false;
 	}
 
 	public static void stopSending() {
@@ -67,6 +64,7 @@ public class Core {
 
 		@Override
 		public boolean send() {
+			System.out.println(slotId + ": " + slotAction.name());
 			sending = true;
 			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return false;
