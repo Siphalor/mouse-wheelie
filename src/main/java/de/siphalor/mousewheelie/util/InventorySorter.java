@@ -12,11 +12,9 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.registry.Registry;
 
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -58,12 +56,13 @@ public class InventorySorter {
 
 	public void combineStacks() {
 		ItemStack stack;
+		ArrayDeque<Core.ClickEvent> clickEvents = new ArrayDeque<>();
 		for(int i = stacks.size() - 1; i >= 0; i--) {
 			stack = stacks.get(i);
 			if(stack.isEmpty()) continue;
 			int stackSize = stack.getAmount();
 			if(stackSize >= stack.getItem().getMaxAmount()) continue;
-			Core.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
+			clickEvents.add(new Core.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for(int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks.get(j);
 				if(targetStack.isEmpty()) continue;
@@ -73,10 +72,17 @@ public class InventorySorter {
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
 					targetStack.setAmount(targetStack.getAmount() + delta);
-					Core.pushClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP);
+					clickEvents.add(new Core.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
 					if(stackSize <= 0) break;
 				}
 			}
+			if(clickEvents.size() <= 1) {
+				clickEvents.clear();
+				continue;
+			}
+			Core.interactionEventQueue.addAll(clickEvents);
+			Core.triggerSend();
+			clickEvents.clear();
 			if(stackSize > 0) {
 				Core.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setAmount(stackSize);
@@ -141,6 +147,10 @@ public class InventorySorter {
 					Integer a2 = itemToAmountMap.get(stack2.getItem()).get(stack2.getTag());
 					return Integer.compare(a2, a);
 				});
+				break;
+			case RAWID:
+				Integer[] rawIds = inventorySlots.stream().map(slot -> (Integer) (slot.getStack().isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(slot.getStack().getItem()))).toArray(Integer[]::new);
+				sortIds.sort(Comparator.comparingInt(o -> rawIds[o]));
 				break;
 		}
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);

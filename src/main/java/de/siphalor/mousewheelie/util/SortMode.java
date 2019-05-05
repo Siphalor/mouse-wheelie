@@ -1,5 +1,5 @@
 package de.siphalor.mousewheelie.util;
 
 public enum SortMode {
-	ALPHABET, QUANTITY
+	ALPHABET, QUANTITY, RAWID
 }

@@ -12,11 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinClientPlayNetworkHandler {
 	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
-		if(Core.clickQueue.size() > 0 && Core.sending) {
-			Core.clickQueue.removeLast().send();
-		} else {
-			if(Core.sending)
-				Core.sending = false;
-		}
+		Core.triggerSend();
 	}
 }

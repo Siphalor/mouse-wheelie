@@ -15,7 +15,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.network.packet.PlayerActionC2SPacket;
 import net.minecraft.text.TextComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,6 +48,52 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 
 	@Shadow protected int containerHeight;
 
+	@Shadow private ItemStack touchDragStack;
+
+	@Shadow protected Slot focusedSlot;
+
+	@Shadow private Slot touchDragSlotStart;
+
+	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
+	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if(this.minecraft.options.keySwapHands.matchesKey(key, scanCode)) {
+			boolean putBack = false;
+			Slot swapSlot = container.slotList.stream().filter(slot -> slot.getStack() == playerInventory.getInvStack(playerInventory.selectedSlot)).findAny().orElse(null);
+			if(swapSlot == null) return;
+			ItemStack swapStack = touchDragStack.copy();
+			ItemStack offHandStack = playerInventory.offHand.get(0).copy();
+			if (touchDragStack.isEmpty()) {
+				putBack = true;
+				if(focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
+					swapStack = focusedSlot.getStack().copy();
+					Core.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
+				} else if(offHandStack.isEmpty()) {
+					return;
+				}
+			}
+			Core.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
+			Core.push(new Core.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN)));
+			Core.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
+			if(putBack) {
+				Core.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
+			}
+			ItemStack finalSwapStack = swapStack;
+			boolean finalPutBack = putBack;
+			// Fix the display up since swapping items doesn't have a confirm packet so we have to trigger the click event too quick afterwards
+			Core.push(() -> {
+				playerInventory.offHand.set(0, finalSwapStack);
+				if(finalPutBack) {
+					focusedSlot.setStack(offHandStack);
+					touchDragStack = ItemStack.EMPTY;
+					playerInventory.setCursorStack(ItemStack.EMPTY);
+				} else {
+					touchDragStack = offHandStack;
+				}
+				return true;
+			});
+		}
+	}
+
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if(button == 0 && hasShiftDown()) {
@@ -63,7 +112,15 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
         	if(playerInventory.player.abilities.creativeMode && !hoveredSlot.getStack().isEmpty())
         		return;
             InventorySorter sorter = new InventorySorter(container, hoveredSlot);
-            sorter.sort(hasShiftDown() ? SortMode.QUANTITY : SortMode.ALPHABET);
+            SortMode sortMode;
+            if(hasShiftDown()) {
+            	sortMode = SortMode.QUANTITY;
+			} else if(hasControlDown()) {
+            	sortMode = SortMode.RAWID;
+			} else {
+            	sortMode = SortMode.ALPHABET;
+			}
+            sorter.sort(sortMode);
 			callbackInfoReturnable.setReturnValue(true);
 		}
 	}
@@ -201,12 +258,10 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
         		done.set(i);
         		continue;
 			}
-			//onMouseClick(inventorySlots.get(sortIds.get(i)), -1, 0, SlotActionType.PICKUP);
 			Core.pushClickEvent(container.syncId, inventorySlots.get(sortIds.get(i)).id, 0, SlotActionType.PICKUP);
             int id = i;
             while(!done.get(id)) {
             	boolean wasEmpty = inventorySlots.get(id).getStack().isEmpty();
-            	//onMouseClick(inventorySlots.get(id), -1, 0, SlotActionType.PICKUP);
 				Core.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
             	done.set(id);
             	if(wasEmpty) {
