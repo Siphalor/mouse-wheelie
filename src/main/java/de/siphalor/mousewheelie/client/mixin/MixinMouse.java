@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -22,12 +23,27 @@ public class MixinMouse {
 
 	@Shadow private double y;
 
+	private static double mouseWheelie_scrollX;
+
+	@Inject(method = "onMouseScroll", at = @At("HEAD"))
+	public void onMouseScrolledHead(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
+		mouseWheelie_scrollX = scrollX;
+	}
+
+	@ModifyVariable(method = "onMouseScroll", at = @At(value = "STORE", ordinal = 0), ordinal = 2)
+	private double changeMouseScroll(double old) {
+		if(MinecraftClient.IS_SYSTEM_MAC && mouseWheelie_scrollX != 0) {
+			return (this.client.options.discreteMouseScroll ? Math.signum(mouseWheelie_scrollX) : mouseWheelie_scrollX) * this.client.options.mouseWheelSensitivity;
+		}
+		return old;
+	}
+
 	// Thanks to Danielshe
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Screen;mouseScrolled(DDD)Z", ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void onMouseScrolled(long windowHandle, double double_1, double scroll, CallbackInfo callbackInfo) {
+	public void onMouseScrolled(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
         double mouseX = this.x * (double) this.client.window.getScaledWidth() / (double) this.client.window.getWidth();
 		double mouseY = this.y * (double) this.client.window.getScaledHeight() / (double) this.client.window.getHeight();
-		double scrollAmount = scroll * this.client.options.mouseWheelSensitivity;
+		double scrollAmount = scrollY * this.client.options.mouseWheelSensitivity;
         if(this.client.currentScreen instanceof IContainerScreen) {
 	        if(((IContainerScreen) this.client.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
 		        callbackInfo.cancel();

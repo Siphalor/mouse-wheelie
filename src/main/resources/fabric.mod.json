@@ -25,8 +25,14 @@
 			"environment": "client"
 		}
 	],
-
-    "suggests": {
+	"entrypoints": {
+		"client": [
+			{
+				"value": "de.siphalor.mousewheelie.client.ClientFabricCore"
+			}
+		]
+	},
+	"suggests": {
 		"fabric": "*"
 	},
 

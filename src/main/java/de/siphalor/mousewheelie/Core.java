@@ -64,7 +64,6 @@ public class Core {
 
 		@Override
 		public boolean send() {
-			System.out.println(slotId + ": " + slotAction.name());
 			sending = true;
 			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return false;

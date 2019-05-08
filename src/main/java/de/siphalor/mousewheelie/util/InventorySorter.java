@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.util;
 
 import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.client.mixin.SlotAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
 import net.minecraft.client.resource.language.I18n;
@@ -40,17 +41,15 @@ public class InventorySorter {
 				// TODO some day this should get fixed though
 				inventorySlots = Collections.emptyList();
 			}
-            ItemStack stack = ((PlayerInventory) inventory).main.get(0);
-            int firstHotbar = -9;
-            for(Slot slot : inventorySlots) {
-            	if(slot.getStack() == stack) {
-            		firstHotbar = slot.id;
-            		break;
-				}
-			}
-            final boolean hotbar = originSlot.id >= firstHotbar && originSlot.id < firstHotbar + 9;
-			final int finalFirstHotbar = firstHotbar;
-			inventorySlots = inventorySlots.stream().filter(slot -> hotbar == (slot.id >= finalFirstHotbar && slot.id < finalFirstHotbar + 9)).collect(Collectors.toList());
+
+			final int originInvSlot = ((SlotAccessor) originSlot).getInvSlot();
+			final boolean originInHotbar = originInvSlot >= 0 && originInvSlot < 9;
+			final int offHandInvSlot = inventory.getInvSize() - 1;
+			final boolean originOffHand = originInvSlot == offHandInvSlot;
+			inventorySlots = inventorySlots.stream().filter(slot -> {
+				final int invSlot = ((SlotAccessor) slot).getInvSlot();
+				return (invSlot >= 0 && invSlot < 9) == originInHotbar && (invSlot == offHandInvSlot) == originOffHand;
+			}).collect(Collectors.toList());
 		}
 	}
 

@@ -1,20 +1,18 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.client.ClientFabricCore;
 import de.siphalor.mousewheelie.util.IContainerScreen;
 import de.siphalor.mousewheelie.util.InventorySorter;
 import de.siphalor.mousewheelie.util.SortMode;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.network.packet.PlayerActionC2SPacket;
 import net.minecraft.text.TextComponent;
 import net.minecraft.util.math.BlockPos;
@@ -25,12 +23,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
@@ -91,6 +83,10 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 				}
 				return true;
 			});
+		} else if(FabricLoader.getInstance().isModLoaded("fabric")) {
+			if(ClientFabricCore.SORT_KEY_BINDING.matchesKey(key, scanCode)) {
+				mouseWheelie_triggerSort();
+			}
 		}
 	}
 
@@ -106,22 +102,8 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         if(button == 2) {
-        	Slot hoveredSlot = getSlotAt(x, y);
-        	if(hoveredSlot == null)
-        		return;
-        	if(playerInventory.player.abilities.creativeMode && !hoveredSlot.getStack().isEmpty())
-        		return;
-            InventorySorter sorter = new InventorySorter(container, hoveredSlot);
-            SortMode sortMode;
-            if(hasShiftDown()) {
-            	sortMode = SortMode.QUANTITY;
-			} else if(hasControlDown()) {
-            	sortMode = SortMode.RAWID;
-			} else {
-            	sortMode = SortMode.ALPHABET;
-			}
-            sorter.sort(sortMode);
-			callbackInfoReturnable.setReturnValue(true);
+        	if(mouseWheelie_triggerSort())
+				callbackInfoReturnable.setReturnValue(true);
 		}
 	}
 
@@ -188,91 +170,21 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 		onMouseClick(slot, slot.id, 0, SlotActionType.PICKUP);
 	}
 
-	private void mouseWheelie_sort(Inventory inventory, SortMode sortMode) {
-        List<Slot> inventorySlots = container.slotList.stream().filter(slot -> mouseWheelie_isSlotValidFor(inventory, slot)).collect(Collectors.toList());
-        List<Integer> sortIds = IntStream.range(0, inventorySlots.size()).boxed().collect(Collectors.toList());
-        switch(sortMode) {
-			case ALPHABET:
-				 List<String> strings = sortIds.stream().map(id -> {
-					 ItemStack itemStack = inventorySlots.get(id).getStack();
-					 if (itemStack.isEmpty()) return "";
-					 return I18n.translate(itemStack.getTranslationKey());
-				 }).collect(Collectors.toList());
-				 sortIds.sort((o1, o2) -> {
-					 if (strings.get(o1).equals("")) {
-						  if (strings.get(o2).equals(""))
-							  return 0;
-						  return 1;
-					 }
-					 if (strings.get(o2).equals("")) return -1;
-					 int comp = strings.get(o1).compareToIgnoreCase(strings.get(o2));
-					 if (comp == 0) {
-						  return Integer.compare(inventorySlots.get(o2).getStack().getAmount(), inventorySlots.get(o1).getStack().getAmount());
-					 }
-					 return comp;
-				 });
-				 break;
-			case QUANTITY:
-					HashMap<Item, HashMap<CompoundTag, Integer>> itemToAmountMap = new HashMap<>();
-					for (Slot slot : inventorySlots) {
-						ItemStack stack = slot.getStack();
-						if (stack.isEmpty()) continue;
-						if (!itemToAmountMap.containsKey(stack.getItem())) {
-							HashMap<CompoundTag, Integer> newMap = new HashMap<>();
-							newMap.put(stack.getOrCreateTag(), stack.getAmount());
-							itemToAmountMap.put(stack.getItem(), newMap);
-						} else {
-							HashMap<CompoundTag, Integer> itemMap = itemToAmountMap.get(stack.getItem());
-							if (!itemMap.containsKey(stack.getOrCreateTag())) {
-								itemMap.put(stack.getTag(), stack.getAmount());
-							} else {
-								itemMap.replace(stack.getTag(), itemMap.get(stack.getTag()) + stack.getAmount());
-							}
-						}
-					}
-					sortIds.sort((o1, o2) -> {
-						ItemStack stack = inventorySlots.get(o1).getStack();
-						ItemStack stack2 = inventorySlots.get(o2).getStack();
-						if (stack.isEmpty()) {
-							return stack2.isEmpty() ? 0 : 1;
-						}
-						if (stack2.isEmpty()) {
-							return -1;
-						}
-						Integer a = itemToAmountMap.get(stack.getItem()).get(stack.getTag());
-						Integer a2 = itemToAmountMap.get(stack2.getItem()).get(stack2.getTag());
-						return Integer.compare(a2, a);
-					});
-				break;
+	private boolean mouseWheelie_triggerSort() {
+		if(focusedSlot == null)
+			return false;
+		if(playerInventory.player.abilities.creativeMode && !focusedSlot.getStack().isEmpty())
+			return false;
+		InventorySorter sorter = new InventorySorter(container, focusedSlot);
+		SortMode sortMode;
+		if(hasShiftDown()) {
+			sortMode = SortMode.QUANTITY;
+		} else if(hasControlDown()) {
+			sortMode = SortMode.RAWID;
+		} else {
+			sortMode = SortMode.ALPHABET;
 		}
-        BitSet done = new BitSet(sortIds.size());
-        for(int i = 0; i < sortIds.size(); i++) {
-        	if(done.get(i) || done.get(sortIds.get(i))) {
-        		continue;
-			}
-			if(inventorySlots.get(sortIds.get(i)).getStack().isEmpty()) {
-				done.set(i);
-				continue;
-			}
-        	if(i == sortIds.get(i)) {
-        		done.set(i);
-        		continue;
-			}
-			Core.pushClickEvent(container.syncId, inventorySlots.get(sortIds.get(i)).id, 0, SlotActionType.PICKUP);
-            int id = i;
-            while(!done.get(id)) {
-            	boolean wasEmpty = inventorySlots.get(id).getStack().isEmpty();
-				Core.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
-            	done.set(id);
-            	if(wasEmpty) {
-					break;
-				}
-            	id = sortIds.indexOf(id);
-			}
-		}
-	}
-
-	private boolean mouseWheelie_isSlotValidFor(Inventory inventory, Slot slot) {
-		return inventory == slot.inventory && slot.canInsert(ItemStack.EMPTY);
+		sorter.sort(sortMode);
+		return true;
 	}
 }
