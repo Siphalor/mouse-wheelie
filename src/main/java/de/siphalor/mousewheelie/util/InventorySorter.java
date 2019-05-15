@@ -1,7 +1,6 @@
 package de.siphalor.mousewheelie.util;
 
 import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.client.mixin.SlotAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
 import net.minecraft.client.resource.language.I18n;
@@ -42,12 +41,12 @@ public class InventorySorter {
 				inventorySlots = Collections.emptyList();
 			}
 
-			final int originInvSlot = ((SlotAccessor) originSlot).getInvSlot();
+			final int originInvSlot = ((ISlot) originSlot).mouseWheelie_getInvSlot();
 			final boolean originInHotbar = originInvSlot >= 0 && originInvSlot < 9;
 			final int offHandInvSlot = inventory.getInvSize() - 1;
 			final boolean originOffHand = originInvSlot == offHandInvSlot;
 			inventorySlots = inventorySlots.stream().filter(slot -> {
-				final int invSlot = ((SlotAccessor) slot).getInvSlot();
+				final int invSlot = ((ISlot) slot).mouseWheelie_getInvSlot();
 				return (invSlot >= 0 && invSlot < 9) == originInHotbar && (invSlot == offHandInvSlot) == originOffHand;
 			}).collect(Collectors.toList());
 		}

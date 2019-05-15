@@ -12,8 +12,8 @@
 		"MixinMouse",
 		"MixinPlayerInventoryScreen",
 		"MixinRecipeBookGui",
-		"RecipeBookGuiResultsAccessor",
-		"SlotAccessor"
+		"MixinSlot",
+		"RecipeBookGuiResultsAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -3,6 +3,7 @@ package de.siphalor.mousewheelie.client.mixin;
 import de.siphalor.mousewheelie.Core;
 import de.siphalor.mousewheelie.client.ClientFabricCore;
 import de.siphalor.mousewheelie.util.IContainerScreen;
+import de.siphalor.mousewheelie.util.ISlot;
 import de.siphalor.mousewheelie.util.InventorySorter;
 import de.siphalor.mousewheelie.util.SortMode;
 import net.fabricmc.loader.api.FabricLoader;
@@ -119,8 +120,8 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 		BiFunction<Slot, Slot, Boolean> slotsInSameScope;
 		//noinspection ConstantConditions
 		if((Screen) this instanceof PlayerInventoryScreen) {
-			changeInventory = ((SlotAccessor) hoveredSlot).getInvSlot() < 9 == moveUp;
-			slotsInSameScope = (slot, slot2) -> (((SlotAccessor) slot).getInvSlot() < 9) == (((SlotAccessor) slot2).getInvSlot() < 9);
+			changeInventory = ((ISlot) hoveredSlot).mouseWheelie_getInvSlot() < 9 == moveUp;
+			slotsInSameScope = (slot, slot2) -> (((ISlot) slot).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
 		} else {
 			boolean isPlayerSlot = hoveredSlot.inventory instanceof PlayerInventory;
 			changeInventory = isPlayerSlot == moveUp;
