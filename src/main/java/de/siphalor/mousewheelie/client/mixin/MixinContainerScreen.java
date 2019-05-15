@@ -8,13 +8,14 @@ import de.siphalor.mousewheelie.util.SortMode;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.ingame.PlayerInventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.network.packet.PlayerActionC2SPacket;
-import net.minecraft.text.TextComponent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Final;
@@ -24,9 +25,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.function.BiFunction;
+
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
-	protected MixinContainerScreen(TextComponent textComponent_1) {
+	protected MixinContainerScreen(Component textComponent_1) {
 		super(textComponent_1);
 	}
 
@@ -38,13 +41,9 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 
 	@Shadow @Final protected PlayerInventory playerInventory;
 
-	@Shadow protected int containerHeight;
-
 	@Shadow private ItemStack touchDragStack;
 
 	@Shadow protected Slot focusedSlot;
-
-	@Shadow private Slot touchDragSlotStart;
 
 	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
 	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
@@ -108,22 +107,33 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 	}
 
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
+		if(hasAltDown()) return false;
 		Slot hoveredSlot = getSlotAt(mouseX, mouseY);
 		if(hoveredSlot == null)
 			return false;
 		if(hoveredSlot.getStack().isEmpty())
 			return false;
 		ItemStack hoveredStack = hoveredSlot.getStack();
-		boolean isPlayerSlot = hoveredSlot.inventory instanceof PlayerInventory;
+		boolean changeInventory;
 		boolean moveUp = scrollAmount * Core.scrollFactor < 0;
-		if((isPlayerSlot && moveUp) || (!isPlayerSlot && !moveUp)) {
+		BiFunction<Slot, Slot, Boolean> slotsInSameScope;
+		//noinspection ConstantConditions
+		if((Screen) this instanceof PlayerInventoryScreen) {
+			changeInventory = ((SlotAccessor) hoveredSlot).getInvSlot() < 9 == moveUp;
+			slotsInSameScope = (slot, slot2) -> (((SlotAccessor) slot).getInvSlot() < 9) == (((SlotAccessor) slot2).getInvSlot() < 9);
+		} else {
+			boolean isPlayerSlot = hoveredSlot.inventory instanceof PlayerInventory;
+			changeInventory = isPlayerSlot == moveUp;
+			slotsInSameScope = (slot, slot2) -> slot.inventory == slot2.inventory;
+		}
+		if(changeInventory) {
 			if(!hoveredSlot.canInsert(ItemStack.EMPTY)) {
 				onMouseClick(hoveredSlot, hoveredSlot.id, 0, SlotActionType.QUICK_MOVE);
 			}
 			if(hasControlDown()) {
 				ItemStack referenceStack = hoveredStack.copy();
 				for(Slot slot : container.slotList) {
-					if(slot.inventory == hoveredSlot.inventory) {
+					if(slotsInSameScope.apply(slot, hoveredSlot)) {
 						if(slot.getStack().isEqualIgnoreTags(referenceStack))
 							onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
 					}
@@ -136,7 +146,7 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 		} else {
 			if(hasShiftDown() || hasControlDown()) {
 				for(Slot slot : container.slotList) {
-					if(slot.inventory == hoveredSlot.inventory) continue;
+					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
 					if(slot.getStack().isEqualIgnoreTags(hoveredStack)) {
 						onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
 						if(!hasControlDown())
@@ -147,7 +157,7 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
 				for(Slot slot : container.slotList) {
-					if(slot.inventory == hoveredSlot.inventory) continue;
+					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
 					if(slot.getStack().isEqualIgnoreTags(hoveredStack)) {
 						if(slot.getStack().getAmount() < stackSize) {
 							stackSize = slot.getStack().getAmount();

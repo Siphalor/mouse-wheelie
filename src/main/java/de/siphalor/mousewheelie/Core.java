@@ -7,7 +7,7 @@ import net.minecraft.network.Packet;
 import java.util.ArrayDeque;
 
 public class Core {
-	public static final String MODID = "mousewheelie";
+	public static final String MOD_ID = "mousewheelie";
 	public static int scrollFactor = -1;
 
 	public static ArrayDeque<InteractionEvent> interactionEventQueue = new ArrayDeque<>();

@@ -8,8 +8,10 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
 public class ClientFabricCore implements ClientModInitializer {
-	public static final String KEY_BINDING_CATEGORY = "key.categories." + Core.MODID;
-	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MODID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
+	public static final String KEY_BINDING_CATEGORY = "key.categories." + Core.MOD_ID;
+	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
+	// TODO
+	public static final FabricKeyBinding FILL_INVENTORY_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MOD_ID, "fill_inventory"), InputUtil.Type.KEYSYM, 71, KEY_BINDING_CATEGORY).build();
 
 	@Override
 	public void onInitializeClient() {
