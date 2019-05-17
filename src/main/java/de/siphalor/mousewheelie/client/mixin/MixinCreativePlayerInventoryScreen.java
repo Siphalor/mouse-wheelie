@@ -36,7 +36,7 @@ public abstract class MixinCreativePlayerInventoryScreen extends AbstractPlayerI
 		//if(mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28))) {
 		// Rough matching:
 		if(mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4) {
-			if(FabricLoader.getInstance().isModLoaded("fabric")) {
+			if(FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativePlayerInventoryScreen)(Object) this);
 				int newIndex = MathHelper.clamp(this.selectedTab + (int) Math.round(scrollAmount * Core.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
 				int newPage = helper.getPageForTabIndex(newIndex);

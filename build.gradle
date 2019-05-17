@@ -19,8 +19,12 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc:fabric:${project.fabric_version}"
+	modCompile "net.fabricmc.fabric-api:fabric-keybindings:+"
+	include "net.fabricmc.fabric-api:fabric-keybindings:+"
+	modCompile "net.fabricmc.fabric-api:fabric-resource-loader:+"
+	include "net.fabricmc.fabric-api:fabric-resource-loader:+"
+	
+	modCompile "net.fabricmc.fabric-api:fabric-item-groups:+"
 }
 
 processResources {
