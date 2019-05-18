@@ -2,12 +2,12 @@ package de.siphalor.mousewheelie.util;
 
 import net.fabricmc.fabric.impl.itemgroup.CreativeGuiExtensions;
 import net.fabricmc.fabric.impl.itemgroup.FabricCreativeGuiComponents;
-import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 
 public final class FabricCreativeGuiHelper {
 	CreativeGuiExtensions fabricExtensions;
 
-	public FabricCreativeGuiHelper(CreativePlayerInventoryScreen screen) {
+	public FabricCreativeGuiHelper(CreativeInventoryScreen screen) {
 		fabricExtensions = (CreativeGuiExtensions) screen;
 	}
 

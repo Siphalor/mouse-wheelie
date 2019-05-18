@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Mouse.class)
 public class MixinMouse {
@@ -26,7 +25,7 @@ public class MixinMouse {
 	private static double mouseWheelie_scrollX;
 
 	@Inject(method = "onMouseScroll", at = @At("HEAD"))
-	public void onMouseScrolledHead(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
+	private void onMouseScrolledHead(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
 		mouseWheelie_scrollX = scrollX;
 	}
 
@@ -38,9 +37,8 @@ public class MixinMouse {
 		return old;
 	}
 
-	// Thanks to Danielshe
-	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Screen;mouseScrolled(DDD)Z", ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void onMouseScrolled(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
+	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "net/minecraft/client/gui/screen/Screen.mouseScrolled(DDD)Z", ordinal = 0), cancellable = true)
+	private void onMouseScrolled(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
         double mouseX = this.x * (double) this.client.window.getScaledWidth() / (double) this.client.window.getWidth();
 		double mouseY = this.y * (double) this.client.window.getScaledHeight() / (double) this.client.window.getHeight();
 		double scrollAmount = scrollY * this.client.options.mouseWheelSensitivity;

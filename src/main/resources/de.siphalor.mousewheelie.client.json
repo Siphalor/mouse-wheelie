@@ -4,16 +4,16 @@
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"MixinAbstractFurnaceScreen",
-		"MixinContainerScreen",
+		"MixinAbstractContainerScreen",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayNetworkHandler",
 		"MixinCraftingTableScreen",
-		"MixinCreativePlayerInventoryScreen",
+		"MixinCreativeInventoryScreen",
 		"MixinMouse",
-		"MixinPlayerInventoryScreen",
-		"MixinRecipeBookGui",
+		"MixinInventoryScreen",
+		"MixinRecipeBookScreen",
 		"MixinSlot",
-		"RecipeBookGuiResultsAccessor"
+		"RecipeBookResultsAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -2,9 +2,9 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.util.IRecipeBookGui;
 import de.siphalor.mousewheelie.util.IScrollableRecipeBook;
-import net.minecraft.client.gui.ContainerScreen;
-import net.minecraft.client.gui.container.AbstractFurnaceRecipeBookScreen;
-import net.minecraft.client.gui.container.AbstractFurnaceScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractFurnaceScreen;
+import net.minecraft.client.gui.screen.recipebook.AbstractFurnaceRecipeBookScreen;
 import net.minecraft.container.Container;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.chat.Component;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractFurnaceScreen.class)
-public abstract class MixinAbstractFurnaceScreen extends ContainerScreen implements IScrollableRecipeBook {
+public abstract class MixinAbstractFurnaceScreen extends AbstractContainerScreen implements IScrollableRecipeBook {
 
 	@Shadow @Final public AbstractFurnaceRecipeBookScreen recipeBook;
 

@@ -2,9 +2,9 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.Core;
 import de.siphalor.mousewheelie.util.IRecipeBookGui;
-import net.minecraft.client.gui.recipebook.GroupButtonWidget;
-import net.minecraft.client.gui.recipebook.RecipeBookGui;
-import net.minecraft.client.gui.recipebook.RecipeBookGuiResults;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookScreen;
+import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,18 +12,18 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-@Mixin(RecipeBookGui.class)
-public abstract class MixinRecipeBookGui implements IRecipeBookGui {
+@Mixin(RecipeBookScreen.class)
+public abstract class MixinRecipeBookScreen implements IRecipeBookGui {
 
-	@Shadow protected RecipeBookGuiResults recipesArea;
+	@Shadow protected RecipeBookResults recipesArea;
 
 	@Shadow private int parentWidth;
 
 	@Shadow private int leftOffset;
 
-	@Shadow @Final private List<GroupButtonWidget> tabButtons;
+	@Shadow @Final private List<RecipeGroupButtonWidget> tabButtons;
 
-	@Shadow private GroupButtonWidget currentTab;
+	@Shadow private RecipeGroupButtonWidget currentTab;
 
 	@Shadow protected abstract void refreshResults(boolean boolean_1);
 
@@ -41,9 +41,9 @@ public abstract class MixinRecipeBookGui implements IRecipeBookGui {
 		int left = (this.parentWidth - 147) / 2 - this.leftOffset;
 		if(mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
-			int maxPage = ((RecipeBookGuiResultsAccessor) recipesArea).getPageCount() - 1;
-			((RecipeBookGuiResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookGuiResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Core.scrollFactor)), 0, maxPage < 0 ? 0 : maxPage));
-			((RecipeBookGuiResultsAccessor) recipesArea).callRefreshResultButtons();
+			int maxPage = ((RecipeBookResultsAccessor) recipesArea).getPageCount() - 1;
+			((RecipeBookResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Core.scrollFactor)), 0, maxPage < 0 ? 0 : maxPage));
+			((RecipeBookResultsAccessor) recipesArea).callRefreshResultButtons();
 			return true;
 		} else if(mouseX >= left - 30 && mouseX < left) {
 			int index = tabButtons.indexOf(currentTab);

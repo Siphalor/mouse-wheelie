@@ -5,8 +5,8 @@ import de.siphalor.mousewheelie.util.FabricCreativeGuiHelper;
 import de.siphalor.mousewheelie.util.IContainerScreen;
 import de.siphalor.mousewheelie.util.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.ingame.AbstractPlayerInventoryScreen;
-import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.network.chat.Component;
@@ -14,14 +14,14 @@ import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(CreativePlayerInventoryScreen.class)
-public abstract class MixinCreativePlayerInventoryScreen extends AbstractPlayerInventoryScreen<CreativePlayerInventoryScreen.CreativeContainer> implements ISpecialScrollableScreen, IContainerScreen {
+@Mixin(CreativeInventoryScreen.class)
+public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeContainer> implements ISpecialScrollableScreen, IContainerScreen {
 
 	@Shadow private static int selectedTab;
 
 	@Shadow protected abstract void setSelectedTab(ItemGroup itemGroup_1);
 
-	public MixinCreativePlayerInventoryScreen(CreativePlayerInventoryScreen.CreativeContainer container_1, PlayerInventory playerInventory_1, Component textComponent_1) {
+	public MixinCreativeInventoryScreen(CreativeInventoryScreen.CreativeContainer container_1, PlayerInventory playerInventory_1, Component textComponent_1) {
 		super(container_1, playerInventory_1, textComponent_1);
 	}
 
@@ -37,8 +37,8 @@ public abstract class MixinCreativePlayerInventoryScreen extends AbstractPlayerI
 		// Rough matching:
 		if(mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4) {
 			if(FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
-				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativePlayerInventoryScreen)(Object) this);
-				int newIndex = MathHelper.clamp(this.selectedTab + (int) Math.round(scrollAmount * Core.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
+				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen)(Object) this);
+				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Core.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
 				int newPage = helper.getPageForTabIndex(newIndex);
 				if(newPage < helper.getCurrentPage())
 					helper.previousPage();
@@ -46,7 +46,7 @@ public abstract class MixinCreativePlayerInventoryScreen extends AbstractPlayerI
 					helper.nextPage();
 				setSelectedTab(ItemGroup.GROUPS[newIndex]);
 			} else
-				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (this.selectedTab + Math.round(scrollAmount * Core.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Core.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
             return false;
 		}
 		return false;

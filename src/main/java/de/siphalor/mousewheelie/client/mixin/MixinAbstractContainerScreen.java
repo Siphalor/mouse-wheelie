@@ -7,9 +7,9 @@ import de.siphalor.mousewheelie.util.ISlot;
 import de.siphalor.mousewheelie.util.InventorySorter;
 import de.siphalor.mousewheelie.util.SortMode;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.ContainerScreen;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.ingame.PlayerInventoryScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
@@ -28,9 +28,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BiFunction;
 
-@Mixin(ContainerScreen.class)
-public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
-	protected MixinContainerScreen(Component textComponent_1) {
+@Mixin(AbstractContainerScreen.class)
+public abstract class MixinAbstractContainerScreen extends Screen implements IContainerScreen {
+	protected MixinAbstractContainerScreen(Component textComponent_1) {
 		super(textComponent_1);
 	}
 
@@ -48,15 +48,15 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 
 	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
 	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if(this.minecraft.options.keySwapHands.matchesKey(key, scanCode)) {
+		if(this.minecraft.options.keySwapHands.matchesKey(key, scanCode) && focusedSlot != null) {
 			boolean putBack = false;
-			Slot swapSlot = container.slotList.stream().filter(slot -> slot.getStack() == playerInventory.getInvStack(playerInventory.selectedSlot)).findAny().orElse(null);
+			Slot swapSlot = container.slotList.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
 			if(swapSlot == null) return;
 			ItemStack swapStack = touchDragStack.copy();
 			ItemStack offHandStack = playerInventory.offHand.get(0).copy();
 			if (touchDragStack.isEmpty()) {
 				putBack = true;
-				if(focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
+				if(!focusedSlot.getStack().isEmpty()) {
 					swapStack = focusedSlot.getStack().copy();
 					Core.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
 				} else if(offHandStack.isEmpty()) {
@@ -119,7 +119,7 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 		boolean moveUp = scrollAmount * Core.scrollFactor < 0;
 		BiFunction<Slot, Slot, Boolean> slotsInSameScope;
 		//noinspection ConstantConditions
-		if((Screen) this instanceof PlayerInventoryScreen) {
+		if((Screen) this instanceof InventoryScreen) {
 			changeInventory = ((ISlot) hoveredSlot).mouseWheelie_getInvSlot() < 9 == moveUp;
 			slotsInSameScope = (slot, slot2) -> (((ISlot) slot).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
 		} else {

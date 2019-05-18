@@ -2,7 +2,7 @@ package de.siphalor.mousewheelie.util;
 
 import de.siphalor.mousewheelie.Core;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.ingame.CreativePlayerInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
@@ -35,7 +35,7 @@ public class InventorySorter {
 		Inventory inventory = originSlot.inventory;
 		this.inventorySlots = container.slotList.stream().filter(slot -> slot.inventory == inventory && slot.canInsert(ItemStack.EMPTY)).collect(Collectors.toList());
 		if(inventory instanceof PlayerInventory) {
-			if(((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativePlayerInventoryScreen) {
+			if(((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen) {
 				// Mojang's creative inventory/slot/container code is so messed up, I really can't sort this out for the player creative inventory
 				// TODO some day this should get fixed though
 				inventorySlots = Collections.emptyList();
@@ -52,7 +52,7 @@ public class InventorySorter {
 		}
 	}
 
-	public void combineStacks() {
+	private void combineStacks() {
 		ItemStack stack;
 		ArrayDeque<Core.ClickEvent> clickEvents = new ArrayDeque<>();
 		for(int i = stacks.size() - 1; i >= 0; i--) {
@@ -147,7 +147,7 @@ public class InventorySorter {
 				});
 				break;
 			case RAWID:
-				Integer[] rawIds = inventorySlots.stream().map(slot -> (Integer) (slot.getStack().isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(slot.getStack().getItem()))).toArray(Integer[]::new);
+				Integer[] rawIds = inventorySlots.stream().map(slot -> slot.getStack().isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(slot.getStack().getItem())).toArray(Integer[]::new);
 				sortIds.sort(Comparator.comparingInt(o -> rawIds[o]));
 				break;
 		}

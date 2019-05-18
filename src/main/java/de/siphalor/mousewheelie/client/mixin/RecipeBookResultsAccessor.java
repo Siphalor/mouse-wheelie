@@ -1,12 +1,12 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import net.minecraft.client.gui.recipebook.RecipeBookGuiResults;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(RecipeBookGuiResults.class)
-public interface RecipeBookGuiResultsAccessor {
+@Mixin(RecipeBookResults.class)
+public interface RecipeBookResultsAccessor {
 	@Accessor
 	int getCurrentPage();
 
