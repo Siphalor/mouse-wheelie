@@ -1,6 +1,6 @@
-package de.siphalor.mousewheelie.util;
+package de.siphalor.mousewheelie.client.util;
 
-import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.client.InteractionManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.resource.language.I18n;
@@ -54,13 +54,13 @@ public class InventorySorter {
 
 	private void combineStacks() {
 		ItemStack stack;
-		ArrayDeque<Core.ClickEvent> clickEvents = new ArrayDeque<>();
+		ArrayDeque<InteractionManager.ClickEvent> clickEvents = new ArrayDeque<>();
 		for(int i = stacks.size() - 1; i >= 0; i--) {
 			stack = stacks.get(i);
 			if(stack.isEmpty()) continue;
 			int stackSize = stack.getAmount();
 			if(stackSize >= stack.getItem().getMaxAmount()) continue;
-			clickEvents.add(new Core.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
+			clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for(int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks.get(j);
 				if(targetStack.isEmpty()) continue;
@@ -70,7 +70,7 @@ public class InventorySorter {
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
 					targetStack.setAmount(targetStack.getAmount() + delta);
-					clickEvents.add(new Core.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
+					clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
 					if(stackSize <= 0) break;
 				}
 			}
@@ -78,11 +78,11 @@ public class InventorySorter {
 				clickEvents.clear();
 				continue;
 			}
-			Core.interactionEventQueue.addAll(clickEvents);
-			Core.triggerSend();
+			InteractionManager.interactionEventQueue.addAll(clickEvents);
+			InteractionManager.triggerSend();
 			clickEvents.clear();
 			if(stackSize > 0) {
-				Core.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setAmount(stackSize);
 			} else {
 				stacks.set(i, ItemStack.EMPTY);
@@ -146,7 +146,7 @@ public class InventorySorter {
 					return Integer.compare(a2, a);
 				});
 				break;
-			case RAWID:
+			case RAW_ID:
 				Integer[] rawIds = inventorySlots.stream().map(slot -> slot.getStack().isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(slot.getStack().getItem())).toArray(Integer[]::new);
 				sortIds.sort(Comparator.comparingInt(o -> rawIds[o]));
 				break;
@@ -166,11 +166,11 @@ public class InventorySorter {
 				doneSlashEmpty.set(i);
 				continue;
 			}
-			Core.pushClickEvent(container.syncId, inventorySlots.get(sortIds.get(i)).id, 0, SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(sortIds.get(i)).id, 0, SlotActionType.PICKUP);
 			doneSlashEmpty.clear(slotCount + sortIds.get(i));
 			int id = i;
 			while(!doneSlashEmpty.get(id)) {
-				Core.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
 				doneSlashEmpty.set(id);
 				if(doneSlashEmpty.get(slotCount + id)) {
 					doneSlashEmpty.set(slotCount + id);

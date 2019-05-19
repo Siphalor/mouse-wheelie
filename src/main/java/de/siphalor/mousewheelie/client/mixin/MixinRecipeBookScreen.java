@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.util.IRecipeBookGui;
+import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.util.IRecipeBookGui;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
@@ -15,7 +15,7 @@ import java.util.List;
 @Mixin(RecipeBookScreen.class)
 public abstract class MixinRecipeBookScreen implements IRecipeBookGui {
 
-	@Shadow protected RecipeBookResults recipesArea;
+	@Shadow @Final protected RecipeBookResults recipesArea;
 
 	@Shadow private int parentWidth;
 
@@ -42,12 +42,12 @@ public abstract class MixinRecipeBookScreen implements IRecipeBookGui {
 		if(mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
 			int maxPage = ((RecipeBookResultsAccessor) recipesArea).getPageCount() - 1;
-			((RecipeBookResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Core.scrollFactor)), 0, maxPage < 0 ? 0 : maxPage));
+			((RecipeBookResultsAccessor) recipesArea).setCurrentPage(MathHelper.clamp((int) (((RecipeBookResultsAccessor) recipesArea).getCurrentPage() + Math.round(scrollAmount * Config.scrollFactor.value)), 0, maxPage < 0 ? 0 : maxPage));
 			((RecipeBookResultsAccessor) recipesArea).callRefreshResultButtons();
 			return true;
 		} else if(mouseX >= left - 30 && mouseX < left) {
 			int index = tabButtons.indexOf(currentTab);
-			int newIndex = MathHelper.clamp(index + (int) (Math.round(scrollAmount * Core.scrollFactor)), 0, tabButtons.size() - 1);
+			int newIndex = MathHelper.clamp(index + (int) (Math.round(scrollAmount * Config.scrollFactor.value)), 0, tabButtons.size() - 1);
 			if(newIndex != index) {
 				currentTab.setToggled(false);
 				currentTab = tabButtons.get(newIndex);

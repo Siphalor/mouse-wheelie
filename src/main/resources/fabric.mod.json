@@ -28,7 +28,12 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "de.siphalor.mousewheelie.client.ClientFabricCore"
+				"value": "de.siphalor.mousewheelie.client.ClientCore"
+			}
+		],
+		"modmenu": [
+			{
+				"value": "de.siphalor.mousewheelie.client.ModMenuEntryPoint"
 			}
 		]
 	},

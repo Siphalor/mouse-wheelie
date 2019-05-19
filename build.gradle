@@ -7,10 +7,22 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 minecraft {
+}
+
+repositories {
+	mavenLocal()
+	maven {
+		name "jitpack"
+		url "https://jitpack.io"
+	}
+	maven {
+		name "curseforge"
+		url "https://minecraft.curseforge.com/api/maven"
+	}
 }
 
 dependencies {
@@ -25,6 +37,13 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-resource-loader:+"
 	
 	modCompile "net.fabricmc.fabric-api:fabric-item-groups:+"
+	modCompile "io.github.prospector.modmenu:ModMenu:+"
+	
+	modCompile "com.github.siphalor:tweed-api:${project.tweed_version}"
+	include "com.github.siphalor:tweed-api:${project.tweed_version}"
+	
+	include "cloth-config:ClothConfig:${project.clothconfig_version}"
+	modCompile "cloth-config:ClothConfig:${project.clothconfig_version}"
 }
 
 processResources {

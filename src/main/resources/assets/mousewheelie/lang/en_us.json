@@ -1,4 +1,14 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
-	"key.mousewheelie.sort_inventory": "Sort Inventory"
+	"key.mousewheelie.sort_inventory": "Sort Inventory",
+
+	"tweed.cloth.mousewheelie": "Mouse Wheelie Config",
+
+	"tweed.cloth.mousewheelie.general": "General",
+	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll factor",
+
+	"tweed.cloth.mousewheelie.sort": "Sorting",
+	"tweed.cloth.mousewheelie.sort.primary-sort": "Middle mouse click",
+	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + middle mouse click",
+	"tweed.cloth.mousewheelie.sort.control-sort": "Control + middle mouse click"
 }

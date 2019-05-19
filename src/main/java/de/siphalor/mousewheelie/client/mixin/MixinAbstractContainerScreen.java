@@ -1,11 +1,12 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.client.ClientFabricCore;
-import de.siphalor.mousewheelie.util.IContainerScreen;
-import de.siphalor.mousewheelie.util.ISlot;
-import de.siphalor.mousewheelie.util.InventorySorter;
-import de.siphalor.mousewheelie.util.SortMode;
+import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.InteractionManager;
+import de.siphalor.mousewheelie.client.util.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.ISlot;
+import de.siphalor.mousewheelie.client.util.InventorySorter;
+import de.siphalor.mousewheelie.client.util.SortMode;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
@@ -58,21 +59,21 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				putBack = true;
 				if(!focusedSlot.getStack().isEmpty()) {
 					swapStack = focusedSlot.getStack().copy();
-					Core.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
 				} else if(offHandStack.isEmpty()) {
 					return;
 				}
 			}
-			Core.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
-			Core.push(new Core.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN)));
-			Core.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN)));
+			InteractionManager.pushClickEvent(container.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
 			if(putBack) {
-				Core.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(container.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
 			}
 			ItemStack finalSwapStack = swapStack;
 			boolean finalPutBack = putBack;
 			// Fix the display up since swapping items doesn't have a confirm packet so we have to trigger the click event too quick afterwards
-			Core.push(() -> {
+			InteractionManager.push(() -> {
 				playerInventory.offHand.set(0, finalSwapStack);
 				if(finalPutBack) {
 					focusedSlot.setStack(offHandStack);
@@ -84,7 +85,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				return true;
 			});
 		} else if(FabricLoader.getInstance().isModLoaded("fabric")) {
-			if(ClientFabricCore.SORT_KEY_BINDING.matchesKey(key, scanCode)) {
+			if(ClientCore.SORT_KEY_BINDING.matchesKey(key, scanCode)) {
 				mouseWheelie_triggerSort();
 			}
 		}
@@ -116,7 +117,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			return false;
 		ItemStack hoveredStack = hoveredSlot.getStack();
 		boolean changeInventory;
-		boolean moveUp = scrollAmount * Core.scrollFactor < 0;
+		boolean moveUp = scrollAmount * Config.scrollFactor.value < 0;
 		BiFunction<Slot, Slot, Boolean> slotsInSameScope;
 		//noinspection ConstantConditions
 		if((Screen) this instanceof InventoryScreen) {
@@ -189,11 +190,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		InventorySorter sorter = new InventorySorter(container, focusedSlot);
 		SortMode sortMode;
 		if(hasShiftDown()) {
-			sortMode = SortMode.QUANTITY;
+			sortMode = Config.shiftSort.value;
 		} else if(hasControlDown()) {
-			sortMode = SortMode.RAWID;
+			sortMode = Config.controlSort.value;
 		} else {
-			sortMode = SortMode.ALPHABET;
+			sortMode = Config.primarySort.value;
 		}
 		sorter.sort(sortMode);
 		return true;

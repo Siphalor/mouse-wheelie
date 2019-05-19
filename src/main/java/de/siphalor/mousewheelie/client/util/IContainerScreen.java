@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.util;
+package de.siphalor.mousewheelie.client.util;
 
 public interface IContainerScreen {
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount);

@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import com.mojang.authlib.GameProfile;
-import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.client.InteractionManager;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -18,6 +18,6 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "closeScreen", at = @At("HEAD"))
 	public void onScreenClosed(CallbackInfo callbackInfo) {
-        Core.stopSending();
+        InteractionManager.stopSending();
 	}
 }

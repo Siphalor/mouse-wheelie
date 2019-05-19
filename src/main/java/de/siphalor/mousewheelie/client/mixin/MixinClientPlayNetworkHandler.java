@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.Core;
+import de.siphalor.mousewheelie.client.InteractionManager;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.ConfirmGuiActionS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinClientPlayNetworkHandler {
 	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
-		if(Core.sending)
-			Core.triggerSend();
+		if(InteractionManager.sending)
+			InteractionManager.triggerSend();
 	}
 }

@@ -1,8 +1,8 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.util.IContainerScreen;
-import de.siphalor.mousewheelie.util.IScrollableRecipeBook;
-import de.siphalor.mousewheelie.util.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.util.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.IScrollableRecipeBook;
+import de.siphalor.mousewheelie.client.util.ISpecialScrollableScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import org.spongepowered.asm.mixin.Final;

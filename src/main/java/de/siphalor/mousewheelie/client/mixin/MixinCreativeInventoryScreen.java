@@ -1,9 +1,9 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.util.FabricCreativeGuiHelper;
-import de.siphalor.mousewheelie.util.IContainerScreen;
-import de.siphalor.mousewheelie.util.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.util.FabricCreativeGuiHelper;
+import de.siphalor.mousewheelie.client.util.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -38,7 +38,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 		if(mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4) {
 			if(FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen)(Object) this);
-				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Core.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
+				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Config.scrollFactor.value), 0, ItemGroup.GROUPS.length - 1);
 				int newPage = helper.getPageForTabIndex(newIndex);
 				if(newPage < helper.getCurrentPage())
 					helper.previousPage();
@@ -46,7 +46,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 					helper.nextPage();
 				setSelectedTab(ItemGroup.GROUPS[newIndex]);
 			} else
-				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Core.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Config.scrollFactor.value)), 0, ItemGroup.GROUPS.length - 1)]);
             return false;
 		}
 		return false;
