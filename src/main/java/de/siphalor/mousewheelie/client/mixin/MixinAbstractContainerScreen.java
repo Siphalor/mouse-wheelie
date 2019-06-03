@@ -43,8 +43,6 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Shadow @Final protected PlayerInventory playerInventory;
 
-	@Shadow private ItemStack touchDragStack;
-
 	@Shadow protected Slot focusedSlot;
 
 	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
@@ -53,9 +51,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			boolean putBack = false;
 			Slot swapSlot = container.slotList.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
 			if(swapSlot == null) return;
-			ItemStack swapStack = touchDragStack.copy();
+			ItemStack swapStack = playerInventory.getCursorStack().copy();
 			ItemStack offHandStack = playerInventory.offHand.get(0).copy();
-			if (touchDragStack.isEmpty()) {
+			if (playerInventory.getCursorStack().isEmpty()) {
 				putBack = true;
 				if(!focusedSlot.getStack().isEmpty()) {
 					swapStack = focusedSlot.getStack().copy();
@@ -77,10 +75,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				playerInventory.offHand.set(0, finalSwapStack);
 				if(finalPutBack) {
 					focusedSlot.setStack(offHandStack);
-					touchDragStack = ItemStack.EMPTY;
 					playerInventory.setCursorStack(ItemStack.EMPTY);
 				} else {
-					touchDragStack = offHandStack;
+					playerInventory.setCursorStack(offHandStack);
 				}
 				return true;
 			});
@@ -93,10 +90,15 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if(button == 0 && hasShiftDown()) {
+		if(button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
-			if(hoveredSlot != null)
-				onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
+			if(hoveredSlot != null) {
+				if(hasAltDown()) {
+					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+				} else if(hasShiftDown()) {
+					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
+				}
+			}
 		}
 	}
 
@@ -185,7 +187,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	private boolean mouseWheelie_triggerSort() {
 		if(focusedSlot == null)
 			return false;
-		if(playerInventory.player.abilities.creativeMode && !focusedSlot.getStack().isEmpty())
+		if(playerInventory.player.abilities.creativeMode && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()) )
 			return false;
 		InventorySorter sorter = new InventorySorter(container, focusedSlot);
 		SortMode sortMode;

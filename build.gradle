@@ -35,6 +35,8 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-keybindings:+"
 	modCompile "net.fabricmc.fabric-api:fabric-resource-loader:+"
 	include "net.fabricmc.fabric-api:fabric-resource-loader:+"
+	modCompile "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
+	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
 	
 	modCompile "net.fabricmc.fabric-api:fabric-item-groups:+"
 	modCompile "io.github.prospector.modmenu:ModMenu:+"
