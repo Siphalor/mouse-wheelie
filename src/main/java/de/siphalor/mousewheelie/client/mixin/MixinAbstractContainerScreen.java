@@ -5,8 +5,8 @@ import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.InteractionManager;
 import de.siphalor.mousewheelie.client.util.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.ISlot;
-import de.siphalor.mousewheelie.client.util.InventorySorter;
-import de.siphalor.mousewheelie.client.util.SortMode;
+import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
+import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
@@ -192,12 +192,13 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		InventorySorter sorter = new InventorySorter(container, focusedSlot);
 		SortMode sortMode;
 		if(hasShiftDown()) {
-			sortMode = Config.shiftSort.value;
+			sortMode = Config.shiftSort.value.sortMode;
 		} else if(hasControlDown()) {
-			sortMode = Config.controlSort.value;
+			sortMode = Config.controlSort.value.sortMode;
 		} else {
-			sortMode = Config.primarySort.value;
+			sortMode = Config.primarySort.value.sortMode;
 		}
+		if(sortMode == null) return false;
 		sorter.sort(sortMode);
 		return true;
 	}

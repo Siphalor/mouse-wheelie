@@ -9,6 +9,8 @@
 		"MixinClientPlayNetworkHandler",
 		"MixinCraftingTableScreen",
 		"MixinCreativeInventoryScreen",
+		"MixinLivingEntity",
+		"MixinMinecraftClient",
 		"MixinMouse",
 		"MixinInventoryScreen",
 		"MixinRecipeBookScreen",

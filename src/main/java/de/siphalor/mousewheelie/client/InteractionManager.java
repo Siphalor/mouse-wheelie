@@ -4,10 +4,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
 
-import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class InteractionManager {
-	public static ArrayDeque<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
+	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
 	public static boolean sending = false;
 
 	public static void push(InteractionEvent interactionEvent) {
@@ -23,7 +24,7 @@ public class InteractionManager {
 
 	public static void triggerSend() {
 		if(interactionEventQueue.size() > 0) {
-			while(interactionEventQueue.pop().send()) {
+			while(interactionEventQueue.remove().send()) {
 				if(interactionEventQueue.isEmpty()) {
 					sending = false;
 					break;

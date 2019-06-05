@@ -1,18 +1,16 @@
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.util.inventory;
 
 import de.siphalor.mousewheelie.client.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ISlot;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.registry.Registry;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,14 +19,14 @@ import java.util.stream.IntStream;
 public class InventorySorter {
 	private Container container;
 	private List<Slot> inventorySlots;
-	private List<ItemStack> stacks;
+	private ItemStack[] stacks;
 
 	public InventorySorter(Container container, Slot originSlot) {
 		this.container = container;
 
 		collectSlots(originSlot);
 
-		this.stacks = inventorySlots.stream().map(slot -> slot.getStack().copy()).collect(Collectors.toList());
+		this.stacks = inventorySlots.stream().map(slot -> slot.getStack().copy()).toArray(ItemStack[]::new);
 	}
 
 	private void collectSlots(Slot originSlot) {
@@ -55,14 +53,14 @@ public class InventorySorter {
 	private void combineStacks() {
 		ItemStack stack;
 		ArrayDeque<InteractionManager.ClickEvent> clickEvents = new ArrayDeque<>();
-		for(int i = stacks.size() - 1; i >= 0; i--) {
-			stack = stacks.get(i);
+		for(int i = stacks.length - 1; i >= 0; i--) {
+			stack = stacks[i];
 			if(stack.isEmpty()) continue;
 			int stackSize = stack.getAmount();
 			if(stackSize >= stack.getItem().getMaxAmount()) continue;
 			clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for(int j = 0; j < i; j++) {
-				ItemStack targetStack = stacks.get(j);
+				ItemStack targetStack = stacks[j];
 				if(targetStack.isEmpty()) continue;
 				if(targetStack.getAmount() >= targetStack.getItem().getMaxAmount()) continue;
 				if(stack.getItem() == targetStack.getItem() && ItemStack.areTagsEqual(stack, targetStack)) {
@@ -85,89 +83,36 @@ public class InventorySorter {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setAmount(stackSize);
 			} else {
-				stacks.set(i, ItemStack.EMPTY);
+				stacks[i] = ItemStack.EMPTY;
 			}
 		}
 	}
 
 	public void sort(SortMode sortMode) {
 		combineStacks();
-		final int slotCount = stacks.size();
-		List<Integer> sortIds = IntStream.range(0, slotCount).boxed().collect(Collectors.toList());
-		switch(sortMode) {
-			case ALPHABET:
-				List<String> strings = sortIds.stream().map(id -> {
-					ItemStack itemStack = stacks.get(id);
-					if (itemStack.isEmpty()) return "";
-					return I18n.translate(itemStack.getTranslationKey());
-				}).collect(Collectors.toList());
-				sortIds.sort((o1, o2) -> {
-					if (strings.get(o1).equals("")) {
-						if (strings.get(o2).equals(""))
-							return 0;
-						return 1;
-					}
-					if (strings.get(o2).equals("")) return -1;
-					int comp = strings.get(o1).compareToIgnoreCase(strings.get(o2));
-					if (comp == 0) {
-						return Integer.compare(stacks.get(o2).getAmount(), stacks.get(o1).getAmount());
-					}
-					return comp;
-				});
-				break;
-			case QUANTITY:
-				HashMap<Item, HashMap<CompoundTag, Integer>> itemToAmountMap = new HashMap<>();
-				for(ItemStack stack : stacks) {
-					if (stack.isEmpty()) continue;
-					if (!itemToAmountMap.containsKey(stack.getItem())) {
-						HashMap<CompoundTag, Integer> newMap = new HashMap<>();
-						newMap.put(stack.getOrCreateTag(), stack.getAmount());
-						itemToAmountMap.put(stack.getItem(), newMap);
-					} else {
-						HashMap<CompoundTag, Integer> itemMap = itemToAmountMap.get(stack.getItem());
-						if (!itemMap.containsKey(stack.getOrCreateTag())) {
-							itemMap.put(stack.getTag(), stack.getAmount());
-						} else {
-							itemMap.replace(stack.getTag(), itemMap.get(stack.getTag()) + stack.getAmount());
-						}
-					}
-				}
-				sortIds.sort((o1, o2) -> {
-					ItemStack stack = stacks.get(o1);
-					ItemStack stack2 = stacks.get(o2);
-					if (stack.isEmpty()) {
-						return stack2.isEmpty() ? 0 : 1;
-					}
-					if (stack2.isEmpty()) {
-						return -1;
-					}
-					Integer a = itemToAmountMap.get(stack.getItem()).get(stack.getTag());
-					Integer a2 = itemToAmountMap.get(stack2.getItem()).get(stack2.getTag());
-					return Integer.compare(a2, a);
-				});
-				break;
-			case RAW_ID:
-				Integer[] rawIds = inventorySlots.stream().map(slot -> slot.getStack().isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(slot.getStack().getItem())).toArray(Integer[]::new);
-				sortIds.sort(Comparator.comparingInt(o -> rawIds[o]));
-				break;
-		}
+		final int slotCount = stacks.length;
+		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
+
+		sortMode.init(sortIds, stacks);
+        Arrays.sort(sortIds, sortMode);
+
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
 		for(int i = 0; i < slotCount; i++) {
-			if(stacks.get(i).isEmpty()) doneSlashEmpty.set(slotCount + i);
+			if(stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
 		}
 		for(int i = 0; i < slotCount; i++) {
-			if(doneSlashEmpty.get(i) || doneSlashEmpty.get(sortIds.get(i))) {
+			if(doneSlashEmpty.get(i) || doneSlashEmpty.get(sortIds[i])) {
 				continue;
 			}
 			if(doneSlashEmpty.get(slotCount + i)) {
-				doneSlashEmpty.set(slotCount + sortIds.get(i));
+				doneSlashEmpty.set(slotCount + sortIds[i]);
 			}
-			if(i == sortIds.get(i)) {
+			if(i == sortIds[i]) {
 				doneSlashEmpty.set(i);
 				continue;
 			}
-			InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(sortIds.get(i)).id, 0, SlotActionType.PICKUP);
-			doneSlashEmpty.clear(slotCount + sortIds.get(i));
+			InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
+			doneSlashEmpty.clear(slotCount + sortIds[i]);
 			int id = i;
 			while(!doneSlashEmpty.get(id)) {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
@@ -176,7 +121,7 @@ public class InventorySorter {
 					doneSlashEmpty.set(slotCount + id);
 					break;
 				}
-				id = sortIds.indexOf(id);
+				id = ArrayUtils.indexOf(sortIds, id);
 			}
 		}
 	}

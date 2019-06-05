@@ -1,7 +1,8 @@
 package de.siphalor.mousewheelie.client;
 
 import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.client.util.SortMode;
+import de.siphalor.mousewheelie.client.util.ToolPickMode;
+import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import de.siphalor.tweed.config.ConfigCategory;
 import de.siphalor.tweed.config.ConfigEnvironment;
 import de.siphalor.tweed.config.ConfigFile;
@@ -15,22 +16,25 @@ public class Config {
 
 	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
 		.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
-	public static EnumEntry<SortMode> primarySort = (EnumEntry<SortMode>) sortCategory.register("primary-sort", new EnumEntry<>(SortMode.RAW_ID))
+	public static EnumEntry<SortMode.Predefined> primarySort = (EnumEntry<SortMode.Predefined>) sortCategory.register("primary-sort", new EnumEntry<>(SortMode.Predefined.RAW_ID))
 		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Sets the sort mode for sorting via middle mouse click.")
 		;
-	public static EnumEntry<SortMode> shiftSort = (EnumEntry<SortMode>) sortCategory.register("shift-sort", new EnumEntry<>(SortMode.QUANTITY))
+	public static EnumEntry<SortMode.Predefined> shiftSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("shift-sort", new EnumEntry<>(SortMode.Predefined.QUANTITY))
 		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Sets the sort mode for sorting via shift + middle mouse click.");
-	public static EnumEntry<SortMode> controlSort = (EnumEntry<SortMode>) sortCategory.register("control-sort", new EnumEntry<>(SortMode.ALPHABET))
+	public static EnumEntry<SortMode.Predefined> controlSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("control-sort", new EnumEntry<>(SortMode.Predefined.ALPHABET))
 		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Sets the sort mode for sorting via control + middle mouse click.");
 		;
 
 	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory());
 	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
+		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Set the scroll factor for item scrolling." + System.lineSeparator() +
 			"To invert the scrolling use negative numbers");
+	public static EnumEntry<ToolPickMode> toolPickMode = configFile.register("tool-pick-mode", new EnumEntry<>(ToolPickMode.HOLD_TOOL))
+		.setEnvironment(ConfigEnvironment.CLIENT);
 
 	public static void initialize() {
 
