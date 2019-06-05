@@ -30,7 +30,7 @@ public class ClientCore implements ClientModInitializer {
 	public void onInitializeClient() {
 		KeyBindingRegistry.INSTANCE.addCategory(KEY_BINDING_CATEGORY);
 		KeyBindingRegistry.INSTANCE.register(SORT_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
+		//KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			if(ToolPickMode.isTriggered(Config.toolPickMode.value, player)) {
