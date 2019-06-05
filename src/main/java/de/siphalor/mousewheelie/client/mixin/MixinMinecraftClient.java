@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin;
 
+import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -18,10 +19,12 @@ public class MixinMinecraftClient {
 
 	@Inject(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
 	public void onItemUse(CallbackInfo callbackInfo) {
-		mouseWheelie_mainHandStack = player.getMainHandStack();
-        mouseWheelie_mainHandStack = mouseWheelie_mainHandStack.isEmpty() ? null : mouseWheelie_mainHandStack.copy();
-		mouseWheelie_offHandStack = player.getOffHandStack();
-        mouseWheelie_offHandStack = mouseWheelie_offHandStack.isEmpty() ? null : mouseWheelie_offHandStack.copy();
+		if(Config.otherRefill.value) {
+			mouseWheelie_mainHandStack = player.getMainHandStack();
+			mouseWheelie_mainHandStack = mouseWheelie_mainHandStack.isEmpty() ? null : mouseWheelie_mainHandStack.copy();
+			mouseWheelie_offHandStack = player.getOffHandStack();
+			mouseWheelie_offHandStack = mouseWheelie_offHandStack.isEmpty() ? null : mouseWheelie_offHandStack.copy();
+		}
 	}
 
 	@Inject(method = "doItemUse", at = @At("RETURN"))

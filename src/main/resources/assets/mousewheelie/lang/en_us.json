@@ -6,9 +6,14 @@
 
 	"tweed.cloth.mousewheelie.general": "General",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll factor",
+	"tweed.cloth.mousewheelie.general.tool-pick-mode": "When to pick the correct tool",
 
 	"tweed.cloth.mousewheelie.sort": "Sorting",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Middle mouse click",
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + middle mouse click",
-	"tweed.cloth.mousewheelie.sort.control-sort": "Control + middle mouse click"
+	"tweed.cloth.mousewheelie.sort.control-sort": "Control + middle mouse click",
+
+	"tweed.cloth.mousewheelie.refill": "Refill",
+	"tweed.cloth.mousewheelie.refill.eat": "Refill on eating food",
+	"tweed.cloth.mousewheelie.refill.other": "Refill on other occasions"
 }

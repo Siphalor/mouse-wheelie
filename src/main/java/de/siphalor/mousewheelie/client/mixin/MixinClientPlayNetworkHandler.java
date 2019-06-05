@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.InteractionManager;
 import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import net.minecraft.client.MinecraftClient;
@@ -47,7 +48,8 @@ public class MixinClientPlayNetworkHandler {
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 	public void onGuiSlotUpdated(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if(mouseWheelie_scheduleRefill) {
-			SlotRefiller.refill();
+			if(Config.otherRefill.value)
+				SlotRefiller.refill();
 			mouseWheelie_scheduleRefill = false;
 		}
 	}
