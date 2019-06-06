@@ -107,6 +107,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
         if(button == 2) {
         	if(mouseWheelie_triggerSort())
 				callbackInfoReturnable.setReturnValue(true);
+		} else if(button == 0 && hasAltDown()) {
+        	Slot hoveredSlot = getSlotAt(x, y);
+        	if(hoveredSlot != null)
+        		onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 		}
 	}
 

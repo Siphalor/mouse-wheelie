@@ -1,0 +1,19 @@
+{
+	"key.categories.mousewheelie": "Mouse Wheelie",
+	"key.mousewheelie.sort_inventory": "Inventar sortieren",
+
+	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
+
+	"tweed.cloth.mousewheelie.general": "Allgemein",
+	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
+	"tweed.cloth.mousewheelie.general.tool-pick-mode": "Wann das zum Abbauen optimale Werkzeug ausgewählt wird:",
+
+	"tweed.cloth.mousewheelie.sort": "Sortierung",
+	"tweed.cloth.mousewheelie.sort.primary-sort": "Mittlere Maustaste",
+	"tweed.cloth.mousewheelie.sort.shift-sort": "Umschalt und mittlere Maustaste",
+	"tweed.cloth.mousewheelie.sort.control-sort": "Steuerung und mittlere Maustaste",
+
+	"tweed.cloth.mousewheelie.refill": "Nachladen",
+	"tweed.cloth.mousewheelie.refill.eat": "Lade Essen nach",
+	"tweed.cloth.mousewheelie.refill.other": "Sonstiges Nachladen"
+}

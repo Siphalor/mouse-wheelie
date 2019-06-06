@@ -33,8 +33,9 @@ public class Config {
 		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Set the scroll factor for item scrolling." + System.lineSeparator() +
 			"To invert the scrolling use negative numbers");
-	public static EnumEntry<ToolPickMode> toolPickMode = generalCategory.register("tool-pick-mode", new EnumEntry<>(ToolPickMode.HOLD_TOOL))
-		.setEnvironment(ConfigEnvironment.CLIENT);
+	public static EnumEntry<ToolPickMode> toolPickMode = (EnumEntry<ToolPickMode>) generalCategory.register("tool-pick-mode", new EnumEntry<>(ToolPickMode.HOLD_TOOL))
+		.setEnvironment(ConfigEnvironment.CLIENT)
+		.setComment("Sets when to pick the optimal tool to mine the targetted block.");
 
 	public static ConfigCategory refillCategory = configFile.register("refill", new ConfigCategory())
 		.setComment("Configure refill related stuff here.");
