@@ -13,7 +13,15 @@
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Umschalt und mittlere Maustaste",
 	"tweed.cloth.mousewheelie.sort.control-sort": "Steuerung und mittlere Maustaste",
 
-	"tweed.cloth.mousewheelie.refill": "Nachladen",
+	"tweed.cloth.mousewheelie.refill": "Auffüllen",
 	"tweed.cloth.mousewheelie.refill.eat": "Lade Essen nach",
-	"tweed.cloth.mousewheelie.refill.other": "Sonstiges Nachladen"
+	"tweed.cloth.mousewheelie.refill.other": "Sonstiges Auffülen",
+
+	"tweed.cloth.mousewheelie.refill.rules": "Auffüll-Regeln",
+	"tweed.cloth.mousewheelie.refill.rules.any-block": "Jegliche Blöcke auffüllen",
+	"tweed.cloth.mousewheelie.refill.rules.itemgroup": "Nach Gegenstandsgruppen auffüllen",
+	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Gegenstände nach Funktionalität auffüllen",
+	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Blöcke nach Funktionalität auffüllen",
+	"tweed.cloth.mousewheelie.refill.rules.food": "Essen auffüllen",
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Mit gleichen Gegenständen auffüllen"
 }

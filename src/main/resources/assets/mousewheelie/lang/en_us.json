@@ -15,5 +15,13 @@
 
 	"tweed.cloth.mousewheelie.refill": "Refill",
 	"tweed.cloth.mousewheelie.refill.eat": "Refill on eating food",
-	"tweed.cloth.mousewheelie.refill.other": "Refill on other occasions"
+	"tweed.cloth.mousewheelie.refill.other": "Refill on other occasions",
+
+	"tweed.cloth.mousewheelie.refill.rules": "Refill rules",
+	"tweed.cloth.mousewheelie.refill.rules.any-block": "Refill with any blocks",
+	"tweed.cloth.mousewheelie.refill.rules.itemgroup": "Refill by item groups",
+	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Refill items with similar functionality",
+	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Refill blocks with similar functionality",
+	"tweed.cloth.mousewheelie.refill.rules.food": "Refill foods",
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Refill with same item"
 }
