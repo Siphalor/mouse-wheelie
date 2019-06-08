@@ -16,8 +16,8 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.network.packet.PlayerActionC2SPacket;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Final;
@@ -31,7 +31,7 @@ import java.util.function.BiFunction;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class MixinAbstractContainerScreen extends Screen implements IContainerScreen {
-	protected MixinAbstractContainerScreen(Component textComponent_1) {
+	protected MixinAbstractContainerScreen(Text textComponent_1) {
 		super(textComponent_1);
 	}
 
@@ -142,7 +142,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				ItemStack referenceStack = hoveredStack.copy();
 				for(Slot slot : container.slotList) {
 					if(slotsInSameScope.apply(slot, hoveredSlot)) {
-						if(slot.getStack().isEqualIgnoreTags(referenceStack))
+						if(slot.getStack().isItemEqualIgnoreDamage(referenceStack))
 							onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
 					}
 				}
@@ -155,7 +155,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			if(hasShiftDown() || hasControlDown()) {
 				for(Slot slot : container.slotList) {
 					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
-					if(slot.getStack().isEqualIgnoreTags(hoveredStack)) {
+					if(slot.getStack().isItemEqualIgnoreDamage(hoveredStack)) {
 						onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
 						if(!hasControlDown())
 							break;
@@ -166,9 +166,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				int stackSize = Integer.MAX_VALUE;
 				for(Slot slot : container.slotList) {
 					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
-					if(slot.getStack().isEqualIgnoreTags(hoveredStack)) {
-						if(slot.getStack().getAmount() < stackSize) {
-							stackSize = slot.getStack().getAmount();
+					if(slot.getStack().isItemEqualIgnoreDamage(hoveredStack)) {
+						if(slot.getStack().getCount() < stackSize) {
+							stackSize = slot.getStack().getCount();
 							moveSlot = slot;
 							if(stackSize == 1) break;
 						}

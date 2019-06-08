@@ -56,18 +56,18 @@ public class InventorySorter {
 		for(int i = stacks.length - 1; i >= 0; i--) {
 			stack = stacks[i];
 			if(stack.isEmpty()) continue;
-			int stackSize = stack.getAmount();
-			if(stackSize >= stack.getItem().getMaxAmount()) continue;
+			int stackSize = stack.getCount();
+			if(stackSize >= stack.getItem().getMaxCount()) continue;
 			clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for(int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks[j];
 				if(targetStack.isEmpty()) continue;
-				if(targetStack.getAmount() >= targetStack.getItem().getMaxAmount()) continue;
+				if(targetStack.getCount() >= targetStack.getItem().getMaxCount()) continue;
 				if(stack.getItem() == targetStack.getItem() && ItemStack.areTagsEqual(stack, targetStack)) {
-					int delta = targetStack.getItem().getMaxAmount() - targetStack.getAmount();
+					int delta = targetStack.getItem().getMaxCount() - targetStack.getCount();
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
-					targetStack.setAmount(targetStack.getAmount() + delta);
+					targetStack.setCount(targetStack.getCount() + delta);
 					clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
 					if(stackSize <= 0) break;
 				}
@@ -81,7 +81,7 @@ public class InventorySorter {
 			clickEvents.clear();
 			if(stackSize > 0) {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
-				stack.setAmount(stackSize);
+				stack.setCount(stackSize);
 			} else {
 				stacks[i] = ItemStack.EMPTY;
 			}

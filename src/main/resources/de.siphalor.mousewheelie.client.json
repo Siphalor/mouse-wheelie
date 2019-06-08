@@ -7,6 +7,7 @@
 		"MixinAbstractContainerScreen",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayNetworkHandler",
+		"MixinContainer",
 		"MixinCraftingTableScreen",
 		"MixinCreativeInventoryScreen",
 		"MixinLivingEntity",

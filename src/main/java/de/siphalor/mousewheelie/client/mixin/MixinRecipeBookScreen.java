@@ -4,7 +4,7 @@ import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.IRecipeBookGui;
 import de.siphalor.mousewheelie.client.util.IRecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookScreen;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-@Mixin(RecipeBookScreen.class)
+@Mixin(RecipeBookWidget.class)
 public abstract class MixinRecipeBookScreen implements IRecipeBookGui {
 
 	@Shadow @Final protected RecipeBookResults recipesArea;

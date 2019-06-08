@@ -30,8 +30,8 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if(ClientCore.awaitFoodSlotUpdate) {
-			ClientCore.awaitFoodSlotUpdate = false;
+		if(ClientCore.awaitSlotUpdate) {
+			ClientCore.awaitSlotUpdate = false;
 			SlotRefiller.refill();
 		} else {
 			PlayerInventory inventory = client.player.inventory;

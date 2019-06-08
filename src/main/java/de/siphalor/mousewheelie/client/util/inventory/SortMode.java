@@ -48,7 +48,7 @@ public abstract class SortMode implements Comparator<Integer> {
 					if (strings[o2].equals("")) return -1;
 					int comp = strings[o1].compareToIgnoreCase(strings[o2]);
 					if (comp == 0) {
-						return Integer.compare(stacks[o2].getAmount(), stacks[o1].getAmount());
+						return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
 					}
 					return comp;
 			}
@@ -63,14 +63,14 @@ public abstract class SortMode implements Comparator<Integer> {
 					if (stack.isEmpty()) continue;
 					if (!itemToAmountMap.containsKey(stack.getItem())) {
 						HashMap<CompoundTag, Integer> newMap = new HashMap<>();
-						newMap.put(stack.getOrCreateTag(), stack.getAmount());
+						newMap.put(stack.getOrCreateTag(), stack.getCount());
 						itemToAmountMap.put(stack.getItem(), newMap);
 					} else {
 						HashMap<CompoundTag, Integer> itemMap = itemToAmountMap.get(stack.getItem());
 						if (!itemMap.containsKey(stack.getOrCreateTag())) {
-							itemMap.put(stack.getTag(), stack.getAmount());
+							itemMap.put(stack.getTag(), stack.getCount());
 						} else {
-							itemMap.replace(stack.getTag(), itemMap.get(stack.getTag()) + stack.getAmount());
+							itemMap.replace(stack.getTag(), itemMap.get(stack.getTag()) + stack.getCount());
 						}
 					}
 				}

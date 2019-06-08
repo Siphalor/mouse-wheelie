@@ -8,9 +8,13 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -24,7 +28,7 @@ public class ClientCore implements ClientModInitializer {
 
 	public static TweedClothBridge tweedClothBridge;
 
-	public static boolean awaitFoodSlotUpdate = false;
+	public static boolean awaitSlotUpdate = false;
 
 	@Override
 	public void onInitializeClient() {
@@ -47,6 +51,19 @@ public class ClientCore implements ClientModInitializer {
 			return ItemStack.EMPTY;
 		});
 
+		UseItemCallback.EVENT.register((player, world, hand) -> {
+			ItemStack stack = player.getStackInHand(hand);
+			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
+			if(equipmentSlot != EquipmentSlot.MAINHAND && equipmentSlot != EquipmentSlot.OFFHAND) {
+				if(!player.getEquippedStack(equipmentSlot).isEmpty()) {
+					player.setStackInHand(hand, player.getEquippedStack(equipmentSlot));
+					player.setEquippedStack(equipmentSlot, stack);
+					return ActionResult.SUCCESS;
+				}
+			}
+			return ActionResult.PASS;
+		});
+
 		Config.initialize();
 
 		tweedClothBridge = new TweedClothBridge(Config.configFile);
@@ -57,6 +74,6 @@ public class ClientCore implements ClientModInitializer {
 	}
 
 	public static boolean isWeapon(Item item) {
-		return item instanceof BaseBowItem || item instanceof TridentItem || item instanceof SwordItem || FabricToolTags.SWORDS.contains(item);
+		return item instanceof RangedWeaponItem || item instanceof TridentItem || item instanceof SwordItem || FabricToolTags.SWORDS.contains(item);
 	}
 }

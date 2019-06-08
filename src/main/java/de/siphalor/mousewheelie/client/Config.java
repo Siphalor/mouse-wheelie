@@ -2,6 +2,7 @@ package de.siphalor.mousewheelie.client;
 
 import de.siphalor.mousewheelie.Core;
 import de.siphalor.mousewheelie.client.util.ToolPickMode;
+import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import de.siphalor.tweed.config.ConfigCategory;
 import de.siphalor.tweed.config.ConfigEnvironment;
@@ -45,8 +46,10 @@ public class Config {
 	public static BooleanEntry otherRefill = refillCategory.register("other", new BooleanEntry(true))
 		.setEnvironment(ConfigEnvironment.CLIENT)
 		.setComment("Refill on other occasions");
+	public static ConfigCategory refillRules = refillCategory.register("rules", new ConfigCategory())
+		.setComment("Enable/Disable specific rules for how to refill items");
 
 	public static void initialize() {
-
+		SlotRefiller.initialize();
 	}
 }

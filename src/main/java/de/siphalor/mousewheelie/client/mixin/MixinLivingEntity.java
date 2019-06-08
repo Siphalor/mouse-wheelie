@@ -18,7 +18,7 @@ public class MixinLivingEntity {
 		if((Object) this instanceof PlayerEntity && Config.eatRefill.value) {
 			PlayerInventory playerInventory = ((PlayerEntity)(Object) this).inventory;
             SlotRefiller.set(playerInventory, playerInventory.getMainHandStack().copy());
-			ClientCore.awaitFoodSlotUpdate = true;
+			ClientCore.awaitSlotUpdate = true;
 		}
 	}
 }

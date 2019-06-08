@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.2-SNAPSHOT'
+	id 'fabric-loom' version '0.2.4-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -29,27 +29,27 @@ dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
-	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "net.fabricmc.fabric-api:fabric-keybindings:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-keybindings:+"
 	include "net.fabricmc.fabric-api:fabric-keybindings:+"
-	modCompile "net.fabricmc.fabric-api:fabric-resource-loader:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader:+"
 	include "net.fabricmc.fabric-api:fabric-resource-loader:+"
-	modCompile "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
 	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
-	modCompile "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
 	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
-	modCompile "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
 	include "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
 	
-	modCompile "net.fabricmc.fabric-api:fabric-item-groups:+"
-	modCompile "io.github.prospector.modmenu:ModMenu:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups:+"
+	modImplementation "io.github.prospector.modmenu:ModMenu:+"
 	
-	modCompile "com.github.siphalor:tweed-api:${project.tweed_version}"
+	modImplementation "com.github.siphalor:tweed-api:${project.tweed_version}"
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
-	
+
+	modImplementation "cloth-config:ClothConfig:${project.clothconfig_version}"
 	include "cloth-config:ClothConfig:${project.clothconfig_version}"
-	modCompile "cloth-config:ClothConfig:${project.clothconfig_version}"
 }
 
 processResources {

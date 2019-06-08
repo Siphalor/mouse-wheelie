@@ -27,7 +27,7 @@ public class ToolPicker {
 				lastToolPickSlot = index;
 				return index;
 			} else {
-				float breakSpeed = stack.getBlockBreakingSpeed(blockState);
+				float breakSpeed = stack.getMiningSpeed(blockState);
 				if(breakSpeed > bestBreakSpeed) {
 					bestSpeedSlot = index;
 					bestBreakSpeed = breakSpeed;
@@ -36,7 +36,7 @@ public class ToolPicker {
 		}
 		if(bestBreakSpeed == -1) {
 			ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
-			if(stack.isEffectiveOn(blockState) || stack.getBlockBreakingSpeed(blockState) > 1.0F) return inventory.selectedSlot;
+			if(stack.isEffectiveOn(blockState) || stack.getMiningSpeed(blockState) > 1.0F) return inventory.selectedSlot;
 		}
 		return bestSpeedSlot;
 	}
