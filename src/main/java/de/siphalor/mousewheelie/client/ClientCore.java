@@ -1,7 +1,9 @@
 package de.siphalor.mousewheelie.client;
 
-import de.siphalor.mousewheelie.Core;
-import de.siphalor.mousewheelie.client.util.ToolPickMode;
+import de.siphalor.amecs.api.AmecsKeyBinding;
+import de.siphalor.amecs.api.KeyModifiers;
+import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.util.inventory.ToolPicker;
 import de.siphalor.tweed.client.TweedClothBridge;
 import net.fabricmc.api.ClientModInitializer;
@@ -20,11 +22,11 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class ClientCore implements ClientModInitializer {
-	public static final String KEY_BINDING_CATEGORY = "key.categories." + Core.MOD_ID;
-	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
-	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
+	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
+	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
+	public static final AmecsKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
 	// TODO
-	public static final FabricKeyBinding FILL_INVENTORY_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(Core.MOD_ID, "fill_inventory"), InputUtil.Type.KEYSYM, 71, KEY_BINDING_CATEGORY).build();
+	public static final FabricKeyBinding FILL_INVENTORY_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "fill_inventory"), InputUtil.Type.KEYSYM, 71, KEY_BINDING_CATEGORY).build();
 
 	public static TweedClothBridge tweedClothBridge;
 
@@ -34,10 +36,11 @@ public class ClientCore implements ClientModInitializer {
 	public void onInitializeClient() {
 		KeyBindingRegistry.INSTANCE.addCategory(KEY_BINDING_CATEGORY);
 		KeyBindingRegistry.INSTANCE.register(SORT_KEY_BINDING);
-		//KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
+		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
-			if(ToolPickMode.isTriggered(Config.toolPickMode.value, player)) {
+			Item item = player.getMainHandStack().getItem();
+			if(ClientCore.isTool(item) || ClientCore.isWeapon(item) && Config.holdToolPick.value) {
 				if(result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));

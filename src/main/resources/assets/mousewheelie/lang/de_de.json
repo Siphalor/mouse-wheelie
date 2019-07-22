@@ -1,12 +1,13 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
 	"key.mousewheelie.sort_inventory": "Inventar sortieren",
+	"key.mousewheelie.pick_tool": "Das optimale Werkzeug wählen",
 
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
 
 	"tweed.cloth.mousewheelie.general": "Allgemein",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
-	"tweed.cloth.mousewheelie.general.tool-pick-mode": "Wann das zum Abbauen optimale Werkzeug ausgewählt wird:",
+	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Wähle das zum Abbauen optimale Werkzeug (siehe Beschreibung)",
 
 	"tweed.cloth.mousewheelie.sort": "Sortierung",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Mittlere Maustaste",
@@ -15,6 +16,8 @@
 
 	"tweed.cloth.mousewheelie.refill": "Auffüllen",
 	"tweed.cloth.mousewheelie.refill.eat": "Lade Essen nach",
+	"tweed.cloth.mousewheelie.refill.drop": "Lade fallen gelassene Gegenstände nach",
+	"tweed.cloth.mousewheelie.refill.use": "Lade benutzte Gegenstände nach",
 	"tweed.cloth.mousewheelie.refill.other": "Sonstiges Auffülen",
 
 	"tweed.cloth.mousewheelie.refill.rules": "Auffüll-Regeln",

@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class SlotRefiller {
 	private static PlayerInventory playerInventory;
 	private static ItemStack stack;
