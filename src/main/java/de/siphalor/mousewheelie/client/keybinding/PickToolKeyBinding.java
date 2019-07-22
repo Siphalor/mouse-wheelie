@@ -30,6 +30,6 @@ public class PickToolKeyBinding extends AmecsKeyBinding implements ListeningKeyB
 
 	@Override
 	public int compareTo(KeyBinding o) {
-		return getId().compareTo(o.getId());
+		return method_1430(o);
 	}
 }

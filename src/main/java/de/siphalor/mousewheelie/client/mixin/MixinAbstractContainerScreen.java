@@ -1,13 +1,11 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.InteractionManager;
 import de.siphalor.mousewheelie.client.util.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.ISlot;
 import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -81,10 +79,6 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 				return true;
 			});
-		} else if(FabricLoader.getInstance().isModLoaded("fabric")) {
-			if(ClientCore.SORT_KEY_BINDING.matchesKey(key, scanCode)) {
-				mouseWheelie_triggerSort();
-			}
 		}
 	}
 
@@ -114,6 +108,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		}
 	}
 
+	@Override
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		if(hasAltDown()) return false;
 		Slot hoveredSlot = getSlotAt(mouseX, mouseY);
@@ -188,7 +183,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		onMouseClick(slot, slot.id, 0, SlotActionType.PICKUP);
 	}
 
-	private boolean mouseWheelie_triggerSort() {
+	@Override
+	public boolean mouseWheelie_triggerSort() {
 		if(focusedSlot == null)
 			return false;
 		if(playerInventory.player.abilities.creativeMode && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()) )
