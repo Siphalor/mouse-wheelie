@@ -7,12 +7,12 @@
 
 	"tweed.cloth.mousewheelie.general": "通常",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "滚动因数",
-        "tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding",
+        "tweed.cloth.mousewheelie.general.hold-tool-pick": "点击鼠标中键时自动拿起正确的工具",
 
 	"tweed.cloth.mousewheelie.sort": "排序",
-	"tweed.cloth.mousewheelie.sort.primary-sort": "鼠标中键点击",
-	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + 鼠标中键点击",
-	"tweed.cloth.mousewheelie.sort.control-sort": "ctrl + 鼠标中键点击",
+	"tweed.cloth.mousewheelie.sort.primary-sort": "点击鼠标中键",
+	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + 点击鼠标中键",
+	"tweed.cloth.mousewheelie.sort.control-sort": "ctrl + 点击鼠标中键",
 
 	"tweed.cloth.mousewheelie.refill": "重新填充",
 	"tweed.cloth.mousewheelie.refill.eat": "吃食物时重新填充",
