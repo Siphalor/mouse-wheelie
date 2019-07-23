@@ -1,12 +1,13 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
 	"key.mousewheelie.sort_inventory": "物品栏排序",
+	"key.mousewheelie.pick_tool": "自动选择正确的工具",
 
 	"tweed.cloth.mousewheelie": "Mouse Wheelie配置",
 
 	"tweed.cloth.mousewheelie.general": "通常",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "滚动因数",
-        "tweed.cloth.mousewheelie.general.tool-pick-mode": "自动选择正确的工具",
+        "tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding",
 
 	"tweed.cloth.mousewheelie.sort": "排序",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "鼠标中键点击",
