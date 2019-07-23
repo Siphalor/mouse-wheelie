@@ -1,6 +1,5 @@
 package de.siphalor.mousewheelie.client;
 
-import de.siphalor.amecs.util.IKeyBinding;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
@@ -15,7 +14,6 @@ import de.siphalor.tweed.config.fixers.ConfigEntryFixer;
 import de.siphalor.tweed.data.DataObject;
 import de.siphalor.tweed.data.DataValue;
 import de.siphalor.tweed.data.serializer.HjsonSerializer;
-import net.minecraft.client.util.InputUtil;
 
 @SuppressWarnings("unchecked")
 public class Config {
@@ -65,8 +63,6 @@ public class Config {
 						mainCompound.set("hold-tool-pick", true);
 					} else if(dataValue.asString().equals("SHIFT")) {
 						mainCompound.set("hold-tool-pick", false);
-						ClientCore.PICK_TOOL_KEY_BINDING.setKeyCode(InputUtil.Type.MOUSE.createFromCode(2));
-						((IKeyBinding) ClientCore.PICK_TOOL_KEY_BINDING).amecs$getKeyModifiers().setShift(true);
 					}
 					dataObject.remove(propertyName);
 				}

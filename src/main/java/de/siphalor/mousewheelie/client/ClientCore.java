@@ -1,10 +1,6 @@
 package de.siphalor.mousewheelie.client;
 
-import de.siphalor.amecs.api.AmecsKeyBinding;
-import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
-import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
 import de.siphalor.mousewheelie.client.util.inventory.ToolPicker;
 import de.siphalor.tweed.client.TweedClothBridge;
 import net.fabricmc.api.ClientModInitializer;
@@ -24,8 +20,7 @@ import net.minecraft.util.hit.HitResult;
 
 public class ClientCore implements ClientModInitializer {
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
-	public static final FabricKeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY);
-	public static final AmecsKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
 	// TODO
 	public static final FabricKeyBinding FILL_INVENTORY_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "fill_inventory"), InputUtil.Type.KEYSYM, 71, KEY_BINDING_CATEGORY).build();
 
@@ -37,7 +32,6 @@ public class ClientCore implements ClientModInitializer {
 	public void onInitializeClient() {
 		KeyBindingRegistry.INSTANCE.addCategory(KEY_BINDING_CATEGORY);
 		KeyBindingRegistry.INSTANCE.register(SORT_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();

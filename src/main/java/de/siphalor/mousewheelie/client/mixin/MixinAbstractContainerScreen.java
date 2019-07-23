@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin;
 
+import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.InteractionManager;
 import de.siphalor.mousewheelie.client.util.IContainerScreen;
@@ -23,6 +24,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.BiFunction;
@@ -106,6 +108,12 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
         	if(hoveredSlot != null)
         		onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 		}
+	}
+
+	@Inject(method = "tick", at = @At("HEAD"))
+	public void tick(CallbackInfo callbackInfo) {
+		if(ClientCore.SORT_KEY_BINDING.wasPressed())
+			mouseWheelie_triggerSort();
 	}
 
 	@Override
