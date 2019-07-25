@@ -92,7 +92,7 @@ public class SlotRefiller {
 	public static void initialize() {}
 
 	static {
-		BLOCK_RULE = new ConfigRule("any-block", true, "Tries to find any block items") {
+		BLOCK_RULE = new ConfigRule("any-block", false, "Tries to find any block items") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return oldStack.getItem() instanceof BlockItem;
@@ -104,7 +104,7 @@ public class SlotRefiller {
 			}
 		};
 
-		ITEMGROUP_RULE = new ConfigRule("itemgroup", true, "Find items of the same item group") {
+		ITEMGROUP_RULE = new ConfigRule("itemgroup", false, "Find items of the same item group") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return oldStack.getItem().getGroup() != null;
@@ -117,7 +117,7 @@ public class SlotRefiller {
 			}
 		};
 
-		ITEM_HIERARCHY_RULE = new ConfigRule("item-hierarchy", true, "Try to find similar items through the item type hierarchy") {
+		ITEM_HIERARCHY_RULE = new ConfigRule("item-hierarchy", false, "Try to find similar items through the item type hierarchy") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return oldStack.getItem().getClass() != Item.class && !(oldStack.getItem() instanceof BlockItem);
@@ -161,7 +161,7 @@ public class SlotRefiller {
 			}
 		};
 
-		BLOCK_HIERARCHY_RULE = new ConfigRule("block-hierarchy", true, "Try to find similar block items through the block type hierarchy") {
+		BLOCK_HIERARCHY_RULE = new ConfigRule("block-hierarchy", false, "Try to find similar block items through the block type hierarchy") {
 			@Override
 			public boolean matchesEnabled(ItemStack oldStack) {
 				return oldStack.getItem() instanceof BlockItem;
@@ -206,7 +206,7 @@ public class SlotRefiller {
 			}
 		};
 
-		FOOD_RULE = new ConfigRule("food", true, "Try to find other food items") {
+		FOOD_RULE = new ConfigRule("food", false, "Try to find other food items") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return oldStack.isFood();

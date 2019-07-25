@@ -21,8 +21,6 @@ import net.minecraft.util.hit.HitResult;
 public class ClientCore implements ClientModInitializer {
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
 	public static final FabricKeyBinding SORT_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY).build();
-	// TODO
-	public static final FabricKeyBinding FILL_INVENTORY_KEY_BINDING = FabricKeyBinding.Builder.create(new Identifier(MouseWheelie.MOD_ID, "fill_inventory"), InputUtil.Type.KEYSYM, 71, KEY_BINDING_CATEGORY).build();
 
 	public static TweedClothBridge tweedClothBridge;
 
