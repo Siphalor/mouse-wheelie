@@ -48,11 +48,8 @@ dependencies {
 	modImplementation "com.github.siphalor:tweed-api:${project.tweed_version}"
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
 	
-	//modImplementation "com.github.siphalor:amecs:${project.amecs_version}"
-	//include "com.github.siphalor:amecs:${project.amecs_version}"
-
-	modImplementation "cloth-config:ClothConfig2:${project.clothconfig_version}"
-	include "cloth-config:ClothConfig2:${project.clothconfig_version}"
+	modImplementation "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
 
 processResources {
