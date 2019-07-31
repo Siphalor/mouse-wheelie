@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Create a report concerning issues or crashes with the mod
-title: "[bug]"
-labels: ''
+title: "[bug] "
+labels: bug
 assignees: ''
 
 ---
