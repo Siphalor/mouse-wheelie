@@ -5,11 +5,11 @@ import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.InteractionManager;
 import de.siphalor.mousewheelie.client.util.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.ISlot;
+import de.siphalor.mousewheelie.client.util.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
@@ -27,8 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.function.BiFunction;
-
+@SuppressWarnings("WeakerAccess")
 @Mixin(AbstractContainerScreen.class)
 public abstract class MixinAbstractContainerScreen extends Screen implements IContainerScreen {
 	protected MixinAbstractContainerScreen(Text textComponent_1) {
@@ -93,6 +92,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 				} else if(hasShiftDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
+				} else if(hasControlDown()) {
+					new ContainerScreenHelper((AbstractContainerScreen)(Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
@@ -103,10 +104,25 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
         if(button == 2) {
         	if(mouseWheelie_triggerSort())
 				callbackInfoReturnable.setReturnValue(true);
-		} else if(button == 0 && hasAltDown()) {
-        	Slot hoveredSlot = getSlotAt(x, y);
-        	if(hoveredSlot != null)
-        		onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+		} else if(button == 0) {
+        	if(hasAltDown()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if(hoveredSlot != null) {
+					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+					callbackInfoReturnable.setReturnValue(true);
+				}
+			} else if(hasControlDown()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if(hoveredSlot != null) {
+					if (hasShiftDown()) {
+						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+						callbackInfoReturnable.setReturnValue(true);
+					} else {
+						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						callbackInfoReturnable.setReturnValue(true);
+					}
+				}
+			}
 		}
 	}
 
@@ -124,71 +140,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			return false;
 		if(hoveredSlot.getStack().isEmpty())
 			return false;
-		ItemStack hoveredStack = hoveredSlot.getStack();
-		boolean changeInventory;
-		boolean moveUp = scrollAmount * Config.scrollFactor.value < 0;
-		BiFunction<Slot, Slot, Boolean> slotsInSameScope;
-		//noinspection ConstantConditions
-		if((Screen) this instanceof InventoryScreen) {
-			changeInventory = ((ISlot) hoveredSlot).mouseWheelie_getInvSlot() < 9 == moveUp;
-			slotsInSameScope = (slot, slot2) -> (((ISlot) slot).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
-		} else {
-			boolean isPlayerSlot = hoveredSlot.inventory instanceof PlayerInventory;
-			changeInventory = isPlayerSlot == moveUp;
-			slotsInSameScope = (slot, slot2) -> slot.inventory == slot2.inventory;
-		}
-		if(changeInventory) {
-			if(!hoveredSlot.canInsert(ItemStack.EMPTY)) {
-				onMouseClick(hoveredSlot, hoveredSlot.id, 0, SlotActionType.QUICK_MOVE);
-			}
-			if(hasControlDown()) {
-				ItemStack referenceStack = hoveredStack.copy();
-				for(Slot slot : container.slotList) {
-					if(slotsInSameScope.apply(slot, hoveredSlot)) {
-						if(slot.getStack().isItemEqualIgnoreDamage(referenceStack))
-							onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
-					}
-				}
-			} else if(hasShiftDown()) {
-				onMouseClick(hoveredSlot, hoveredSlot.id, 0, SlotActionType.QUICK_MOVE);
-			} else {
-				mouseWheelie_sendSingleItem(hoveredSlot);
-			}
-		} else {
-			if(hasShiftDown() || hasControlDown()) {
-				for(Slot slot : container.slotList) {
-					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(hoveredStack)) {
-						onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
-						if(!hasControlDown())
-							break;
-					}
-				}
-			} else {
-				Slot moveSlot = null;
-				int stackSize = Integer.MAX_VALUE;
-				for(Slot slot : container.slotList) {
-					if(slotsInSameScope.apply(slot, hoveredSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(hoveredStack)) {
-						if(slot.getStack().getCount() < stackSize) {
-							stackSize = slot.getStack().getCount();
-							moveSlot = slot;
-							if(stackSize == 1) break;
-						}
-					}
-				}
-				if(moveSlot != null)
-					mouseWheelie_sendSingleItem(moveSlot);
-			}
-		}
-		return true;
-	}
 
-	private void mouseWheelie_sendSingleItem(Slot slot) {
-		onMouseClick(slot, slot.id, 0, SlotActionType.PICKUP);
-		onMouseClick(slot, slot.id, 1, SlotActionType.PICKUP);
-		onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
-		onMouseClick(slot, slot.id, 0, SlotActionType.PICKUP);
+		ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((AbstractContainerScreen)(Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+		containerScreenHelper.scroll(hoveredSlot, scrollAmount * Config.scrollFactor.value < 0);
+
+		return true;
 	}
 
 	@Override

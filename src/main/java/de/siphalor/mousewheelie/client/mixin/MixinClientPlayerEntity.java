@@ -22,7 +22,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "closeScreen", at = @At("HEAD"))
 	public void onScreenClosed(CallbackInfo callbackInfo) {
-        InteractionManager.stopSending();
+        InteractionManager.clear();
 	}
 
 	@Inject(method = "dropSelectedItem", at = @At("HEAD"))

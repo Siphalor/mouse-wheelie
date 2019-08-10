@@ -34,7 +34,7 @@ public class InteractionManager {
 			sending = false;
 	}
 
-	public static void stopSending() {
+	public static void clear() {
 		sending = false;
 		interactionEventQueue.clear();
 	}
