@@ -15,6 +15,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
@@ -54,11 +55,11 @@ public class ClientCore implements ClientModInitializer {
 				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
 				if(!equipmentStack.isEmpty()) {
 					player.setStackInHand(hand, equipmentStack);
-					player.setEquippedStack(equipmentSlot, stack);
-					return ActionResult.SUCCESS;
+					player.equipStack(equipmentSlot, stack);
+					return new TypedActionResult<>(ActionResult.SUCCESS, equipmentStack, true);
 				}
 			}
-			return ActionResult.PASS;
+			return new TypedActionResult<>(ActionResult.PASS, stack, false);
 		});
 
 		Config.initialize();

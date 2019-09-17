@@ -35,20 +35,26 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-keybindings-v0:+"
 	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:+"
 	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:+"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.1.2+"
-	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.1.2+"
+	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
+	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:+"
 	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
 	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
 	modImplementation "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
 	include "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.0+"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:+"
 	//modImplementation "io.github.prospector.modmenu:ModMenu:+"
 	
-	modImplementation "com.github.siphalor:tweed-api:${project.tweed_version}"
+	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
+		exclude module: "fabric-biomes-v1"
+		exclude module: "fabric-renderer-indigo"
+	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
 	
-	modImplementation "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
+		exclude module: "fabric-biomes-v1"
+		exclude module: "fabric-renderer-indigo"
+	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
 

@@ -63,7 +63,7 @@ public class InteractionManager {
 		@Override
 		public boolean send() {
 			sending = true;
-			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
+			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return false;
 		}
 	}
