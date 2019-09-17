@@ -42,6 +42,12 @@ public class MixinMouse {
         double mouseX = this.x * (double) this.client.window.getScaledWidth() / (double) this.client.window.getWidth();
 		double mouseY = this.y * (double) this.client.window.getScaledHeight() / (double) this.client.window.getHeight();
 		double scrollAmount = scrollY * this.client.options.mouseWheelSensitivity;
+		if(this.client.currentScreen instanceof ISpecialScrollableScreen) {
+			if(((ISpecialScrollableScreen) this.client.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {
+				callbackInfo.cancel();
+				return;
+			}
+		}
         if(this.client.currentScreen instanceof IContainerScreen) {
 	        if(((IContainerScreen) this.client.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
 		        callbackInfo.cancel();
@@ -52,12 +58,6 @@ public class MixinMouse {
 	        if(((IScrollableRecipeBook) this.client.currentScreen).mouseWheelie_onMouseScrollRecipeBook(mouseX, mouseY, scrollAmount)) {
 		        callbackInfo.cancel();
 		        return;
-	        }
-        }
-        if(this.client.currentScreen instanceof ISpecialScrollableScreen) {
-        	if(((ISpecialScrollableScreen) this.client.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {
-        		callbackInfo.cancel();
-        		return;
 	        }
         }
 	}

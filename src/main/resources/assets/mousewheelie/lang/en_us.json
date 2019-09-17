@@ -6,8 +6,10 @@
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Config",
 
 	"tweed.cloth.mousewheelie.general": "General",
+	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Enable item scrolling",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll factor",
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding",
+	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Enable quick crafting",
 
 	"tweed.cloth.mousewheelie.sort": "Sorting",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Middle mouse click",

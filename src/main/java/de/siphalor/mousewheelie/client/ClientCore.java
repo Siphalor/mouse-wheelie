@@ -51,8 +51,9 @@ public class ClientCore implements ClientModInitializer {
 			ItemStack stack = player.getStackInHand(hand);
 			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
 			if(equipmentSlot != EquipmentSlot.MAINHAND && equipmentSlot != EquipmentSlot.OFFHAND) {
-				if(!player.getEquippedStack(equipmentSlot).isEmpty()) {
-					player.setStackInHand(hand, player.getEquippedStack(equipmentSlot));
+				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
+				if(!equipmentStack.isEmpty()) {
+					player.setStackInHand(hand, equipmentStack);
 					player.setEquippedStack(equipmentSlot, stack);
 					return ActionResult.SUCCESS;
 				}

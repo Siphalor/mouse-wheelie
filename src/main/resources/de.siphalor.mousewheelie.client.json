@@ -3,8 +3,9 @@
 	"package": "de.siphalor.mousewheelie.client.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"MixinAbstractFurnaceScreen",
+		"MixinAbstractButtonWidget",
 		"MixinAbstractContainerScreen",
+		"MixinAbstractFurnaceScreen",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
@@ -12,10 +13,13 @@
 		"MixinCreativeInventoryScreen",
 		"MixinLivingEntity",
 		"MixinMinecraftClient",
+		"MixinMerchantScreen",
+		"MixinMerchantWidgetButtonPage",
 		"MixinMouse",
 		"MixinInventoryScreen",
-		"MixinRecipeBookScreen",
 		"MixinRecipeBookResults",
+		"MixinRecipeBookScreen",
+		"MixinRecipeBookWidget",
 		"MixinSlot"
 	],
 	"injectors": {

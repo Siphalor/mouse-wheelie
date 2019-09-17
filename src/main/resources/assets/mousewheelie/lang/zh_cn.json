@@ -6,8 +6,10 @@
 	"tweed.cloth.mousewheelie": "Mouse Wheelie配置",
 
 	"tweed.cloth.mousewheelie.general": "通常",
+	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Enable item scrolling",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "滚动因数",
-        "tweed.cloth.mousewheelie.general.hold-tool-pick": "点击鼠标中键时自动拿起正确的工具",
+    "tweed.cloth.mousewheelie.general.hold-tool-pick": "点击鼠标中键时自动拿起正确的工具",
+	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Enable quick crafting",
 
 	"tweed.cloth.mousewheelie.sort": "排序",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "点击鼠标中键",

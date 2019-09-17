@@ -6,8 +6,10 @@
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
 
 	"tweed.cloth.mousewheelie.general": "Allgemein",
+	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Aktiviert Scrollen zum Bewegen von Gegenständen",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Wähle das zum Abbauen optimale Werkzeug (siehe Beschreibung)",
+	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Aktiviert schnelles Herstellen",
 
 	"tweed.cloth.mousewheelie.sort": "Sortierung",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Mittlere Maustaste",

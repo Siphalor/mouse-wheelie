@@ -1,8 +1,8 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.IRecipeBookGui;
 import de.siphalor.mousewheelie.client.util.IRecipeBookResults;
+import de.siphalor.mousewheelie.client.util.IRecipeBookScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.List;
 
 @Mixin(RecipeBookWidget.class)
-public abstract class MixinRecipeBookScreen implements IRecipeBookGui {
+public abstract class MixinRecipeBookScreen implements IRecipeBookScreen {
 
 	@Shadow @Final protected RecipeBookResults recipesArea;
 

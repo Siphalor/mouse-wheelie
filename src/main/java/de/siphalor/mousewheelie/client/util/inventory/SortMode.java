@@ -15,7 +15,7 @@ public abstract class SortMode implements Comparator<Integer> {
 
 	void init(Integer[] sortIds, ItemStack[] stacks) {};
 
-	public static enum Predefined {
+	public enum Predefined {
 		ALPHABET(SortMode.ALPHABET), QUANTITY(SortMode.QUANTITY), RAW_ID(SortMode.RAW_ID), NONE(null);
 		public SortMode sortMode;
 
@@ -93,14 +93,18 @@ public abstract class SortMode implements Comparator<Integer> {
 		};
 		RAW_ID = new SortMode() {
 			Integer[] rawIds;
+			ItemStack[] stacks;
 			@Override
 			void init(Integer[] sortIds, ItemStack[] stacks) {
+				this.stacks = stacks;
 				rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
 			}
 
 			@Override
 			public int compare(Integer o1, Integer o2) {
-				return Integer.compare(rawIds[o1], rawIds[o2]);
+				int result = Integer.compare(rawIds[o1], rawIds[o2]);
+				if(result == 0) return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
+				return result;
 			}
 		};
 	}

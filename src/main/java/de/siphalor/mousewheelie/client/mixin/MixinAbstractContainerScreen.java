@@ -10,9 +10,12 @@ import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.packet.PlayerActionC2SPacket;
@@ -102,6 +105,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if(ClientCore.SORT_KEY_BINDING.matchesMouse(button)) {
+			mouseWheelie_triggerSort();
+			callbackInfoReturnable.setReturnValue(true);
+			return;
+		}
         if(button == 2) {
         	if(mouseWheelie_triggerSort())
 				callbackInfoReturnable.setReturnValue(true);
@@ -129,17 +137,31 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Override
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
-		if(hasAltDown()) return false;
-		Slot hoveredSlot = getSlotAt(mouseX, mouseY);
-		if(hoveredSlot == null)
-			return false;
-		if(hoveredSlot.getStack().isEmpty())
-			return false;
+		if(Config.enableItemScrolling.value) {
+			if (hasAltDown()) return false;
+			Slot hoveredSlot = getSlotAt(mouseX, mouseY);
+			if (hoveredSlot == null)
+				return false;
+			if (hoveredSlot.getStack().isEmpty())
+				return false;
 
-		ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((AbstractContainerScreen)(Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
-		containerScreenHelper.scroll(hoveredSlot, scrollAmount * Config.scrollFactor.value < 0);
+			scrollAmount = scrollAmount * Config.scrollFactor.value;
+			//noinspection ConstantConditions
+			if(scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
+				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(hoveredSlot.getStack());
+				if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
+					InteractionManager.pushClickEvent(container.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					return true;
+				}
+			}
 
-		return true;
+			ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

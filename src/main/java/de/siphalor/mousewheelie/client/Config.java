@@ -15,9 +15,23 @@ import de.siphalor.tweed.data.DataObject;
 import de.siphalor.tweed.data.DataValue;
 import de.siphalor.tweed.data.serializer.HjsonSerializer;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "WeakerAccess"})
 public class Config {
 	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
+
+	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory())
+		.setComment("General settings");
+	public static BooleanEntry enableItemScrolling = generalCategory.register("enable-item-scrolling", new BooleanEntry(true))
+		.setComment("Enables scrolling of items/stacks.\n" +
+			"(WHY WOULD YOU DARE TO TURN THIS OFF?)");
+	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
+		.setComment("Set the scroll factor for item scrolling.\n" +
+			"To invert the scrolling use negative numbers");
+	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
+		.setComment("Pick correct tool when middle clicking whilst holding a tool.\n" +
+			"(shift-middle-clicking has been moved to the 'Controls' screen)");
+	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
+		.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
 
 	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
 		.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
@@ -27,15 +41,6 @@ public class Config {
 		.setComment("Sets the sort mode for sorting via shift + middle mouse click.");
 	public static EnumEntry<SortMode.Predefined> controlSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("control-sort", new EnumEntry<>(SortMode.Predefined.ALPHABET))
 		.setComment("Sets the sort mode for sorting via control + middle mouse click.");
-
-	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory())
-		.setComment("General settings");
-	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
-		.setComment("Set the scroll factor for item scrolling." + System.lineSeparator() +
-			"To invert the scrolling use negative numbers");
-	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
-		.setComment("Pick correct tool when middle clicking whilst holding a tool.\n" +
-			"(shift-middle-clicking has been moved to the 'Controls' screen)");
 
 	public static ConfigCategory refillCategory = configFile.register("refill", new ConfigCategory())
 		.setComment("Configure refill related stuff here.");
