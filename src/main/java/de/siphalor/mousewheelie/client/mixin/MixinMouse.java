@@ -39,8 +39,8 @@ public class MixinMouse {
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE", target = "net/minecraft/client/gui/screen/Screen.mouseScrolled(DDD)Z", ordinal = 0), cancellable = true)
 	private void onMouseScrolled(long windowHandle, double scrollX, double scrollY, CallbackInfo callbackInfo) {
-        double mouseX = this.x * (double) this.client.window.getScaledWidth() / (double) this.client.window.getWidth();
-		double mouseY = this.y * (double) this.client.window.getScaledHeight() / (double) this.client.window.getHeight();
+        double mouseX = this.x * (double) this.client.method_22683().getScaledWidth() / (double) this.client.method_22683().getWidth();
+		double mouseY = this.y * (double) this.client.method_22683().getScaledHeight() / (double) this.client.method_22683().getHeight();
 		double scrollAmount = scrollY * this.client.options.mouseWheelSensitivity;
 		if(this.client.currentScreen instanceof ISpecialScrollableScreen) {
 			if(((ISpecialScrollableScreen) this.client.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {

@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.client.util.IRecipeBookScreen;
+import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
 import de.siphalor.mousewheelie.client.util.IScrollableRecipeBook;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.CraftingTableScreen;
@@ -22,6 +22,6 @@ public abstract class MixinCraftingTableScreen extends AbstractContainerScreen<C
 
 	@Override
 	public boolean mouseWheelie_onMouseScrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
-		return ((IRecipeBookScreen) recipeBookGui).mouseWheelie_scrollRecipeBook(mouseX, mouseY, scrollAmount);
+		return ((IRecipeBookWidget) recipeBookGui).mouseWheelie_scrollRecipeBook(mouseX, mouseY, scrollAmount);
 	}
 }

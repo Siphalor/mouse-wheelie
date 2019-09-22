@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -73,5 +74,13 @@ public class ClientCore implements ClientModInitializer {
 
 	public static boolean isWeapon(Item item) {
 		return item instanceof RangedWeaponItem || item instanceof TridentItem || item instanceof SwordItem || FabricToolTags.SWORDS.contains(item);
+	}
+
+	public static double getMouseX(MinecraftClient minecraftClient) {
+		return minecraftClient.mouse.getX() * minecraftClient.method_22683().getScaledWidth() / minecraftClient.method_22683().getWidth();
+	}
+
+	public static double getMouseY(MinecraftClient minecraftClient) {
+		return minecraftClient.mouse.getY() * minecraftClient.method_22683().getScaledHeight() / minecraftClient.method_22683().getHeight();
 	}
 }

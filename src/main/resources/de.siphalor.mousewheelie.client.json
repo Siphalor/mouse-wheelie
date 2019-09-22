@@ -18,7 +18,6 @@
 		"MixinMouse",
 		"MixinInventoryScreen",
 		"MixinRecipeBookResults",
-		"MixinRecipeBookScreen",
 		"MixinRecipeBookWidget",
 		"MixinSlot"
 	],
