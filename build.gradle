@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.4-SNAPSHOT'
+	id 'fabric-loom' version '0.2.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -16,12 +16,12 @@ minecraft {
 repositories {
 	mavenLocal()
 	maven {
-		name "jitpack"
-		url "https://jitpack.io"
+		name "Fabric"
+		url "http://maven.fabricmc.net/"
 	}
 	maven {
-		name "curseforge"
-		url "https://minecraft.curseforge.com/api/maven"
+		name "jitpack"
+		url "https://jitpack.io"
 	}
 }
 
@@ -31,33 +31,43 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modImplementation "net.fabricmc.fabric-api:fabric-api-base:+"
+	include "net.fabricmc.fabric-api:fabric-api-base:+"
 	modImplementation "net.fabricmc.fabric-api:fabric-keybindings-v0:+"
 	include "net.fabricmc.fabric-api:fabric-keybindings-v0:+"
-	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:+"
-	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.3+"
+	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.3+"
 	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.1.2+"
 	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.1.2+"
 	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
 	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:+"
 	modImplementation "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
 	include "net.fabricmc.fabric-api:fabric-mining-levels-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:+"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:+"
+	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:+"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.0+"
 	//modImplementation "io.github.prospector.modmenu:ModMenu:+"
 	
-	modImplementation "com.github.siphalor:tweed-api:${project.tweed_version}"
+	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
+		exclude group: "net.fabricmc.fabric-api"
+	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
 	
-	modImplementation "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
+		exclude group: "net.fabricmc.fabric-api"
+	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", version
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
-		expand "version": project.version
+		expand "version": version
 	}
 
 	from(sourceSets.main.resources.srcDirs) {
