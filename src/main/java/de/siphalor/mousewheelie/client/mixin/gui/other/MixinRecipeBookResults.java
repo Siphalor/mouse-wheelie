@@ -1,7 +1,7 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.IRecipeBookResults;
+import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;

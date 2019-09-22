@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.util.accessors;
 
 public interface IMerchantScreen {
 	void mouseWheelie_setRecipeId(int id);

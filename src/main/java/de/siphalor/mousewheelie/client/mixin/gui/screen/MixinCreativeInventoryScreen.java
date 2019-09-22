@@ -1,9 +1,9 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.FabricCreativeGuiHelper;
-import de.siphalor.mousewheelie.client.util.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
+import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;

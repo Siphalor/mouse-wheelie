@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.util.inventory;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.InteractionManager;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
 import de.siphalor.tweed.config.entry.BooleanEntry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerInventory;
@@ -61,8 +61,7 @@ public class SlotRefiller {
 		boolean matches(ItemStack oldStack);
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack);
 
-		@SuppressWarnings("UnnecessaryInterfaceModifier")
-		public static int iterateInventory(PlayerInventory playerInventory, Function<ItemStack, Boolean> consumer) {
+		static int iterateInventory(PlayerInventory playerInventory, Function<ItemStack, Boolean> consumer) {
 			for(int i = 0; i < playerInventory.main.size(); i++) {
                 if(consumer.apply(playerInventory.main.get(i)))
                 	return i;

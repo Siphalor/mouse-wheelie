@@ -33,7 +33,7 @@
 		],
 		"modmenu": [
 			{
-				"value": "de.siphalor.mousewheelie.client.ModMenuEntryPoint"
+				"value": "de.siphalor.mousewheelie.client.compat.ModMenuEntryPoint"
 			}
 		]
 	},

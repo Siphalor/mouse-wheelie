@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.compat;
 
 import net.fabricmc.fabric.impl.itemgroup.CreativeGuiExtensions;
 import net.fabricmc.fabric.impl.itemgroup.FabricCreativeGuiComponents;

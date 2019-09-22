@@ -1,8 +1,8 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.IRecipeBookResults;
-import de.siphalor.mousewheelie.client.util.IRecipeBookScreen;
+import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
+import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;

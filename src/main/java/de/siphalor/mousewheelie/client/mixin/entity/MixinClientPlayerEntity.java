@@ -1,8 +1,8 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.entity;
 
 import com.mojang.authlib.GameProfile;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.InteractionManager;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
 import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
