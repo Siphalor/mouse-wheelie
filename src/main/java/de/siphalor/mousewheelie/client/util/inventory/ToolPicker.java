@@ -41,8 +41,8 @@ public class ToolPicker {
 		return bestSpeedSlot;
 	}
 
-	public void pickToolFor(BlockState blockState) {
-		pick(findToolFor(blockState));
+	public boolean pickToolFor(BlockState blockState) {
+		return pick(findToolFor(blockState));
 	}
 
 	public int findWeapon() {
@@ -55,14 +55,16 @@ public class ToolPicker {
 		return -1;
 	}
 
-	public void pickWeapon() {
-		pick(findWeapon());
+	public boolean pickWeapon() {
+		return pick(findWeapon());
 	}
 
-	private void pick(int index) {
+	private boolean pick(int index) {
 		if(index != -1) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
 			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
+			return true;
 		}
+		return false;
 	}
 }

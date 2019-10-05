@@ -19,7 +19,6 @@
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
 		"MixinMinecraftClient",
-		"MixinMouse",
 		"MixinSlot"
 	],
 	"injectors": {

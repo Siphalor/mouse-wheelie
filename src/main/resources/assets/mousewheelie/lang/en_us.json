@@ -1,6 +1,8 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
 	"key.mousewheelie.sort_inventory": "Sort Inventory",
+	"key.mousewheelie.scroll_up": "Scroll Up",
+	"key.mousewheelie.scroll_down": "Scroll Down",
 	"key.mousewheelie.pick_tool": "Pick the correct tool",
 
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Config",
