@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.util.inventory;
 
-import de.siphalor.mousewheelie.client.InteractionManager;
-import de.siphalor.mousewheelie.client.util.ISlot;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Container;

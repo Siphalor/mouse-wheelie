@@ -28,8 +28,7 @@ public class Config {
 		.setComment("Set the scroll factor for item scrolling.\n" +
 			"To invert the scrolling use negative numbers");
 	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
-		.setComment("Pick correct tool when middle clicking whilst holding a tool.\n" +
-			"(shift-middle-clicking has been moved to the 'Controls' screen)");
+		.setComment("Pick correct tool when middle clicking whilst holding a tool.");
 	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
 		.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
 

@@ -3,7 +3,6 @@ package de.siphalor.mousewheelie.client.util.inventory;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Arrays;
@@ -54,7 +53,7 @@ public abstract class SortMode implements Comparator<Integer> {
 			}
 		};
 		QUANTITY = new SortMode() {
-			HashMap<Item, HashMap<CompoundTag, Integer>> itemToAmountMap = new HashMap<>();
+			HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
 			ItemStack[] stacks;
 			@Override
 			void init(Integer[] sortIds, ItemStack[] stacks) {
@@ -62,16 +61,9 @@ public abstract class SortMode implements Comparator<Integer> {
 				for(ItemStack stack : stacks) {
 					if (stack.isEmpty()) continue;
 					if (!itemToAmountMap.containsKey(stack.getItem())) {
-						HashMap<CompoundTag, Integer> newMap = new HashMap<>();
-						newMap.put(stack.getOrCreateTag(), stack.getCount());
-						itemToAmountMap.put(stack.getItem(), newMap);
+						itemToAmountMap.put(stack.getItem(), stack.getCount());
 					} else {
-						HashMap<CompoundTag, Integer> itemMap = itemToAmountMap.get(stack.getItem());
-						if (!itemMap.containsKey(stack.getOrCreateTag())) {
-							itemMap.put(stack.getTag(), stack.getCount());
-						} else {
-							itemMap.replace(stack.getTag(), itemMap.get(stack.getTag()) + stack.getCount());
-						}
+						itemToAmountMap.put(stack.getItem(), itemToAmountMap.get(stack.getItem()) + stack.getCount());
 					}
 				}
 			}
@@ -86,8 +78,8 @@ public abstract class SortMode implements Comparator<Integer> {
 				if (stack2.isEmpty()) {
 					return -1;
 				}
-				Integer a = itemToAmountMap.get(stack.getItem()).get(stack.getTag());
-				Integer a2 = itemToAmountMap.get(stack2.getItem()).get(stack2.getTag());
+				Integer a = itemToAmountMap.get(stack.getItem());
+				Integer a2 = itemToAmountMap.get(stack2.getItem());
 				return Integer.compare(a2, a);
 			}
 		};
@@ -103,7 +95,13 @@ public abstract class SortMode implements Comparator<Integer> {
 			@Override
 			public int compare(Integer o1, Integer o2) {
 				int result = Integer.compare(rawIds[o1], rawIds[o2]);
-				if(result == 0) return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
+				if(result == 0) {
+					if(stacks[o2].isDamageable()) {
+						return Integer.compare(stacks[o1].getDamage(), stacks[o2].getDamage());
+					} else {
+						return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
+					}
+				}
 				return result;
 			}
 		};

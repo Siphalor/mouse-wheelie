@@ -1,10 +1,9 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.InteractionManager;
-import de.siphalor.mousewheelie.client.util.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.ISlot;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import de.siphalor.mousewheelie.client.util.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
 import de.siphalor.mousewheelie.client.util.inventory.SortMode;
@@ -82,8 +81,6 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 				return true;
 			});
-		} else if(ClientCore.SORT_KEY_BINDING.matchesKey(key, scanCode)) {
-			mouseWheelie_triggerSort();
 		}
 	}
 
@@ -105,15 +102,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if(ClientCore.SORT_KEY_BINDING.matchesMouse(button)) {
-			mouseWheelie_triggerSort();
-			callbackInfoReturnable.setReturnValue(true);
-			return;
-		}
-        if(button == 2) {
-        	if(mouseWheelie_triggerSort())
-				callbackInfoReturnable.setReturnValue(true);
-		} else if(button == 0) {
+		if(button == 0) {
         	if(hasAltDown()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if(hoveredSlot != null) {

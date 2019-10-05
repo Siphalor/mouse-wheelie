@@ -1,6 +1,7 @@
-package de.siphalor.mousewheelie.client;
+package de.siphalor.mousewheelie.client.compat;
 
 import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.client.ClientCore;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import net.minecraft.client.gui.screen.Screen;
 

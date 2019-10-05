@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.util.accessors;
 
 public interface IRecipeBookResults {
 	void mouseWheelie_setCurrentPage(int page);

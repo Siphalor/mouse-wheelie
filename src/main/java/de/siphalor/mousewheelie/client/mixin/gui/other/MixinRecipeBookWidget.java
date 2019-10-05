@@ -1,10 +1,10 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.InteractionManager;
-import de.siphalor.mousewheelie.client.util.IRecipeBookResults;
 import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
@@ -89,7 +89,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 		if(isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
 				field_3087 = false;
-				if(mouseClicked(ClientCore.getMouseX(client), ClientCore.getMouseY(client), 0)) {
+				if(mouseClicked(ClientCore.getMouseX(), ClientCore.getMouseY(), 0)) {
 					InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
 				}

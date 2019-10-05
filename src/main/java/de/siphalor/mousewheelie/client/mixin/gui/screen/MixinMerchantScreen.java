@@ -1,6 +1,6 @@
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.client.util.IMerchantScreen;
+import de.siphalor.mousewheelie.client.util.accessors.IMerchantScreen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
