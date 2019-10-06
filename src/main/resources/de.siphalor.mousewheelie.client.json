@@ -17,6 +17,7 @@
 		"gui.screen.MixinMerchantScreen",
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
+		"MixinCreativeSlot",
 		"MixinMinecraftClient",
 		"MixinSlot"
 	],

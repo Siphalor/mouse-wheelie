@@ -26,11 +26,6 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 	}
 
 	@Override
-	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
-		return false;
-	}
-
-	@Override
 	public boolean mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
 		// Exact box matching:
 		//if(mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28))) {
