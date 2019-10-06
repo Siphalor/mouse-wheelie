@@ -3,7 +3,7 @@ package de.siphalor.mousewheelie.client.util.inventory;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
@@ -21,7 +21,7 @@ public class ContainerScreenHelper {
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
 		boolean changeInventory;
-		if(screen instanceof InventoryScreen) {
+		if(screen instanceof AbstractInventoryScreen) {
 			changeInventory = ((ISlot) referenceSlot).mouseWheelie_getInvSlot() < 9 == scrollUp;
 		} else {
 			changeInventory = (referenceSlot.inventory instanceof PlayerInventory) == scrollUp;
