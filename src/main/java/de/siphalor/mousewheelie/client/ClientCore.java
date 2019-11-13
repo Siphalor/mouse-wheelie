@@ -2,9 +2,11 @@ package de.siphalor.mousewheelie.client;
 
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
 import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
+import de.siphalor.mousewheelie.client.util.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
@@ -21,6 +23,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
+import net.minecraft.server.network.packet.PickFromInventoryC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -30,10 +33,12 @@ public class ClientCore implements ClientModInitializer {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
+
+	public static final FabricKeyBinding OPEN_CONFIG_SCREEN = new OpenConfigScreenKeybinding(new Identifier(MouseWheelie.MOD_ID, "open_config_screen"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
 	public static final FabricKeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
-	public static final FabricKeyBinding SCROLL_UP_KEYBINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
-	public static final FabricKeyBinding SCROLL_DOWN_KEYBINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
-	public static final FabricKeyBinding PICK_TOOL_KEYBINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
+	public static final FabricKeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
+	public static final FabricKeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
+	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
 
 	public static TweedClothBridge tweedClothBridge;
 
@@ -42,10 +47,11 @@ public class ClientCore implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		KeyBindingRegistry.INSTANCE.addCategory(KEY_BINDING_CATEGORY);
+		KeyBindingRegistry.INSTANCE.register(OPEN_CONFIG_SCREEN);
 		KeyBindingRegistry.INSTANCE.register(SORT_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(SCROLL_UP_KEYBINDING);
-		KeyBindingRegistry.INSTANCE.register(SCROLL_DOWN_KEYBINDING);
-		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEYBINDING);
+		KeyBindingRegistry.INSTANCE.register(SCROLL_UP_KEY_BINDING);
+		KeyBindingRegistry.INSTANCE.register(SCROLL_DOWN_KEY_BINDING);
+		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
@@ -66,9 +72,10 @@ public class ClientCore implements ClientModInitializer {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getStackInHand(hand);
 			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
-			if(equipmentSlot != EquipmentSlot.MAINHAND && equipmentSlot != EquipmentSlot.OFFHAND) {
+			if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
 				if(!equipmentStack.isEmpty()) {
+					InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket()));
 					player.setStackInHand(hand, equipmentStack);
 					player.setEquippedStack(equipmentSlot, stack);
 					return ActionResult.SUCCESS;
