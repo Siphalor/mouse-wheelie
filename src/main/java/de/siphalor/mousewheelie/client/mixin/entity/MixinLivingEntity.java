@@ -2,7 +2,7 @@ package de.siphalor.mousewheelie.client.mixin.entity;
 
 import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

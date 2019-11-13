@@ -2,8 +2,8 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.InteractionManager;
-import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.ConfirmGuiActionS2CPacket;

@@ -1,6 +1,6 @@
-package de.siphalor.mousewheelie.client.util.inventory;
+package de.siphalor.mousewheelie.client.inventory.sort;
 
-import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;

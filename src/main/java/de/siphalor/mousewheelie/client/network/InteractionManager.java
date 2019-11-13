@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.network;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;

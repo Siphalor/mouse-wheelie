@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util.inventory;
+package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.ClientCore;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;

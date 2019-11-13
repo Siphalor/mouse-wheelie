@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IMerchantScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialClickableButtonWidget;
 import net.minecraft.client.MinecraftClient;
