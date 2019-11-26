@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.recipe.Recipe;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,7 +47,7 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 		refreshResultButtons();
 	}
 
-	@Inject(method = "mouseClicked", at = @At(value = "JUMP", opcode = Opcodes.IFNE), locals = LocalCapture.CAPTURE_FAILSOFT)
+	@Inject(method = "mouseClicked", at = @At(value = "JUMP", opcode = 154), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void mouseClicked(double x, double y, int mouseButton, int int2, int int3, int int4, int int5, CallbackInfoReturnable<Boolean> callbackInfoReturnable, Iterator iterator, AnimatedResultButton animatedResultButton) {
 		if(Config.enableQuickCraft.value && mouseButton == 1 && animatedResultButton.hasResults()) {
 			lastClickedRecipe = animatedResultButton.currentRecipe();

@@ -1,11 +1,11 @@
 package de.siphalor.mousewheelie.client.compat;
 
-import net.fabricmc.fabric.impl.itemgroup.CreativeGuiExtensions;
-import net.fabricmc.fabric.impl.itemgroup.FabricCreativeGuiComponents;
+import net.fabricmc.fabric.impl.item.group.CreativeGuiExtensions;
+import net.fabricmc.fabric.impl.item.group.FabricCreativeGuiComponents;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 
 public final class FabricCreativeGuiHelper {
-	CreativeGuiExtensions fabricExtensions;
+	private CreativeGuiExtensions fabricExtensions;
 
 	public FabricCreativeGuiHelper(CreativeInventoryScreen screen) {
 		fabricExtensions = (CreativeGuiExtensions) screen;
@@ -27,7 +27,7 @@ public final class FabricCreativeGuiHelper {
 		return index < 12 ? 0 : (index - 12) / (12 - FabricCreativeGuiHelper.getCommonItemGroupsSize()) + 1;
 	}
 
-	public static final int getCommonItemGroupsSize() {
+	public static int getCommonItemGroupsSize() {
 		return FabricCreativeGuiComponents.COMMON_GROUPS.size();
 	}
 }

@@ -72,10 +72,10 @@ public class ClientCore implements ClientModInitializer {
 				if(!equipmentStack.isEmpty()) {
 					player.setStackInHand(hand, equipmentStack);
 					player.equipStack(equipmentSlot, stack);
-					return new TypedActionResult<>(ActionResult.SUCCESS, equipmentStack, true);
+					return TypedActionResult.success(equipmentStack);
 				}
 			}
-			return new TypedActionResult<>(ActionResult.PASS, stack, false);
+			return TypedActionResult.pass(stack);
 		});
 
 		Config.initialize();
