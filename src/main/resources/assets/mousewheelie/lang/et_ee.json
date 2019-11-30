@@ -1,0 +1,34 @@
+{
+	"key.categories.mousewheelie": "Mouse Wheelie",
+	"key.mousewheelie.sort_inventory": "Sorteeri seljakott",
+	"key.mousewheelie.scroll_up": "Keri üles",
+	"key.mousewheelie.scroll_down": "Keri alla",
+	"key.mousewheelie.pick_tool": "Vali vastav tööriist",
+
+	"tweed.cloth.mousewheelie": "Mouse Wheelie seadistus",
+
+	"tweed.cloth.mousewheelie.general": "Üldine",
+	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Luba esemete kerimine",
+	"tweed.cloth.mousewheelie.general.scroll-factor": "Kerimise faktor",
+	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Keskmine klõps vastava tööriista juurde, seda hoides",
+	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Luba kiirmeisterdamine",
+
+	"tweed.cloth.mousewheelie.sort": "Sorteerimine",
+	"tweed.cloth.mousewheelie.sort.primary-sort": "Keskmine hiireklõps",
+	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + keskmine hiireklõps",
+	"tweed.cloth.mousewheelie.sort.control-sort": "Ctrl + keskmine hiireklõps",
+
+	"tweed.cloth.mousewheelie.refill": "Täitmine",
+	"tweed.cloth.mousewheelie.refill.eat": "Täida koht toitu süües",
+	"tweed.cloth.mousewheelie.refill.drop": "Täida koht esemeid visates",
+	"tweed.cloth.mousewheelie.refill.use": "Täida koht esemeid kasutades",
+	"tweed.cloth.mousewheelie.refill.other": "Täida koht teistel juhtudel",
+
+	"tweed.cloth.mousewheelie.refill.rules": "Täitmise reeglid",
+	"tweed.cloth.mousewheelie.refill.rules.any-block": "Täida koht mistahes plokiga",
+	"tweed.cloth.mousewheelie.refill.rules.itemgroup": "Täida koht eseme grupi järgi",
+	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Täida sarnase funktsionaalusega esemete koht",
+	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Täida sarnase funktsionaalusega plokkide koht",
+	"tweed.cloth.mousewheelie.refill.rules.food": "Täida koht toitudega",
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Täida koht sama esemega"
+}
