@@ -27,8 +27,8 @@
 	"tweed.cloth.mousewheelie.refill.rules": "Täitmise reeglid",
 	"tweed.cloth.mousewheelie.refill.rules.any-block": "Täida koht mistahes plokiga",
 	"tweed.cloth.mousewheelie.refill.rules.itemgroup": "Täida koht eseme grupi järgi",
-	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Täida sarnase funktsionaalusega esemete koht",
-	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Täida sarnase funktsionaalusega plokkide koht",
+	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Täida koht sarnase funktsionaalusega esemetega",
+	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Täida koht sarnase funktsionaalusega plokkidega",
 	"tweed.cloth.mousewheelie.refill.rules.food": "Täida koht toitudega",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Täida koht sama esemega"
 }
