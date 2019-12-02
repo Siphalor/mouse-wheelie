@@ -50,10 +50,11 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:+"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:+"
-	//modImplementation "io.github.prospector.modmenu:ModMenu:+"
+	modImplementation "io.github.prospector.modmenu:ModMenu:+"
 	
 	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
+		exclude module: "modmenu"
 	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
 	
@@ -64,6 +65,7 @@ dependencies {
 
 	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
 		exclude group: "net.fabricmc.fabric-api"
+		exclude module: "modmenu"
 	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
