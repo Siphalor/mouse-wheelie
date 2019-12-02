@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
+@SuppressWarnings("WeakerAccess")
 public class ClientCore implements ClientModInitializer {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
@@ -55,7 +56,7 @@ public class ClientCore implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if(ClientCore.isTool(item) || ClientCore.isWeapon(item) && Config.holdToolPick.value) {
+			if((ClientCore.isTool(item) || ClientCore.isWeapon(item)) && Config.holdToolPick.value) {
 				if(result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
