@@ -1,12 +1,12 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
+import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
+import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
-import de.siphalor.mousewheelie.client.util.inventory.ContainerScreenHelper;
-import de.siphalor.mousewheelie.client.util.inventory.InventorySorter;
-import de.siphalor.mousewheelie.client.util.inventory.SortMode;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;

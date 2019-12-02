@@ -1,8 +1,8 @@
 package de.siphalor.mousewheelie.client;
 
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
-import de.siphalor.mousewheelie.client.util.inventory.SortMode;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.tweed.config.ConfigCategory;
 import de.siphalor.tweed.config.ConfigEnvironment;
 import de.siphalor.tweed.config.ConfigFile;

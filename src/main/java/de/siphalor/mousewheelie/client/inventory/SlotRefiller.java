@@ -1,7 +1,7 @@
-package de.siphalor.mousewheelie.client.util.inventory;
+package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed.config.entry.BooleanEntry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerInventory;

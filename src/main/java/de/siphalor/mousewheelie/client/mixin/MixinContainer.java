@@ -1,8 +1,8 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
-import de.siphalor.mousewheelie.client.util.inventory.SlotRefiller;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.Container;
 import net.minecraft.container.PlayerContainer;

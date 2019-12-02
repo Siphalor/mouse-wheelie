@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util.inventory;
+package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;

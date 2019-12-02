@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client.util.inventory;
+package de.siphalor.mousewheelie.client.inventory.sort;
 
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;

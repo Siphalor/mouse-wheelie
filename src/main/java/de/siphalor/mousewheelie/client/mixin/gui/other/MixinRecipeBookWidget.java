@@ -3,7 +3,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.other;
 import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
-import de.siphalor.mousewheelie.client.util.InteractionManager;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
