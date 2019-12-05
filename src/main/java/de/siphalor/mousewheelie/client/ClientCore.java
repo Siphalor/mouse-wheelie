@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EquipmentSlot;
@@ -56,7 +57,7 @@ public class ClientCore implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if((ClientCore.isTool(item) || ClientCore.isWeapon(item)) && Config.holdToolPick.value) {
+			if(Config.holdToolPick.value && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
 				if(result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
@@ -65,6 +66,14 @@ public class ClientCore implements ClientModInitializer {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findWeapon();
                     return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+				}
+			}
+			if(Config.holdBlockToolPick.value && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
+				if(blockState.getBlock() == ((BlockItem) item).getBlock()) {
+					ToolPicker toolPicker = new ToolPicker(player.inventory);
+					int index = toolPicker.findToolFor(blockState);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				}
 			}
 			return ItemStack.EMPTY;
