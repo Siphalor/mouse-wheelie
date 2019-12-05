@@ -30,7 +30,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 		// Exact box matching:
 		//if(mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28))) {
 		// Rough matching:
-		if(mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4) {
+		if(mouseY < this.y + 4 || mouseY >= this.y + this.containerHeight - 4) {
 			if(FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen)(Object) this);
 				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Config.scrollFactor.value), 0, ItemGroup.GROUPS.length - 1);
