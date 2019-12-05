@@ -10,7 +10,8 @@
 	"tweed.cloth.mousewheelie.general": "General",
 	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Enable item scrolling",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll factor",
-	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding",
+	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding a tool",
+	"tweed.cloth.mousewheelie.general.hold-block-tool-pick": "Middle-click to the correct tool while holding the same block",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Enable quick crafting",
 
 	"tweed.cloth.mousewheelie.sort": "Sorting",
