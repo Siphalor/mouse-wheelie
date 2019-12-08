@@ -15,7 +15,7 @@ public class SortKeyBinding extends AmecsKeyBinding implements PriorityKeyBindin
 	}
 
 	@Override
-	public boolean onPressed() {
+	public boolean onPressedPriority() {
 		Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 		if(currentScreen instanceof IContainerScreen)
 			return ((IContainerScreen) currentScreen).mouseWheelie_triggerSort();

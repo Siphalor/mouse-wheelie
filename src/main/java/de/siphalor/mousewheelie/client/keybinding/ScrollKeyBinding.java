@@ -18,7 +18,7 @@ public class ScrollKeyBinding extends AmecsKeyBinding implements PriorityKeyBind
 	}
 
 	@Override
-	public boolean onPressed() {
+	public boolean onPressedPriority() {
 		return ClientCore.triggerScroll(ClientCore.getMouseX(), ClientCore.getMouseY(), scrollDown ? Config.scrollFactor.value : -Config.scrollFactor.value);
 	}
 }

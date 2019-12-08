@@ -14,7 +14,7 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
     }
 
     @Override
-    public boolean onPressed() {
+    public boolean onPressedPriority() {
         MinecraftClient.getInstance().openScreen(ClientCore.tweedClothBridge.buildScreen());
         return true;
     }
