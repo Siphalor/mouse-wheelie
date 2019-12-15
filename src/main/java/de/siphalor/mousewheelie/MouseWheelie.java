@@ -6,7 +6,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 
 public class MouseWheelie implements ModInitializer {
 	public static final String MOD_ID = "mousewheelie";
@@ -14,19 +14,19 @@ public class MouseWheelie implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
+			ItemStack stack = player.getStackInHand(hand);
 			if(world instanceof ServerWorld) {
-				ItemStack stack = player.getStackInHand(hand);
 				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 					ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
 					if (!equipmentStack.isEmpty()) {
 						player.setStackInHand(hand, equipmentStack);
-						player.setEquippedStack(equipmentSlot, stack);
-						return ActionResult.SUCCESS;
+						player.equipStack(equipmentSlot, stack);
+						return TypedActionResult.consume(equipmentStack);
 					}
 				}
 			}
-			return ActionResult.PASS;
+			return TypedActionResult.pass(stack);
 		});
 	}
 }
