@@ -18,7 +18,7 @@
 	"license": "CC0-1.0",
 	"icon": "assets/mousewheelie/icon.png",
 
-	"environment": "client",
+	"environment": "*",
 	"mixins": [
 		{
 			"config": "de.siphalor.mousewheelie.client.json",
@@ -29,6 +29,11 @@
 		"client": [
 			{
 				"value": "de.siphalor.mousewheelie.client.ClientCore"
+			}
+		],
+		"main": [
+			{
+			  "value": "de.siphalor.mousewheelie.MouseWheelie"
 			}
 		],
 		"modmenu": [

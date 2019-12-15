@@ -25,6 +25,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
 import net.minecraft.server.network.packet.PickFromInventoryC2SPacket;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -77,21 +78,6 @@ public class ClientCore implements ClientModInitializer {
 				}
 			}
 			return ItemStack.EMPTY;
-		});
-
-		UseItemCallback.EVENT.register((player, world, hand) -> {
-			ItemStack stack = player.getStackInHand(hand);
-			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
-			if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
-				if(!equipmentStack.isEmpty()) {
-					InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket()));
-					player.setStackInHand(hand, equipmentStack);
-					player.setEquippedStack(equipmentSlot, stack);
-					return ActionResult.SUCCESS;
-				}
-			}
-			return ActionResult.PASS;
 		});
 
 		Config.initialize();
