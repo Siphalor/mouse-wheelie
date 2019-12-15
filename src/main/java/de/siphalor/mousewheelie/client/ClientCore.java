@@ -7,7 +7,6 @@ import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
 import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
-import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
@@ -16,17 +15,12 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.*;
-import net.minecraft.server.network.packet.PickFromInventoryC2SPacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
@@ -77,21 +71,6 @@ public class ClientCore implements ClientModInitializer {
 				}
 			}
 			return ItemStack.EMPTY;
-		});
-
-		UseItemCallback.EVENT.register((player, world, hand) -> {
-			ItemStack stack = player.getStackInHand(hand);
-			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
-			if(equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
-				if(!equipmentStack.isEmpty()) {
-					InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket()));
-					player.setStackInHand(hand, equipmentStack);
-					player.equipStack(equipmentSlot, stack);
-					return TypedActionResult.success(equipmentStack);
-				}
-			}
-			return TypedActionResult.pass(stack);
 		});
 
 		Config.initialize();
