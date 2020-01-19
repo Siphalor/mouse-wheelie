@@ -43,7 +43,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Shadow protected CraftingContainer<?> craftingContainer;
 
-	@Shadow private boolean field_3087;
+	@Shadow private boolean searching;
 
 	@Shadow protected MinecraftClient client;
 
@@ -60,7 +60,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 		if(mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
 			int maxPage = ((IRecipeBookResults) recipesArea).mouseWheelie_getPageCount() - 1;
-			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount * Config.scrollFactor.value)), 0, maxPage < 0 ? 0 : maxPage));
+			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount * Config.scrollFactor.value)), 0, Math.max(maxPage, 0)));
 			((IRecipeBookResults) recipesArea).mouseWheelie_refreshResultButtons();
 			return true;
 		} else if(mouseX >= left - 30 && mouseX < left) {
@@ -88,7 +88,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if(isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
-				field_3087 = false;
+				searching = false;
 				if(mouseClicked(ClientCore.getMouseX(), ClientCore.getMouseY(), 0)) {
 					InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
