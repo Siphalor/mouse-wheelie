@@ -9,11 +9,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
-	public static boolean sending = false;
+
+	private static int awaitedTriggers = 0;
 
 	public static void push(InteractionEvent interactionEvent) {
 		interactionEventQueue.add(interactionEvent);
-		if(!sending)
+		if(awaitedTriggers <= 0)
 			triggerSend();
 	}
 
@@ -23,28 +24,26 @@ public class InteractionManager {
 	}
 
 	public static void triggerSend() {
-		if(interactionEventQueue.size() > 0) {
-			while(interactionEventQueue.remove().send()) {
-				if(interactionEventQueue.isEmpty()) {
-					sending = false;
+		if (--awaitedTriggers <= 0 && interactionEventQueue.size() > 0) {
+			while ((awaitedTriggers = interactionEventQueue.remove().send()) == 0) {
+				if (interactionEventQueue.isEmpty()) {
 					break;
 				}
 			}
-		} else
-			sending = false;
+		}
 	}
 
 	public static void clear() {
-		sending = false;
+		awaitedTriggers = 0;
 		interactionEventQueue.clear();
 	}
 
 	public interface InteractionEvent {
 		/**
 		 * Sends the interaction to the server
-		 * @return a boolean determining whether to continue sending packets
+		 * @return the number of inventory packets to wait for
 		 */
-		boolean send();
+		int send();
 	}
 
 	public static class ClickEvent implements InteractionEvent {
@@ -61,10 +60,9 @@ public class InteractionManager {
 		}
 
 		@Override
-		public boolean send() {
-			sending = true;
+		public int send() {
 			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
-			return false;
+			return 1;
 		}
 	}
 
@@ -76,9 +74,9 @@ public class InteractionManager {
 		}
 
 		@Override
-		public boolean send() {
+		public int send() {
             MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
-			return true;
+			return 1;
 		}
 	}
 }

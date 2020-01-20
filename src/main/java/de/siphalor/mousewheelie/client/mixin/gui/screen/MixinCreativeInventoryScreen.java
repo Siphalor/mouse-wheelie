@@ -2,13 +2,10 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
-import de.siphalor.mousewheelie.client.mixin.MixinCreativeSlot;
-import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Container;
@@ -17,8 +14,6 @@ import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.packet.CreativeInventoryActionC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -96,30 +91,32 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 						for (Slot testSlot : container.slotList) {
 							if (testSlot.inventory == playerInventory) {
 								ItemStack testStack = testSlot.getStack();
-								if (scrollUp) {
+								if(testStack.isEmpty()) continue;
+								if (scrollUp && testStack.getItem() == slotStack.getItem()) {
 									if (hasShiftDown() || hasControlDown()) {
 										onMouseClick(testSlot, ((ISlot) testSlot).mouseWheelie_getInvSlot(), 0, SlotActionType.QUICK_MOVE);
 										if (!hasControlDown())
 											return true;
 									} else {
-										onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
-										onMouseClick(tempDelSlot, 0, 1, SlotActionType.PICKUP);
-										onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
-									}
-								} else {
-									if (testStack.isEmpty() || (Container.canStacksCombine(slotStack, testStack) && testStack.getCount() < testStack.getMaxCount())) {
-										if (hasShiftDown()) {
-											boolean wasEmpty = testSlot.getStack().isEmpty();
-											onMouseClick(slot, slotId, 0, SlotActionType.CLONE);
-											onMouseClick(testSlot, ((ISlot) testSlot).mouseWheelie_getInvSlot(), 0, SlotActionType.PICKUP);
-											if(!wasEmpty)
-												onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
-										} else {
-											onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
-											onMouseClick(testSlot, ((ISlot) testSlot).mouseWheelie_getInvSlot(), 0, SlotActionType.PICKUP);
-										}
+										int testSlotId = ((ISlot) testSlot).mouseWheelie_getInvSlot();
+										onMouseClick(testSlot, testSlotId, 0, SlotActionType.PICKUP);
+										onMouseClick(testSlot, testSlotId, 1, SlotActionType.PICKUP);
+										onMouseClick(testSlot, testSlotId, 0, SlotActionType.QUICK_MOVE);
+										onMouseClick(testSlot, testSlotId, 0, SlotActionType.PICKUP);
 										return true;
 									}
+								} else if (Container.canStacksCombine(slotStack, testStack) && testStack.getCount() < testStack.getMaxCount()) {
+									if (hasShiftDown()) {
+										boolean wasEmpty = testSlot.getStack().isEmpty();
+										onMouseClick(slot, slotId, 0, SlotActionType.CLONE);
+										onMouseClick(testSlot, ((ISlot) testSlot).mouseWheelie_getInvSlot(), 0, SlotActionType.PICKUP);
+										if(!wasEmpty)
+											onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
+									} else {
+										onMouseClick(slot, slotId, 0, SlotActionType.PICKUP);
+										onMouseClick(testSlot, ((ISlot) testSlot).mouseWheelie_getInvSlot(), 0, SlotActionType.PICKUP);
+									}
+									return true;
 								}
 							}
 						}

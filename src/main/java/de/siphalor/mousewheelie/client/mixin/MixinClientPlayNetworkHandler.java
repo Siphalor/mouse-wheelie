@@ -24,8 +24,7 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
-		if(InteractionManager.sending)
-			InteractionManager.triggerSend();
+		InteractionManager.triggerSend();
 	}
 
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
