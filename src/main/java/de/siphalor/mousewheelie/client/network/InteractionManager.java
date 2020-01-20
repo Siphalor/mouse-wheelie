@@ -69,7 +69,7 @@ public class InteractionManager {
 
 		@Override
 		public int send() {
-			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
+			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return awaitedTriggers;
 		}
 	}
@@ -88,9 +88,9 @@ public class InteractionManager {
 	}
 
 	public static class PacketEvent implements InteractionEvent {
-		private Packet packet;
+		private Packet<?> packet;
 
-		public PacketEvent(Packet packet) {
+		public PacketEvent(Packet<?> packet) {
 			this.packet = packet;
 		}
 
