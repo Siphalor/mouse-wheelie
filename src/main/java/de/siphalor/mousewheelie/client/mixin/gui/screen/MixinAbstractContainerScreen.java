@@ -114,14 +114,18 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				if(hoveredSlot != null) {
 					if (hasShiftDown()) {
 						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
-						callbackInfoReturnable.setReturnValue(true);
 					} else {
 						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
-						callbackInfoReturnable.setReturnValue(true);
 					}
+					callbackInfoReturnable.setReturnValue(true);
 				}
 			}
 		}
+	}
+
+	@Override
+	public Slot mouseWheelie_getSlotAt(double mouseX, double mouseY) {
+		return getSlotAt(mouseX, mouseY);
 	}
 
 	@Override
