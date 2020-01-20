@@ -10,30 +10,24 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 @SuppressWarnings("WeakerAccess")
-public class ContainerScreenHelper {
-	private AbstractContainerScreen screen;
-	private ClickHandler clickHandler;
+public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
+	protected final T screen;
+	protected final ClickHandler clickHandler;
 
-	public ContainerScreenHelper(AbstractContainerScreen screen, ClickHandler clickHandler) {
+	public ContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		this.screen = screen;
 		this.clickHandler = clickHandler;
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
-		boolean changeInventory;
-		if(screen instanceof AbstractInventoryScreen) {
-			changeInventory = ((ISlot) referenceSlot).mouseWheelie_getInvSlot() < 9 == scrollUp;
-		} else {
-			changeInventory = (referenceSlot.inventory instanceof PlayerInventory) == scrollUp;
-		}
-		if(changeInventory) {
+		if(shallChangeInventory(referenceSlot, scrollUp)) {
 			if(!referenceSlot.canInsert(ItemStack.EMPTY)) {
-				clickHandler.handleClick(referenceSlot, 0, SlotActionType.QUICK_MOVE);
+				sendStack(referenceSlot);
 			}
 			if(Screen.hasControlDown()) {
 				sendAllOfAKind(referenceSlot);
 			} else if(Screen.hasShiftDown()) {
-				clickHandler.handleClick(referenceSlot, 0, SlotActionType.QUICK_MOVE);
+				sendStack(referenceSlot);
 			} else {
 				sendSingleItem(referenceSlot);
 			}
@@ -43,7 +37,7 @@ public class ContainerScreenHelper {
 				for(Slot slot : screen.getContainer().slotList) {
 					if(slotsInSameScope(slot, referenceSlot)) continue;
 					if(slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
-						clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+						sendStack(slot);
 						if(!Screen.hasControlDown())
 							break;
 					}
@@ -67,11 +61,23 @@ public class ContainerScreenHelper {
 		}
 	}
 
+	public boolean shallChangeInventory(Slot slot, boolean scrollUp) {
+		if(screen instanceof AbstractInventoryScreen) {
+			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9 == scrollUp;
+		} else {
+			return (slot.inventory instanceof PlayerInventory) == scrollUp;
+		}
+	}
+
 	public void sendSingleItem(Slot slot) {
 		clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
 		clickHandler.handleClick(slot, 1, SlotActionType.PICKUP);
 		clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 		clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
+	}
+
+	public void sendStack(Slot slot) {
+		clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 	}
 
 	public void sendAllOfAKind(Slot referenceSlot) {

@@ -2,18 +2,17 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
+import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,8 +30,6 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 	@Shadow private List<Slot> slots;
 
 	@Shadow protected abstract void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType);
-
-	@Shadow private Slot deleteItemSlot;
 
 	public MixinCreativeInventoryScreen(CreativeInventoryScreen.CreativeContainer container_1, PlayerInventory playerInventory_1, Text textComponent_1) {
 		super(container_1, playerInventory_1, textComponent_1);
@@ -58,7 +55,14 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
             return true;
 		}
 
-		if(selectedTab != ItemGroup.INVENTORY.getIndex()) {
+		Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
+
+		if (hoverSlot != null) {
+			new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType)).scroll(hoverSlot, scrollAmount < 0);
+			return true;
+		}
+
+		/*if(selectedTab != ItemGroup.INVENTORY.getIndex()) {
 			Slot slot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (slot != null) {
 				int slotId = ((ISlot) slot).mouseWheelie_getInvSlot();
@@ -124,7 +128,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				}
 			}
 			return true;
-		}
+		}*/
 		return false;
 	}
 }

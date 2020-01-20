@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -75,10 +74,6 @@ public class ClientCore implements ClientModInitializer {
 		});
 
 		Config.initialize();
-
-		if(FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			CLIENT.options.load();
-		}
 
 		tweedClothBridge = new TweedClothBridge(Config.configFile);
 	}
