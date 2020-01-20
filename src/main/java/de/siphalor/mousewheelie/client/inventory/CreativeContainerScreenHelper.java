@@ -90,9 +90,4 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 		}
 		return screen.getContainer().slotList.get(0);
 	}
-
-	@Override
-	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
-		return slot1.inventory == slot2.inventory;
-	}
 }

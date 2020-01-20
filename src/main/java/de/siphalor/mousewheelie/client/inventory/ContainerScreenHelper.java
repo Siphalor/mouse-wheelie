@@ -111,13 +111,7 @@ public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 	}
 
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
-		if (slot1.inventory == slot2.inventory) {
-			if (slot1.inventory instanceof PlayerInventory) {
-				return (((ISlot) slot1).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
-			}
-			return true;
-		}
-		return false;
+		return isLowerSlot(slot1) == isLowerSlot(slot2);
 	}
 
 	public interface ClickHandler {
