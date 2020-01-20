@@ -32,8 +32,8 @@ public class InventorySorter {
 	private void collectSlots(Slot originSlot) {
 		Inventory inventory = originSlot.inventory;
 		this.inventorySlots = container.slotList.stream().filter(slot -> slot.inventory == inventory && slot.canInsert(ItemStack.EMPTY)).collect(Collectors.toList());
-		if(inventory instanceof PlayerInventory) {
-			if(((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen) {
+		if (inventory instanceof PlayerInventory) {
+			if (((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen) {
 				// Mojang's creative inventory/slot/container code is so messed up, I really can't sort this out for the player creative inventory
 				// TODO some day this should get fixed though
 				inventorySlots = Collections.emptyList();
@@ -53,33 +53,33 @@ public class InventorySorter {
 	private void combineStacks() {
 		ItemStack stack;
 		ArrayDeque<InteractionManager.ClickEvent> clickEvents = new ArrayDeque<>();
-		for(int i = stacks.length - 1; i >= 0; i--) {
+		for (int i = stacks.length - 1; i >= 0; i--) {
 			stack = stacks[i];
-			if(stack.isEmpty()) continue;
+			if (stack.isEmpty()) continue;
 			int stackSize = stack.getCount();
-			if(stackSize >= stack.getItem().getMaxCount()) continue;
+			if (stackSize >= stack.getItem().getMaxCount()) continue;
 			clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
-			for(int j = 0; j < i; j++) {
+			for (int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks[j];
-				if(targetStack.isEmpty()) continue;
-				if(targetStack.getCount() >= targetStack.getItem().getMaxCount()) continue;
-				if(stack.getItem() == targetStack.getItem() && ItemStack.areTagsEqual(stack, targetStack)) {
+				if (targetStack.isEmpty()) continue;
+				if (targetStack.getCount() >= targetStack.getItem().getMaxCount()) continue;
+				if (stack.getItem() == targetStack.getItem() && ItemStack.areTagsEqual(stack, targetStack)) {
 					int delta = targetStack.getItem().getMaxCount() - targetStack.getCount();
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
 					targetStack.setCount(targetStack.getCount() + delta);
 					clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
-					if(stackSize <= 0) break;
+					if (stackSize <= 0) break;
 				}
 			}
-			if(clickEvents.size() <= 1) {
+			if (clickEvents.size() <= 1) {
 				clickEvents.clear();
 				continue;
 			}
 			InteractionManager.interactionEventQueue.addAll(clickEvents);
 			InteractionManager.triggerSend();
 			clickEvents.clear();
-			if(stackSize > 0) {
+			if (stackSize > 0) {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setCount(stackSize);
 			} else {
@@ -94,30 +94,30 @@ public class InventorySorter {
 		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
 
 		sortMode.init(sortIds, stacks);
-        Arrays.sort(sortIds, sortMode);
+		Arrays.sort(sortIds, sortMode);
 
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
-		for(int i = 0; i < slotCount; i++) {
-			if(stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
+		for (int i = 0; i < slotCount; i++) {
+			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
 		}
-		for(int i = 0; i < slotCount; i++) {
-			if(doneSlashEmpty.get(i) || doneSlashEmpty.get(sortIds[i])) {
+		for (int i = 0; i < slotCount; i++) {
+			if (doneSlashEmpty.get(i) || doneSlashEmpty.get(sortIds[i])) {
 				continue;
 			}
-			if(doneSlashEmpty.get(slotCount + i)) {
+			if (doneSlashEmpty.get(slotCount + i)) {
 				doneSlashEmpty.set(slotCount + sortIds[i]);
 			}
-			if(i == sortIds[i]) {
+			if (i == sortIds[i]) {
 				doneSlashEmpty.set(i);
 				continue;
 			}
 			InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
 			doneSlashEmpty.clear(slotCount + sortIds[i]);
 			int id = i;
-			while(!doneSlashEmpty.get(id)) {
+			while (!doneSlashEmpty.get(id)) {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
 				doneSlashEmpty.set(id);
-				if(doneSlashEmpty.get(slotCount + id)) {
+				if (doneSlashEmpty.get(slotCount + id)) {
 					doneSlashEmpty.set(slotCount + id);
 					break;
 				}

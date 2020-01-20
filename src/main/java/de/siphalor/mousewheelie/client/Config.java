@@ -20,41 +20,44 @@ public class Config {
 	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
 
 	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory())
-		.setComment("General settings");
+			.setComment("General settings");
 	public static BooleanEntry enableItemScrolling = generalCategory.register("enable-item-scrolling", new BooleanEntry(true))
-		.setComment("Enables scrolling of items/stacks.\n" +
-			"(WHY WOULD YOU DARE TO TURN THIS OFF?)");
+			.setComment("Enables scrolling of items/stacks.\n" +
+					"(WHY WOULD YOU DARE TO TURN THIS OFF?)");
+	public static BooleanEntry directionalScrolling = generalCategory.register("directional-scrolling", new BooleanEntry(true))
+			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
+					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
 	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
-		.setComment("Set the scroll factor for item scrolling.\n" +
-			"To invert the scrolling use negative numbers");
+			.setComment("Set the scroll factor for item scrolling.\n" +
+					"To invert the scrolling use negative numbers");
 	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
-		.setComment("Pick correct tool when middle clicking whilst holding a tool.");
+			.setComment("Pick correct tool when middle clicking whilst holding a tool.");
 	public static BooleanEntry holdBlockToolPick = generalCategory.register("hold-block-tool-pick", new BooleanEntry(false))
-		.setComment("Pick correct tool when middle clicking the held block.");
+			.setComment("Pick correct tool when middle clicking the held block.");
 	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
-		.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
+			.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
 
 	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
-		.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
+			.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
 	public static EnumEntry<SortMode.Predefined> primarySort = (EnumEntry<SortMode.Predefined>) sortCategory.register("primary-sort", new EnumEntry<>(SortMode.Predefined.RAW_ID))
-		.setComment("Sets the sort mode for sorting via middle mouse click.");
+			.setComment("Sets the sort mode for sorting via middle mouse click.");
 	public static EnumEntry<SortMode.Predefined> shiftSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("shift-sort", new EnumEntry<>(SortMode.Predefined.QUANTITY))
-		.setComment("Sets the sort mode for sorting via shift + middle mouse click.");
+			.setComment("Sets the sort mode for sorting via shift + middle mouse click.");
 	public static EnumEntry<SortMode.Predefined> controlSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("control-sort", new EnumEntry<>(SortMode.Predefined.ALPHABET))
-		.setComment("Sets the sort mode for sorting via control + middle mouse click.");
+			.setComment("Sets the sort mode for sorting via control + middle mouse click.");
 
 	public static ConfigCategory refillCategory = configFile.register("refill", new ConfigCategory())
-		.setComment("Configure refill related stuff here.");
+			.setComment("Configure refill related stuff here.");
 	public static BooleanEntry eatRefill = refillCategory.register("eat", new BooleanEntry(true))
-		.setComment("Refill when eating items");
+			.setComment("Refill when eating items");
 	public static BooleanEntry dropRefill = refillCategory.register("drop", new BooleanEntry(true))
-		.setComment("Refill when dropping items");
+			.setComment("Refill when dropping items");
 	public static BooleanEntry useRefill = refillCategory.register("use", new BooleanEntry(true))
-		.setComment("Refill when using items");
+			.setComment("Refill when using items");
 	public static BooleanEntry otherRefill = refillCategory.register("other", new BooleanEntry(true))
-		.setComment("Refill on other occasions");
+			.setComment("Refill on other occasions");
 	public static ConfigCategory refillRules = refillCategory.register("rules", new ConfigCategory())
-		.setComment("Enable/Disable specific rules for how to refill items");
+			.setComment("Enable/Disable specific rules for how to refill items");
 
 	public static void initialize() {
 		SlotRefiller.initialize();
@@ -62,12 +65,12 @@ public class Config {
 		configFile.register("general.tool-pick-mode", new ConfigEntryFixer() {
 			@Override
 			public void fix(DataObject dataObject, String propertyName, DataObject mainCompound) {
-                if(dataObject.has(propertyName)) {
+				if (dataObject.has(propertyName)) {
 					DataValue dataValue = dataObject.get(propertyName);
-					if(!dataValue.isString()) return;
-					if(dataValue.asString().equals("HOLD_TOOL")) {
+					if (!dataValue.isString()) return;
+					if (dataValue.asString().equals("HOLD_TOOL")) {
 						mainCompound.set("hold-tool-pick", true);
-					} else if(dataValue.asString().equals("SHIFT")) {
+					} else if (dataValue.asString().equals("SHIFT")) {
 						mainCompound.set("hold-tool-pick", false);
 					}
 					dataObject.remove(propertyName);

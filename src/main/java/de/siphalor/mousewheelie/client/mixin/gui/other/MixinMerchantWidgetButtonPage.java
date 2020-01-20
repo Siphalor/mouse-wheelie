@@ -14,18 +14,20 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(targets = "net/minecraft/client/gui/screen/ingame/MerchantScreen$WidgetButtonPage")
 public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWidget {
-	@Shadow @Final private int field_19165;
+	@Shadow
+	@Final
+	private int field_19165;
 
 	@Override
 	public boolean mouseClicked(int mouseButton) {
-		if(mouseButton != 1 || !Config.enableQuickCraft.value) return false;
+		if (mouseButton != 1 || !Config.enableQuickCraft.value) return false;
 		MinecraftClient minecraft = MinecraftClient.getInstance();
 		Screen screen = minecraft.currentScreen;
-		if(screen instanceof IMerchantScreen) {
+		if (screen instanceof IMerchantScreen) {
 			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.field_19165 + ((IMerchantScreen) screen).getRecipeIdOffset());
 			((IMerchantScreen) screen).mouseWheelie_syncRecipeId();
-			if(screen instanceof AbstractContainerScreen) {
-				if(Screen.hasShiftDown())
+			if (screen instanceof AbstractContainerScreen) {
+				if (Screen.hasShiftDown())
 					InteractionManager.pushClickEvent(((AbstractContainerScreen) screen).getContainer().syncId, 2, 1, SlotActionType.QUICK_MOVE);
 				else
 					InteractionManager.pushClickEvent(((AbstractContainerScreen) screen).getContainer().syncId, 2, 1, SlotActionType.PICKUP);

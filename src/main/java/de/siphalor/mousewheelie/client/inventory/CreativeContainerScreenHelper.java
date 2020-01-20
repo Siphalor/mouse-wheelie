@@ -40,8 +40,8 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 	}
 
 	@Override
-	public boolean shallChangeInventory(Slot slot, boolean scrollUp) {
-		return slot.inventory instanceof PlayerInventory == scrollUp;
+	public boolean isLowerSlot(Slot slot) {
+		return slot.inventory instanceof PlayerInventory;
 	}
 
 	@Override

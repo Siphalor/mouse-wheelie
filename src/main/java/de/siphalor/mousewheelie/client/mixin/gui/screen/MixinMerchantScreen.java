@@ -8,11 +8,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MerchantScreen.class)
 public abstract class MixinMerchantScreen implements IMerchantScreen {
 
-	@Shadow private int field_19161;
+	@Shadow
+	private int field_19161;
 
-	@Shadow protected abstract void syncRecipeIndex();
+	@Shadow
+	protected abstract void syncRecipeIndex();
 
-	@Shadow private int field_19163;
+	@Shadow
+	private int field_19163;
 
 	@Override
 	public void mouseWheelie_setRecipeId(int id) {

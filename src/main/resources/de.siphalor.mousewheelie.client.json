@@ -16,6 +16,7 @@
 		"gui.screen.MixinInventoryScreen",
 		"gui.screen.MixinMerchantScreen",
 		"gui.screen.MixinRecipeBookScreen",
+		"gui.screen.MixinStonecutterScreen",
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
 		"MixinCreativeSlot",

@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(AbstractFurnaceScreen.class)
 public abstract class MixinAbstractFurnaceScreen extends AbstractContainerScreen implements IScrollableRecipeBook {
 
-	@Shadow @Final public AbstractFurnaceRecipeBookScreen recipeBook;
+	@Shadow
+	@Final
+	public AbstractFurnaceRecipeBookScreen recipeBook;
 
 	public MixinAbstractFurnaceScreen(Container container_1, PlayerInventory playerInventory_1, Text textComponent_1) {
 		super(container_1, playerInventory_1, textComponent_1);

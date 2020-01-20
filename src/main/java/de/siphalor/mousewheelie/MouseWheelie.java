@@ -14,7 +14,7 @@ public class MouseWheelie implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
-			if(world instanceof ServerWorld) {
+			if (world instanceof ServerWorld) {
 				ItemStack stack = player.getStackInHand(hand);
 				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {

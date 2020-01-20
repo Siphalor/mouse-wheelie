@@ -8,7 +8,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Slot.class)
 public class MixinSlot implements ISlot {
-	@Shadow @Final private int invSlot;
+	@Shadow
+	@Final
+	private int invSlot;
 
 	@Override
 	public int mouseWheelie_getInvSlot() {

@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetworkHandler {
-	@Shadow private MinecraftClient client;
+	@Shadow
+	private MinecraftClient client;
 
 	private boolean mouseWheelie_scheduleRefill = false;
 
@@ -29,7 +30,7 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if(ClientCore.awaitSlotUpdate) {
+		if (ClientCore.awaitSlotUpdate) {
 			ClientCore.awaitSlotUpdate = false;
 			SlotRefiller.refill();
 		} else {
@@ -46,8 +47,8 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 	public void onGuiSlotUpdated(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if(mouseWheelie_scheduleRefill) {
-			if(Config.otherRefill.value)
+		if (mouseWheelie_scheduleRefill) {
+			if (Config.otherRefill.value)
 				SlotRefiller.refill();
 			mouseWheelie_scheduleRefill = false;
 		}

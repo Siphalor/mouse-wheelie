@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
+import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
@@ -20,52 +21,63 @@ public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
-		if(shallChangeInventory(referenceSlot, scrollUp)) {
-			if(!referenceSlot.canInsert(ItemStack.EMPTY)) {
+		boolean shallSend;
+		if (Config.directionalScrolling.value) {
+			shallSend = shallChangeInventory(referenceSlot, scrollUp);
+		} else {
+			shallSend = !scrollUp;
+		}
+
+		if (shallSend) {
+			if (!referenceSlot.canInsert(ItemStack.EMPTY)) {
 				sendStack(referenceSlot);
 			}
-			if(Screen.hasControlDown()) {
+			if (Screen.hasControlDown()) {
 				sendAllOfAKind(referenceSlot);
-			} else if(Screen.hasShiftDown()) {
+			} else if (Screen.hasShiftDown()) {
 				sendStack(referenceSlot);
 			} else {
 				sendSingleItem(referenceSlot);
 			}
 		} else {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
-			if(Screen.hasShiftDown() || Screen.hasControlDown()) {
-				for(Slot slot : screen.getContainer().slotList) {
-					if(slotsInSameScope(slot, referenceSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+				for (Slot slot : screen.getContainer().slotList) {
+					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						sendStack(slot);
-						if(!Screen.hasControlDown())
+						if (!Screen.hasControlDown())
 							break;
 					}
 				}
 			} else {
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
-				for(Slot slot : screen.getContainer().slotList) {
-					if(slotsInSameScope(slot, referenceSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
-						if(slot.getStack().getCount() < stackSize) {
+				for (Slot slot : screen.getContainer().slotList) {
+					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+						if (slot.getStack().getCount() < stackSize) {
 							stackSize = slot.getStack().getCount();
 							moveSlot = slot;
-							if(stackSize == 1) break;
+							if (stackSize == 1) break;
 						}
 					}
 				}
-				if(moveSlot != null)
+				if (moveSlot != null)
 					sendSingleItem(moveSlot);
 			}
 		}
 	}
 
 	public boolean shallChangeInventory(Slot slot, boolean scrollUp) {
-		if(screen instanceof AbstractInventoryScreen) {
-			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9 == scrollUp;
+		return isLowerSlot(slot) == scrollUp;
+	}
+
+	public boolean isLowerSlot(Slot slot) {
+		if (screen instanceof AbstractInventoryScreen) {
+			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
 		} else {
-			return (slot.inventory instanceof PlayerInventory) == scrollUp;
+			return (slot.inventory instanceof PlayerInventory);
 		}
 	}
 
@@ -82,25 +94,25 @@ public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
-		for(Slot slot : screen.getContainer().slotList) {
-			if(slotsInSameScope(slot, referenceSlot)) {
-				if(slot.getStack().isItemEqualIgnoreDamage(referenceStack))
+		for (Slot slot : screen.getContainer().slotList) {
+			if (slotsInSameScope(slot, referenceSlot)) {
+				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
 					clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 			}
 		}
 	}
 
 	public void sendAllFrom(Slot referenceSlot) {
-		for(Slot slot : screen.getContainer().slotList) {
-			if(slotsInSameScope(slot, referenceSlot)) {
+		for (Slot slot : screen.getContainer().slotList) {
+			if (slotsInSameScope(slot, referenceSlot)) {
 				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 			}
 		}
 	}
 
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
-		if(slot1.inventory == slot2.inventory) {
-			if(slot1.inventory instanceof PlayerInventory) {
+		if (slot1.inventory == slot2.inventory) {
+			if (slot1.inventory instanceof PlayerInventory) {
 				return (((ISlot) slot1).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
 			}
 			return true;

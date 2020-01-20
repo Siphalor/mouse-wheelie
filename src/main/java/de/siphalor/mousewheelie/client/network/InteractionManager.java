@@ -6,6 +6,7 @@ import net.minecraft.network.Packet;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
@@ -14,13 +15,13 @@ public class InteractionManager {
 
 	public static void push(InteractionEvent interactionEvent) {
 		interactionEventQueue.add(interactionEvent);
-		if(awaitedTriggers <= 0)
+		if (awaitedTriggers <= 0)
 			triggerSend();
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
 		ClickEvent clickEvent = new ClickEvent(containerSyncId, slotId, buttonId, slotAction);
-        push(clickEvent);
+		push(clickEvent);
 	}
 
 	public static void triggerSend() {
@@ -41,18 +42,25 @@ public class InteractionManager {
 	public interface InteractionEvent {
 		/**
 		 * Sends the interaction to the server
+		 *
 		 * @return the number of inventory packets to wait for
 		 */
 		int send();
 	}
 
 	public static class ClickEvent implements InteractionEvent {
+		private final int awaitedTriggers;
 		private int containerSyncId;
 		private int slotId;
 		private int buttonId;
 		private SlotActionType slotAction;
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
+			this(1, containerSyncId, slotId, buttonId, slotAction);
+		}
+
+		public ClickEvent(int awaitedTriggers, int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
+			this.awaitedTriggers = awaitedTriggers;
 			this.containerSyncId = containerSyncId;
 			this.slotId = slotId;
 			this.buttonId = buttonId;
@@ -62,7 +70,20 @@ public class InteractionManager {
 		@Override
 		public int send() {
 			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
-			return 1;
+			return awaitedTriggers;
+		}
+	}
+
+	public static class CallbackEvent implements InteractionEvent {
+		private final Supplier<Integer> callback;
+
+		public CallbackEvent(Supplier<Integer> callback) {
+			this.callback = callback;
+		}
+
+		@Override
+		public int send() {
+			return callback.get();
 		}
 	}
 
@@ -75,7 +96,7 @@ public class InteractionManager {
 
 		@Override
 		public int send() {
-            MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
+			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return 1;
 		}
 	}
