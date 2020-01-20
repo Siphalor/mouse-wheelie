@@ -15,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinLivingEntity {
 	@Inject(method = "consumeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	protected void onItemUseFinish(CallbackInfo callbackInfo) {
-		if((Object) this instanceof PlayerEntity && Config.eatRefill.value) {
-			PlayerInventory playerInventory = ((PlayerEntity)(Object) this).inventory;
-            SlotRefiller.set(playerInventory, playerInventory.getMainHandStack().copy());
+		if ((Object) this instanceof PlayerEntity && Config.eatRefill.value) {
+			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
+			SlotRefiller.set(playerInventory, playerInventory.getMainHandStack().copy());
 			ClientCore.awaitSlotUpdate = true;
 		}
 	}

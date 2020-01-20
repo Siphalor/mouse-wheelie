@@ -9,7 +9,9 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot")
 public class MixinCreativeSlot implements ISlot {
 
-	@Shadow @Final private Slot slot;
+	@Shadow
+	@Final
+	private Slot slot;
 
 	@Override
 	public int mouseWheelie_getInvSlot() {

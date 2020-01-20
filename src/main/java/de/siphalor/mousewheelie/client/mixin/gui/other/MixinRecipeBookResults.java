@@ -17,15 +17,20 @@ import java.util.Iterator;
 
 @Mixin(RecipeBookResults.class)
 public abstract class MixinRecipeBookResults implements IRecipeBookResults {
-	@Shadow private int currentPage;
+	@Shadow
+	private int currentPage;
 
-	@Shadow private int pageCount;
+	@Shadow
+	private int pageCount;
 
-	@Shadow protected abstract void refreshResultButtons();
+	@Shadow
+	protected abstract void refreshResultButtons();
 
-	@Shadow private Recipe<?> lastClickedRecipe;
+	@Shadow
+	private Recipe<?> lastClickedRecipe;
 
-	@Shadow private RecipeResultCollection resultCollection;
+	@Shadow
+	private RecipeResultCollection resultCollection;
 
 	@Override
 	public void mouseWheelie_setCurrentPage(int page) {
@@ -49,7 +54,7 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 
 	@Inject(method = "mouseClicked", at = @At(value = "JUMP", opcode = 154), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void mouseClicked(double x, double y, int mouseButton, int int2, int int3, int int4, int int5, CallbackInfoReturnable<Boolean> callbackInfoReturnable, Iterator iterator, AnimatedResultButton animatedResultButton) {
-		if(Config.enableQuickCraft.value && mouseButton == 1 && animatedResultButton.hasResults()) {
+		if (Config.enableQuickCraft.value && mouseButton == 1 && animatedResultButton.hasResults()) {
 			lastClickedRecipe = animatedResultButton.currentRecipe();
 			resultCollection = animatedResultButton.getResultCollection();
 		}

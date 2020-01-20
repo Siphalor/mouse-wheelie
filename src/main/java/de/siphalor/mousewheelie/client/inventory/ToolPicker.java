@@ -21,22 +21,23 @@ public class ToolPicker {
 		int bestSpeedSlot = -1;
 		for (int i = 1; i <= inventory.getInvSize(); i++) {
 			int index = (i + lastToolPickSlot) % inventory.getInvSize();
-			if(index == inventory.selectedSlot) continue;
+			if (index == inventory.selectedSlot) continue;
 			ItemStack stack = inventory.getInvStack(index);
 			if (stack.isEffectiveOn(blockState)) {
 				lastToolPickSlot = index;
 				return index;
 			} else {
 				float breakSpeed = stack.getMiningSpeed(blockState);
-				if(breakSpeed > bestBreakSpeed) {
+				if (breakSpeed > bestBreakSpeed) {
 					bestSpeedSlot = index;
 					bestBreakSpeed = breakSpeed;
 				}
 			}
 		}
-		if(bestBreakSpeed == -1) {
+		if (bestBreakSpeed == -1) {
 			ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
-			if(stack.isEffectiveOn(blockState) || stack.getMiningSpeed(blockState) > 1.0F) return inventory.selectedSlot;
+			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeed(blockState) > 1.0F)
+				return inventory.selectedSlot;
 		}
 		return bestSpeedSlot;
 	}
@@ -48,8 +49,8 @@ public class ToolPicker {
 	public int findWeapon() {
 		for (int i = 1; i <= inventory.getInvSize(); i++) {
 			int index = (i + lastToolPickSlot) % inventory.getInvSize();
-			if(index == inventory.selectedSlot) continue;
-			if(ClientCore.isWeapon(inventory.getInvStack(index).getItem()))
+			if (index == inventory.selectedSlot) continue;
+			if (ClientCore.isWeapon(inventory.getInvStack(index).getItem()))
 				return index;
 		}
 		return -1;
@@ -60,7 +61,7 @@ public class ToolPicker {
 	}
 
 	private boolean pick(int index) {
-		if(index != -1) {
+		if (index != -1) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
 			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
 			return true;

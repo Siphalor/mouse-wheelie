@@ -40,12 +40,12 @@ public class SlotRefiller {
 	@SuppressWarnings("UnusedReturnValue")
 	public static boolean refill() {
 		Iterator<Rule> iterator = rules.descendingIterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Rule rule = iterator.next();
-			if(rule.matches(stack)) {
+			if (rule.matches(stack)) {
 				int slot = rule.findMatchingStack(playerInventory, stack);
-				if(slot != -1) {
-					if(slot < 9) {
+				if (slot != -1) {
+					if (slot < 9) {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
 					} else
@@ -59,12 +59,13 @@ public class SlotRefiller {
 
 	public interface Rule {
 		boolean matches(ItemStack oldStack);
+
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack);
 
 		static int iterateInventory(PlayerInventory playerInventory, Function<ItemStack, Boolean> consumer) {
-			for(int i = 0; i < playerInventory.main.size(); i++) {
-                if(consumer.apply(playerInventory.main.get(i)))
-                	return i;
+			for (int i = 0; i < playerInventory.main.size(); i++) {
+				if (consumer.apply(playerInventory.main.get(i)))
+					return i;
 			}
 			return -1;
 		}
@@ -80,15 +81,16 @@ public class SlotRefiller {
 
 		@Override
 		public final boolean matches(ItemStack oldStack) {
-            if(booleanEntry.value)
-            	return matchesEnabled(oldStack);
-            return false;
+			if (booleanEntry.value)
+				return matchesEnabled(oldStack);
+			return false;
 		}
 
 		abstract boolean matchesEnabled(ItemStack oldStack);
 	}
 
-	public static void initialize() {}
+	public static void initialize() {
+	}
 
 	static {
 		BLOCK_RULE = new ConfigRule("any-block", false, "Tries to find any block items") {
@@ -99,7 +101,7 @@ public class SlotRefiller {
 
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-                return Rule.iterateInventory(playerInventory, itemStack -> itemStack.getItem() instanceof BlockItem);
+				return Rule.iterateInventory(playerInventory, itemStack -> itemStack.getItem() instanceof BlockItem);
 			}
 		};
 
@@ -127,27 +129,27 @@ public class SlotRefiller {
 				int currentRank = 0;
 				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
 				Class clazz = oldStack.getItem().getClass();
-				while(clazz != Item.class) {
+				while (clazz != Item.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
 				}
 				int classesSize = classes.size();
-                if(classesSize == 0)
-                	return -1;
+				if (classesSize == 0)
+					return -1;
 
-                int index = -1;
+				int index = -1;
 
 				DefaultedList<ItemStack> mainInv = playerInventory.main;
-                outer:
-                for(int i = 0; i < mainInv.size(); i++) {
-                    clazz = mainInv.get(i).getItem().getClass();
-                    while(clazz != Item.class) {
-                        int classRank = classesSize;
+				outer:
+				for (int i = 0; i < mainInv.size(); i++) {
+					clazz = mainInv.get(i).getItem().getClass();
+					while (clazz != Item.class) {
+						int classRank = classesSize;
 						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
-							if(classRank <= 0) break;
-							if(classRank <= currentRank) continue outer;
-							if(clazz.equals(iterator.next())) {
-								if(classRank >= classesSize) return i;
+							if (classRank <= 0) break;
+							if (classRank <= currentRank) continue outer;
+							if (clazz.equals(iterator.next())) {
+								if (classRank >= classesSize) return i;
 								currentRank = classRank;
 								index = i;
 								continue outer;
@@ -171,28 +173,28 @@ public class SlotRefiller {
 				int currentRank = 0;
 				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
 				Class clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
-				while(clazz != Block.class) {
+				while (clazz != Block.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
 				}
 				int classesSize = classes.size();
-                if(classesSize == 0)
-                	return -1;
+				if (classesSize == 0)
+					return -1;
 
-                int index = -1;
-                DefaultedList<ItemStack> mainInv = playerInventory.main;
+				int index = -1;
+				DefaultedList<ItemStack> mainInv = playerInventory.main;
 
-                outer:
-                for(int i = 0; i < mainInv.size(); i++) {
-                	if(!(mainInv.get(i).getItem() instanceof BlockItem)) continue;
-                    clazz = ((BlockItem) mainInv.get(i).getItem()).getBlock().getClass();
-                    while(clazz != Block.class) {
-                        int classRank = classesSize;
+				outer:
+				for (int i = 0; i < mainInv.size(); i++) {
+					if (!(mainInv.get(i).getItem() instanceof BlockItem)) continue;
+					clazz = ((BlockItem) mainInv.get(i).getItem()).getBlock().getClass();
+					while (clazz != Block.class) {
+						int classRank = classesSize;
 						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
-							if(classRank <= 0) break;
-							if(classRank <= currentRank) continue outer;
-							if(clazz.equals(iterator.next())) {
-								if(classRank >= classesSize) return i;
+							if (classRank <= 0) break;
+							if (classRank <= currentRank) continue outer;
+							if (clazz.equals(iterator.next())) {
+								if (classRank >= classesSize) return i;
 								currentRank = classRank;
 								index = i;
 								continue outer;
@@ -213,7 +215,7 @@ public class SlotRefiller {
 
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-                return Rule.iterateInventory(playerInventory, ItemStack::isFood);
+				return Rule.iterateInventory(playerInventory, ItemStack::isFood);
 			}
 		};
 

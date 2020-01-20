@@ -20,15 +20,16 @@ import java.util.List;
 
 @Mixin(Container.class)
 public abstract class MixinContainer {
-	@Shadow public abstract Slot getSlot(int int_1);
+	@Shadow
+	public abstract Slot getSlot(int int_1);
 
 	private static boolean mouseWheelie_scheduleRefill = false;
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;getSlot(I)Lnet/minecraft/container/Slot;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
-		if((Object) this instanceof PlayerContainer && Config.otherRefill.value) {
+		if ((Object) this instanceof PlayerContainer && Config.otherRefill.value) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
-			if(inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
+			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
 				ItemStack stack = inventory.getMainHandStack();
 				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {
 					mouseWheelie_scheduleRefill = true;
@@ -40,7 +41,7 @@ public abstract class MixinContainer {
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdated(List<ItemStack> stacks, CallbackInfo callbackInfo, int index) {
-		if(mouseWheelie_scheduleRefill) {
+		if (mouseWheelie_scheduleRefill) {
 			mouseWheelie_scheduleRefill = false;
 			SlotRefiller.refill();
 		}

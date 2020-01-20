@@ -16,7 +16,7 @@ public final class FabricCreativeGuiHelper {
 	}
 
 	public void previousPage() {
-        fabricExtensions.fabric_previousPage();
+		fabricExtensions.fabric_previousPage();
 	}
 
 	public int getCurrentPage() {

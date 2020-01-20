@@ -51,20 +51,20 @@ public class ClientCore implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if(Config.holdToolPick.value && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
-				if(result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+			if (Config.holdToolPick.value && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
+				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
 					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				} else {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findWeapon();
-                    return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				}
 			}
-			if(Config.holdBlockToolPick.value && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+			if (Config.holdBlockToolPick.value && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
-				if(blockState.getBlock() == ((BlockItem) item).getBlock()) {
+				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(blockState);
 					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
@@ -96,19 +96,19 @@ public class ClientCore implements ClientModInitializer {
 
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {
 		double scrollAmount = scrollY * CLIENT.options.mouseWheelSensitivity;
-		if(CLIENT.currentScreen instanceof ISpecialScrollableScreen) {
-			if(((ISpecialScrollableScreen) CLIENT.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {
+		if (CLIENT.currentScreen instanceof ISpecialScrollableScreen) {
+			if (((ISpecialScrollableScreen) CLIENT.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {
 				return true;
 			}
 		}
-		if(CLIENT.currentScreen instanceof IContainerScreen) {
-			if(((IContainerScreen) CLIENT.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
+		if (CLIENT.currentScreen instanceof IContainerScreen) {
+			if (((IContainerScreen) CLIENT.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
 				return true;
 			}
 		}
-		if(CLIENT.currentScreen instanceof IScrollableRecipeBook) {
+		if (CLIENT.currentScreen instanceof IScrollableRecipeBook) {
 			//noinspection RedundantIfStatement
-			if(((IScrollableRecipeBook) CLIENT.currentScreen).mouseWheelie_onMouseScrollRecipeBook(mouseX, mouseY, scrollAmount)) {
+			if (((IScrollableRecipeBook) CLIENT.currentScreen).mouseWheelie_onMouseScrollRecipeBook(mouseX, mouseY, scrollAmount)) {
 				return true;
 			}
 		}

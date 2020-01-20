@@ -6,54 +6,61 @@ import net.minecraft.network.Packet;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
-	public static boolean sending = false;
+
+	private static int awaitedTriggers = 0;
 
 	public static void push(InteractionEvent interactionEvent) {
 		interactionEventQueue.add(interactionEvent);
-		if(!sending)
+		if (awaitedTriggers <= 0)
 			triggerSend();
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
 		ClickEvent clickEvent = new ClickEvent(containerSyncId, slotId, buttonId, slotAction);
-        push(clickEvent);
+		push(clickEvent);
 	}
 
 	public static void triggerSend() {
-		if(interactionEventQueue.size() > 0) {
-			while(interactionEventQueue.remove().send()) {
-				if(interactionEventQueue.isEmpty()) {
-					sending = false;
+		if (--awaitedTriggers <= 0 && interactionEventQueue.size() > 0) {
+			while ((awaitedTriggers = interactionEventQueue.remove().send()) == 0) {
+				if (interactionEventQueue.isEmpty()) {
 					break;
 				}
 			}
-		} else
-			sending = false;
+		}
 	}
 
 	public static void clear() {
-		sending = false;
+		awaitedTriggers = 0;
 		interactionEventQueue.clear();
 	}
 
 	public interface InteractionEvent {
 		/**
 		 * Sends the interaction to the server
-		 * @return a boolean determining whether to continue sending packets
+		 *
+		 * @return the number of inventory packets to wait for
 		 */
-		boolean send();
+		int send();
 	}
 
 	public static class ClickEvent implements InteractionEvent {
+		private final int awaitedTriggers;
 		private int containerSyncId;
 		private int slotId;
 		private int buttonId;
 		private SlotActionType slotAction;
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
+			this(1, containerSyncId, slotId, buttonId, slotAction);
+		}
+
+		public ClickEvent(int awaitedTriggers, int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
+			this.awaitedTriggers = awaitedTriggers;
 			this.containerSyncId = containerSyncId;
 			this.slotId = slotId;
 			this.buttonId = buttonId;
@@ -61,10 +68,22 @@ public class InteractionManager {
 		}
 
 		@Override
-		public boolean send() {
-			sending = true;
-			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
-			return false;
+		public int send() {
+			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
+			return awaitedTriggers;
+		}
+	}
+
+	public static class CallbackEvent implements InteractionEvent {
+		private final Supplier<Integer> callback;
+
+		public CallbackEvent(Supplier<Integer> callback) {
+			this.callback = callback;
+		}
+
+		@Override
+		public int send() {
+			return callback.get();
 		}
 	}
 
@@ -76,9 +95,9 @@ public class InteractionManager {
 		}
 
 		@Override
-		public boolean send() {
-            MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
-			return true;
+		public int send() {
+			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
+			return 1;
 		}
 	}
 }

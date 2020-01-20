@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
+import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
@@ -10,60 +11,73 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 @SuppressWarnings("WeakerAccess")
-public class ContainerScreenHelper {
-	private AbstractContainerScreen screen;
-	private ClickHandler clickHandler;
+public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
+	protected final T screen;
+	protected final ClickHandler clickHandler;
 
-	public ContainerScreenHelper(AbstractContainerScreen screen, ClickHandler clickHandler) {
+	public ContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		this.screen = screen;
 		this.clickHandler = clickHandler;
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
-		boolean changeInventory;
-		if(screen instanceof AbstractInventoryScreen) {
-			changeInventory = ((ISlot) referenceSlot).mouseWheelie_getInvSlot() < 9 == scrollUp;
+		boolean shallSend;
+		if (Config.directionalScrolling.value) {
+			shallSend = shallChangeInventory(referenceSlot, scrollUp);
 		} else {
-			changeInventory = (referenceSlot.inventory instanceof PlayerInventory) == scrollUp;
+			shallSend = !scrollUp;
 		}
-		if(changeInventory) {
-			if(!referenceSlot.canInsert(ItemStack.EMPTY)) {
-				clickHandler.handleClick(referenceSlot, 0, SlotActionType.QUICK_MOVE);
+
+		if (shallSend) {
+			if (!referenceSlot.canInsert(ItemStack.EMPTY)) {
+				sendStack(referenceSlot);
 			}
-			if(Screen.hasControlDown()) {
+			if (Screen.hasControlDown()) {
 				sendAllOfAKind(referenceSlot);
-			} else if(Screen.hasShiftDown()) {
-				clickHandler.handleClick(referenceSlot, 0, SlotActionType.QUICK_MOVE);
+			} else if (Screen.hasShiftDown()) {
+				sendStack(referenceSlot);
 			} else {
 				sendSingleItem(referenceSlot);
 			}
 		} else {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
-			if(Screen.hasShiftDown() || Screen.hasControlDown()) {
-				for(Slot slot : screen.getContainer().slotList) {
-					if(slotsInSameScope(slot, referenceSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
-						clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
-						if(!Screen.hasControlDown())
+			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+				for (Slot slot : screen.getContainer().slotList) {
+					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+						sendStack(slot);
+						if (!Screen.hasControlDown())
 							break;
 					}
 				}
 			} else {
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
-				for(Slot slot : screen.getContainer().slotList) {
-					if(slotsInSameScope(slot, referenceSlot)) continue;
-					if(slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
-						if(slot.getStack().getCount() < stackSize) {
+				for (Slot slot : screen.getContainer().slotList) {
+					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+						if (slot.getStack().getCount() < stackSize) {
 							stackSize = slot.getStack().getCount();
 							moveSlot = slot;
-							if(stackSize == 1) break;
+							if (stackSize == 1) break;
 						}
 					}
 				}
-				if(moveSlot != null)
+				if (moveSlot != null)
 					sendSingleItem(moveSlot);
 			}
+		}
+	}
+
+	public boolean shallChangeInventory(Slot slot, boolean scrollUp) {
+		return isLowerSlot(slot) == scrollUp;
+	}
+
+	public boolean isLowerSlot(Slot slot) {
+		if (screen instanceof AbstractInventoryScreen) {
+			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+		} else {
+			return (slot.inventory instanceof PlayerInventory);
 		}
 	}
 
@@ -74,27 +88,31 @@ public class ContainerScreenHelper {
 		clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
 	}
 
+	public void sendStack(Slot slot) {
+		clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+	}
+
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
-		for(Slot slot : screen.getContainer().slotList) {
-			if(slotsInSameScope(slot, referenceSlot)) {
-				if(slot.getStack().isItemEqualIgnoreDamage(referenceStack))
+		for (Slot slot : screen.getContainer().slotList) {
+			if (slotsInSameScope(slot, referenceSlot)) {
+				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
 					clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 			}
 		}
 	}
 
 	public void sendAllFrom(Slot referenceSlot) {
-		for(Slot slot : screen.getContainer().slotList) {
-			if(slotsInSameScope(slot, referenceSlot)) {
+		for (Slot slot : screen.getContainer().slotList) {
+			if (slotsInSameScope(slot, referenceSlot)) {
 				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 			}
 		}
 	}
 
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
-		if(slot1.inventory == slot2.inventory) {
-			if(slot1.inventory instanceof PlayerInventory) {
+		if (slot1.inventory == slot2.inventory) {
+			if (slot1.inventory instanceof PlayerInventory) {
 				return (((ISlot) slot1).mouseWheelie_getInvSlot() < 9) == (((ISlot) slot2).mouseWheelie_getInvSlot() < 9);
 			}
 			return true;

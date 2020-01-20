@@ -13,12 +13,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
-	@Shadow public ClientPlayerEntity player;
+	@Shadow
+	public ClientPlayerEntity player;
 	private ItemStack mouseWheelie_mainHandStack;
 
 	@Inject(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
 	public void onItemUse(CallbackInfo callbackInfo) {
-		if(Config.useRefill.value) {
+		if (Config.useRefill.value) {
 			mouseWheelie_mainHandStack = player.getMainHandStack();
 			mouseWheelie_mainHandStack = mouseWheelie_mainHandStack.isEmpty() ? null : mouseWheelie_mainHandStack.copy();
 		}
@@ -26,8 +27,8 @@ public class MixinMinecraftClient {
 
 	@Inject(method = "doItemUse", at = @At("RETURN"))
 	public void onItemUsed(CallbackInfo callbackInfo) {
-		if(mouseWheelie_mainHandStack != null) {
-			if(player.getMainHandStack().isEmpty()) {
+		if (mouseWheelie_mainHandStack != null) {
+			if (player.getMainHandStack().isEmpty()) {
 				SlotRefiller.set(player.inventory, mouseWheelie_mainHandStack);
 				SlotRefiller.refill();
 			}

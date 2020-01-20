@@ -27,6 +27,7 @@ public abstract class SortMode implements Comparator<Integer> {
 		ALPHABET = new SortMode() {
 			String[] strings;
 			ItemStack[] stacks;
+
 			@Override
 			public void init(Integer[] sortIds, ItemStack[] stacks) {
 				this.stacks = stacks;
@@ -40,25 +41,26 @@ public abstract class SortMode implements Comparator<Integer> {
 			@Override
 			public int compare(Integer o1, Integer o2) {
 				if (strings[o1].equals("")) {
-						if (strings[o2].equals(""))
-							return 0;
-						return 1;
-					}
-					if (strings[o2].equals("")) return -1;
-					int comp = strings[o1].compareToIgnoreCase(strings[o2]);
-					if (comp == 0) {
-						return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
-					}
-					return comp;
+					if (strings[o2].equals(""))
+						return 0;
+					return 1;
+				}
+				if (strings[o2].equals("")) return -1;
+				int comp = strings[o1].compareToIgnoreCase(strings[o2]);
+				if (comp == 0) {
+					return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
+				}
+				return comp;
 			}
 		};
 		QUANTITY = new SortMode() {
 			HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
 			ItemStack[] stacks;
+
 			@Override
 			void init(Integer[] sortIds, ItemStack[] stacks) {
 				this.stacks = stacks;
-				for(ItemStack stack : stacks) {
+				for (ItemStack stack : stacks) {
 					if (stack.isEmpty()) continue;
 					if (!itemToAmountMap.containsKey(stack.getItem())) {
 						itemToAmountMap.put(stack.getItem(), stack.getCount());
@@ -86,6 +88,7 @@ public abstract class SortMode implements Comparator<Integer> {
 		RAW_ID = new SortMode() {
 			Integer[] rawIds;
 			ItemStack[] stacks;
+
 			@Override
 			void init(Integer[] sortIds, ItemStack[] stacks) {
 				this.stacks = stacks;
@@ -95,8 +98,8 @@ public abstract class SortMode implements Comparator<Integer> {
 			@Override
 			public int compare(Integer o1, Integer o2) {
 				int result = Integer.compare(rawIds[o1], rawIds[o2]);
-				if(result == 0) {
-					if(stacks[o2].isDamageable()) {
+				if (result == 0) {
+					if (stacks[o2].isDamageable()) {
 						return Integer.compare(stacks[o1].getDamage(), stacks[o2].getDamage());
 					} else {
 						return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());

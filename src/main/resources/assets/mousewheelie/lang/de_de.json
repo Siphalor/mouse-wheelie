@@ -1,5 +1,6 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
+	"key.mousewheelie.open_config_screen": "Einstellungen öffnen",
 	"key.mousewheelie.sort_inventory": "Inventar sortieren",
 	"key.mousewheelie.scroll_up": "Hochscrollen",
 	"key.mousewheelie.scroll_down": "Runterscrollen",
@@ -9,6 +10,7 @@
 
 	"tweed.cloth.mousewheelie.general": "Allgemein",
 	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Scrollen zum Bewegen von Gegenständen",
+	"tweed.cloth.mousewheelie.general.directional-scrolling": "Richtungsgesteuerters Scrollen",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Zum Abbauen optimale Werkzeug wählen (siehe Beschreibung)",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Schnelles Herstellen",

@@ -22,7 +22,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "closeScreen", at = @At("HEAD"))
 	public void onScreenClosed(CallbackInfo callbackInfo) {
-        InteractionManager.clear();
+		InteractionManager.clear();
 	}
 
 	@Inject(method = "dropSelectedItem", at = @At("HEAD"))
@@ -32,7 +32,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "dropSelectedItem", at = @At("RETURN"))
 	public void onSelectedItemDropped(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
-		if(Config.dropRefill.value && getMainHandStack().isEmpty()) {
+		if (Config.dropRefill.value && getMainHandStack().isEmpty()) {
 			SlotRefiller.refill();
 		}
 	}

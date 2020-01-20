@@ -18,9 +18,9 @@ public class PickToolKeyBinding extends AmecsKeyBinding implements PriorityKeyBi
 
 	@Override
 	public boolean onPressedPriority() {
-		if(MinecraftClient.getInstance().currentScreen != null) return false;
+		if (MinecraftClient.getInstance().currentScreen != null) return false;
 		PlayerEntity playerEntity = MinecraftClient.getInstance().player;
-		if(playerEntity != null) {
+		if (playerEntity != null) {
 			HitResult hitResult = playerEntity.rayTrace(4.5D, 0.0F, false);
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
 				return new ToolPicker(playerEntity.inventory).pickToolFor(playerEntity.world.getBlockState(((BlockHitResult) hitResult).getBlockPos()));
