@@ -49,7 +49,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.1+"
 	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.1+"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.0+"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.1+28f8190f42"
 	//modImplementation "io.github.prospector.modmenu:ModMenu:+"
 	
 	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
