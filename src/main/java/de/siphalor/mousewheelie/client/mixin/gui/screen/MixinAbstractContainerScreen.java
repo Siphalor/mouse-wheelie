@@ -8,7 +8,7 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
@@ -17,7 +17,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.packet.PlayerActionC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("WeakerAccess")
-@Mixin(AbstractContainerScreen.class)
+@Mixin(ContainerScreen.class)
 public abstract class MixinAbstractContainerScreen extends Screen implements IContainerScreen {
 	protected MixinAbstractContainerScreen(Text textComponent_1) {
 		super(textComponent_1);
@@ -56,7 +56,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (this.minecraft.options.keySwapHands.matchesKey(key, scanCode) && focusedSlot != null) {
 			boolean putBack = false;
-			Slot swapSlot = container.slotList.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
+			Slot swapSlot = container.slots.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
 			if (swapSlot == null) return;
 			ItemStack swapStack = playerInventory.getCursorStack().copy();
 			ItemStack offHandStack = playerInventory.offHand.get(0).copy();
@@ -101,7 +101,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				} else if (hasShiftDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
 				} else if (hasControlDown()) {
-					new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+					new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
@@ -120,9 +120,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasShiftDown()) {
-						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+						new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
 					} else {
-						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
@@ -156,7 +156,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 			}
 
-			ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+			ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
 			return true;
 		}

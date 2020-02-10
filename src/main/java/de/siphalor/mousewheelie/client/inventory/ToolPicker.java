@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.packet.PickFromInventoryC2SPacket;
+import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 
 public class ToolPicker {
 	PlayerInventory inventory;

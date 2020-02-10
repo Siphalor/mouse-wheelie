@@ -4,7 +4,7 @@ import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.StonecutterScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.container.StonecutterContainer;
@@ -13,7 +13,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(StonecutterScreen.class)
-public abstract class MixinStonecutterScreen extends AbstractContainerScreen<StonecutterContainer> implements IContainerScreen {
+public abstract class MixinStonecutterScreen extends ContainerScreen<StonecutterContainer> implements IContainerScreen {
 
 	public MixinStonecutterScreen(StonecutterContainer container, PlayerInventory playerInventory, Text name) {
 		super(container, playerInventory, name);

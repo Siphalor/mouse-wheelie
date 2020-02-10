@@ -31,7 +31,7 @@ public class InventorySorter {
 
 	private void collectSlots(Slot originSlot) {
 		Inventory inventory = originSlot.inventory;
-		this.inventorySlots = container.slotList.stream().filter(slot -> slot.inventory == inventory && slot.canInsert(ItemStack.EMPTY)).collect(Collectors.toList());
+		this.inventorySlots = container.slots.stream().filter(slot -> slot.inventory == inventory && slot.canInsert(ItemStack.EMPTY)).collect(Collectors.toList());
 		if (inventory instanceof PlayerInventory) {
 			if (((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen) {
 				// Mojang's creative inventory/slot/container code is so messed up, I really can't sort this out for the player creative inventory

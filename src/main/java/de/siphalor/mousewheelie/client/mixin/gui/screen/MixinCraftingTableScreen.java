@@ -2,7 +2,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.CraftingTableScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.container.CraftingTableContainer;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(CraftingTableScreen.class)
-public abstract class MixinCraftingTableScreen extends AbstractContainerScreen<CraftingTableContainer> implements IScrollableRecipeBook {
+public abstract class MixinCraftingTableScreen extends ContainerScreen<CraftingTableContainer> implements IScrollableRecipeBook {
 	@Shadow
 	@Final
 	private RecipeBookWidget recipeBookGui;

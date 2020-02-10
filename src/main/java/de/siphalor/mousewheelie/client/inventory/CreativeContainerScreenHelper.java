@@ -17,7 +17,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 		if (slot.inventory instanceof PlayerInventory) {
 			super.sendSingleItem(slot);
 		} else {
-			for (Slot testSlot : screen.getContainer().slotList) {
+			for (Slot testSlot : screen.getContainer().slots) {
 				if (!slotsInSameScope(slot, testSlot)) {
 					ItemStack itemStack = testSlot.getStack();
 					if (Container.canStacksCombine(slot.getStack(), itemStack) && itemStack.getCount() < itemStack.getMaxCount()) {
@@ -27,7 +27,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 					}
 				}
 			}
-			for (Slot testSlot : screen.getContainer().slotList) {
+			for (Slot testSlot : screen.getContainer().slots) {
 				if (!slotsInSameScope(slot, testSlot)) {
 					if (!testSlot.hasStack()) {
 						clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
@@ -51,7 +51,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 		} else {
 			int count = slot.getStack().getMaxCount();
 			clickHandler.handleClick(slot, 0, SlotActionType.CLONE);
-			for (Slot testSlot : screen.getContainer().slotList) {
+			for (Slot testSlot : screen.getContainer().slots) {
 				ItemStack itemStack = testSlot.getStack();
 				if (itemStack.isEmpty()) {
 					clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
@@ -83,11 +83,11 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 	}
 
 	private Slot getDelSlot(ItemStack delStack) {
-		for (Slot slot : screen.getContainer().slotList) {
+		for (Slot slot : screen.getContainer().slots) {
 			if (slot.getStack().getItem() != delStack.getItem()) {
 				return slot;
 			}
 		}
-		return screen.getContainer().slotList.get(0);
+		return screen.getContainer().slots.get(0);
 	}
 }
