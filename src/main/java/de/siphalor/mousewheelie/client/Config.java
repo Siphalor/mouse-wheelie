@@ -66,7 +66,7 @@ public class Config {
 			@Override
 			public void fix(DataObject dataObject, String propertyName, DataObject mainCompound) {
 				if (dataObject.has(propertyName)) {
-					DataValue dataValue = dataObject.get(propertyName);
+					DataValue<?> dataValue = dataObject.get(propertyName);
 					if (!dataValue.isString()) return;
 					if (dataValue.asString().equals("HOLD_TOOL")) {
 						mainCompound.set("hold-tool-pick", true);

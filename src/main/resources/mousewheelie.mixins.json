@@ -2,7 +2,12 @@
 	"required": true,
 	"package": "de.siphalor.mousewheelie.client.mixin",
 	"compatibilityLevel": "JAVA_8",
-	"mixins": [
+	"client": [
+		"MixinClientPlayNetworkHandler",
+		"MixinContainer",
+		"MixinCreativeSlot",
+		"MixinMinecraftClient",
+		"MixinSlot",
 		"entity.MixinClientPlayerEntity",
 		"entity.MixinLivingEntity",
 		"gui.other.MixinAbstractButtonWidget",
@@ -15,12 +20,7 @@
 		"gui.screen.MixinCreativeInventoryScreen",
 		"gui.screen.MixinInventoryScreen",
 		"gui.screen.MixinMerchantScreen",
-		"gui.screen.MixinStonecutterScreen",
-		"MixinClientPlayNetworkHandler",
-		"MixinContainer",
-		"MixinCreativeSlot",
-		"MixinMinecraftClient",
-		"MixinSlot"
+		"gui.screen.MixinStonecutterScreen"
 	],
 	"injectors": {
 		"defaultRequire": 1

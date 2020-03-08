@@ -3,6 +3,8 @@ package de.siphalor.mousewheelie.client.inventory;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed.config.entry.BooleanEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
+@Environment(EnvType.CLIENT)
 @SuppressWarnings("unused")
 public class SlotRefiller {
 	private static PlayerInventory playerInventory;
@@ -127,8 +130,8 @@ public class SlotRefiller {
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
 				int currentRank = 0;
-				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
-				Class clazz = oldStack.getItem().getClass();
+				ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
+				Class<?> clazz = oldStack.getItem().getClass();
 				while (clazz != Item.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
@@ -145,7 +148,7 @@ public class SlotRefiller {
 					clazz = mainInv.get(i).getItem().getClass();
 					while (clazz != Item.class) {
 						int classRank = classesSize;
-						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
+						for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
 							if (classRank <= 0) break;
 							if (classRank <= currentRank) continue outer;
 							if (clazz.equals(iterator.next())) {
@@ -171,8 +174,8 @@ public class SlotRefiller {
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
 				int currentRank = 0;
-				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
-				Class clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
+				ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
+				Class<?> clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
 				while (clazz != Block.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
@@ -190,7 +193,7 @@ public class SlotRefiller {
 					clazz = ((BlockItem) mainInv.get(i).getItem()).getBlock().getClass();
 					while (clazz != Block.class) {
 						int classRank = classesSize;
-						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
+						for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
 							if (classRank <= 0) break;
 							if (classRank <= currentRank) continue outer;
 							if (clazz.equals(iterator.next())) {

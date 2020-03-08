@@ -3,6 +3,8 @@ package de.siphalor.mousewheelie.client.mixin;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.Container;
 import net.minecraft.container.PlayerContainer;
@@ -18,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(Container.class)
 public abstract class MixinContainer {
 	@Shadow
@@ -27,6 +30,7 @@ public abstract class MixinContainer {
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;getSlot(I)Lnet/minecraft/container/Slot;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
+		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerContainer && Config.otherRefill.value) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
 			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {

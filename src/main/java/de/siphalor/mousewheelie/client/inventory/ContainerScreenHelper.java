@@ -2,6 +2,8 @@ package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
@@ -10,6 +12,7 @@ import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
+@Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
 public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	protected final T screen;

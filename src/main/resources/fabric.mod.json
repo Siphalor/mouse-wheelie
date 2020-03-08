@@ -20,10 +20,7 @@
 
 	"environment": "*",
 	"mixins": [
-		{
-			"config": "de.siphalor.mousewheelie.client.json",
-			"environment": "client"
-		}
+		"mousewheelie.mixins.json"
 	],
 	"entrypoints": {
 		"client": [

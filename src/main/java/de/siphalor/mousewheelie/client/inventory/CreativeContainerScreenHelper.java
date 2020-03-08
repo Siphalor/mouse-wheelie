@@ -1,5 +1,7 @@
 package de.siphalor.mousewheelie.client.inventory;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
@@ -7,6 +9,7 @@ import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
+@Environment(EnvType.CLIENT)
 public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> extends ContainerScreenHelper<T> {
 	public CreativeContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		super(screen, clickHandler);

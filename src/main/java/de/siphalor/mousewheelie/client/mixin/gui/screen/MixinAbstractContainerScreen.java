@@ -54,6 +54,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
 	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		//noinspection ConstantConditions
 		if (this.minecraft.options.keySwapHands.matchesKey(key, scanCode) && focusedSlot != null) {
 			boolean putBack = false;
 			Slot swapSlot = container.slots.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
@@ -101,12 +102,14 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				} else if (hasShiftDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
 				} else if (hasControlDown()) {
-					new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+					// noinspection ConstantConditions
+					new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
@@ -120,9 +123,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasShiftDown()) {
-						new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+						//noinspection ConstantConditions
+						new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
 					} else {
-						new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
@@ -156,7 +160,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 			}
 
-			ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+			//noinspection ConstantConditions
+			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
 			return true;
 		}

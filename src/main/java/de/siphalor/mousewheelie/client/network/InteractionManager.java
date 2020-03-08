@@ -1,5 +1,7 @@
 package de.siphalor.mousewheelie.client.network;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
@@ -8,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 
+@Environment(EnvType.CLIENT)
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
 
@@ -69,6 +72,7 @@ public class InteractionManager {
 
 		@Override
 		public int send() {
+			//noinspection ConstantConditions
 			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return awaitedTriggers;
 		}
@@ -96,6 +100,7 @@ public class InteractionManager {
 
 		@Override
 		public int send() {
+			//noinspection ConstantConditions
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return 1;
 		}

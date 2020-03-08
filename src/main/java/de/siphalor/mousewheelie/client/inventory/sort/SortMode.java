@@ -1,5 +1,7 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,10 +11,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
+@Environment(EnvType.CLIENT)
 public abstract class SortMode implements Comparator<Integer> {
 	public static final SortMode ALPHABET, QUANTITY, RAW_ID;
 
-	void init(Integer[] sortIds, ItemStack[] stacks) {};
+	void init(Integer[] sortIds, ItemStack[] stacks) {
+	}
 
 	public enum Predefined {
 		ALPHABET(SortMode.ALPHABET), QUANTITY(SortMode.QUANTITY), RAW_ID(SortMode.RAW_ID), NONE(null);

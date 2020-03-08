@@ -4,6 +4,8 @@ import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetworkHandler {
 	@Shadow

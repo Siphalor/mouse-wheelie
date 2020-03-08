@@ -12,6 +12,8 @@ import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import de.siphalor.tweed.client.TweedClothBridge;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
@@ -24,6 +26,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
+@Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
 public class ClientCore implements ClientModInitializer {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();

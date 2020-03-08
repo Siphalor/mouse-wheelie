@@ -2,9 +2,11 @@ package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.client.ClientCore;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
 import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
@@ -22,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(RecipeBookWidget.class)
 public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
@@ -86,10 +89,11 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if(isOpen() && !client.player.isSpectator()) {
+		//noinspection ConstantConditions
+		if (isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
 				searching = false;
-				if(mouseClicked(ClientCore.getMouseX(), ClientCore.getMouseY(), 0)) {
+				if (mouseClicked(ClientCore.getMouseX(), ClientCore.getMouseY(), 0)) {
 					InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
 				}
