@@ -59,10 +59,10 @@ dependencies {
 	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
 	
-	modImplementation("com.github.siphalor:amecs:${project.amecs_version}") {
+	modImplementation("com.github.siphalor:amecs-api:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	include "com.github.siphalor:amecs:${project.amecs_version}"
+	include "com.github.siphalor:amecs-api:${project.amecs_version}"
 
 	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
 		exclude group: "net.fabricmc.fabric-api"

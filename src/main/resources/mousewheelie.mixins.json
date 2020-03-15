@@ -2,6 +2,7 @@
 	"required": true,
 	"package": "de.siphalor.mousewheelie.client.mixin",
 	"compatibilityLevel": "JAVA_8",
+	"mixins": [],
 	"client": [
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
