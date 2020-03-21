@@ -6,15 +6,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.ContainerScreen;
-import net.minecraft.container.Slot;
-import net.minecraft.container.SlotActionType;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
-public class ContainerScreenHelper<T extends ContainerScreen<?>> {
+public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	protected final T screen;
 	protected final ClickHandler clickHandler;
 
@@ -45,7 +45,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 		} else {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
 			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
-				for (Slot slot : screen.getContainer().slots) {
+				for (Slot slot : screen.getScreenHandler().slots) {
 					if (slotsInSameScope(slot, referenceSlot)) continue;
 					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						sendStack(slot);
@@ -56,7 +56,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 			} else {
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
-				for (Slot slot : screen.getContainer().slots) {
+				for (Slot slot : screen.getScreenHandler().slots) {
 					if (slotsInSameScope(slot, referenceSlot)) continue;
 					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						if (slot.getStack().getCount() < stackSize) {
@@ -97,7 +97,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
-		for (Slot slot : screen.getContainer().slots) {
+		for (Slot slot : screen.getScreenHandler().slots) {
 			if (slotsInSameScope(slot, referenceSlot)) {
 				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
 					clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
@@ -106,7 +106,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void sendAllFrom(Slot referenceSlot) {
-		for (Slot slot : screen.getContainer().slots) {
+		for (Slot slot : screen.getScreenHandler().slots) {
 			if (slotsInSameScope(slot, referenceSlot)) {
 				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
 			}

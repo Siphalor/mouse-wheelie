@@ -12,8 +12,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
-import net.minecraft.container.CraftingContainer;
-import net.minecraft.container.SlotActionType;
+import net.minecraft.screen.AbstractRecipeScreenHandler;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,27 +40,33 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Shadow protected abstract void refreshResults(boolean boolean_1);
 
-	@Shadow private int parentHeight;
+	@Shadow
+	private int parentHeight;
 
-	@Shadow public abstract boolean isOpen();
+	@Shadow
+	public abstract boolean isOpen();
 
-	@Shadow protected CraftingContainer<?> craftingContainer;
+	@Shadow
+	private boolean searching;
 
-	@Shadow private boolean searching;
+	@Shadow
+	protected MinecraftClient client;
 
-	@Shadow protected MinecraftClient client;
+	@Shadow
+	public abstract boolean mouseClicked(double double_1, double double_2, int int_1);
 
-	@Shadow public abstract boolean mouseClicked(double double_1, double double_2, int int_1);
+	@Shadow
+	protected AbstractRecipeScreenHandler<?> craftingScreenHandler;
 
 	@Override
 	public boolean mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
-		if(!this.isOpen())
+		if (!this.isOpen())
 			return false;
 		int top = (this.parentHeight - 166) / 2;
-		if(mouseY < top || mouseY >= top + 166)
+		if (mouseY < top || mouseY >= top + 166)
 			return false;
 		int left = (this.parentWidth - 147) / 2 - this.leftOffset;
-		if(mouseX >= left && mouseX < left + 147) {
+		if (mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
 			int maxPage = ((IRecipeBookResults) recipesArea).mouseWheelie_getPageCount() - 1;
 			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount * Config.scrollFactor.value)), 0, Math.max(maxPage, 0)));
@@ -83,7 +89,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;clickRecipe(ILnet/minecraft/recipe/Recipe;Z)V", shift = At.Shift.AFTER))
 	public void mouseClicked(double x, double y, int mouseButton, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (Config.enableQuickCraft.value && mouseButton == 1) {
-			InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, Screen.hasShiftDown() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(craftingScreenHandler.syncId, craftingScreenHandler.getCraftingResultSlotIndex(), 0, Screen.hasShiftDown() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
 		}
 	}
 
@@ -94,7 +100,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
 				searching = false;
 				if (mouseClicked(ClientCore.getMouseX(), ClientCore.getMouseY(), 0)) {
-					InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
+					InteractionManager.pushClickEvent(craftingScreenHandler.syncId, craftingScreenHandler.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
 				}
 			}

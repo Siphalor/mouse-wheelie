@@ -3,8 +3,8 @@ package de.siphalor.mousewheelie.client.network;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
+import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;

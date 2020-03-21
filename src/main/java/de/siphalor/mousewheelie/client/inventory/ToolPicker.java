@@ -1,12 +1,15 @@
 package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.ClientCore;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 
+@Environment(EnvType.CLIENT)
 public class ToolPicker {
 	PlayerInventory inventory;
 
@@ -27,7 +30,7 @@ public class ToolPicker {
 				lastToolPickSlot = index;
 				return index;
 			} else {
-				float breakSpeed = stack.getMiningSpeed(blockState);
+				float breakSpeed = stack.getMiningSpeedMultiplier(blockState);
 				if (breakSpeed > bestBreakSpeed) {
 					bestSpeedSlot = index;
 					bestBreakSpeed = breakSpeed;
@@ -36,7 +39,7 @@ public class ToolPicker {
 		}
 		if (bestBreakSpeed == -1) {
 			ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
-			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeed(blockState) > 1.0F)
+			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeedMultiplier(blockState) > 1.0F)
 				return inventory.selectedSlot;
 		}
 		return bestSpeedSlot;

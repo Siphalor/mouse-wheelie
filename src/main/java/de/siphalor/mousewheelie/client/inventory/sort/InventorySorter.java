@@ -6,12 +6,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.container.Container;
-import net.minecraft.container.Slot;
-import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -20,11 +20,11 @@ import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
-	private Container container;
+	private ScreenHandler container;
 	private List<Slot> inventorySlots;
 	private ItemStack[] stacks;
 
-	public InventorySorter(Container container, Slot originSlot) {
+	public InventorySorter(ScreenHandler container, Slot originSlot) {
 		this.container = container;
 
 		collectSlots(originSlot);

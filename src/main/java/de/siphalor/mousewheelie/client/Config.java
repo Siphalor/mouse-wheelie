@@ -14,8 +14,11 @@ import de.siphalor.tweed.config.fixers.ConfigEntryFixer;
 import de.siphalor.tweed.data.DataObject;
 import de.siphalor.tweed.data.DataValue;
 import de.siphalor.tweed.data.serializer.HjsonSerializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 @SuppressWarnings({"unchecked", "WeakerAccess"})
+@Environment(EnvType.CLIENT)
 public class Config {
 	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
 

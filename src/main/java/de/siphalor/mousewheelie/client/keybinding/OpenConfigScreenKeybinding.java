@@ -5,7 +5,7 @@ import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.amecs.api.PriorityKeyBinding;
 import de.siphalor.mousewheelie.client.ClientCore;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.ContainerScreen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
@@ -17,7 +17,7 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
 	@Override
 	public boolean onPressedPriority() {
 		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof ContainerScreen)
+		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof HandledScreen)
 			minecraftClient.openScreen(ClientCore.tweedClothBridge.buildScreen());
 		return true;
 	}
