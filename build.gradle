@@ -7,7 +7,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version + "+" + project.minecraft_version
+version = project.mod_version + "+mc" + project.minecraft_version
 group = project.maven_group
 
 minecraft {
@@ -57,7 +57,7 @@ dependencies {
 		exclude module: "modmenu"
 	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
-	
+
 	modImplementation("com.github.siphalor:amecs:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
