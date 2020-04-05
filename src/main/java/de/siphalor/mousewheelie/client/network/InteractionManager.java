@@ -1,5 +1,7 @@
 package de.siphalor.mousewheelie.client.network;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
@@ -8,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 
+@Environment(EnvType.CLIENT)
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
 

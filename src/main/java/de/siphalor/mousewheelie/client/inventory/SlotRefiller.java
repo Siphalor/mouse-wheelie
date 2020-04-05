@@ -3,6 +3,8 @@ package de.siphalor.mousewheelie.client.inventory;
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed.config.entry.BooleanEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
@@ -19,6 +21,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class SlotRefiller {
 	private static PlayerInventory playerInventory;
 	private static ItemStack stack;
