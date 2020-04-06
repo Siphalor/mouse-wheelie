@@ -39,7 +39,7 @@ public class MixinClientPlayNetworkHandler {
 		} else {
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && packet.getSlot() - 36 == inventory.selectedSlot && MinecraftClient.getInstance().currentScreen == null) {
-				ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
+				ItemStack stack = inventory.getStack(inventory.selectedSlot);
 				if (!stack.isEmpty()) {
 					mouseWheelie_scheduleRefill = true;
 					SlotRefiller.set(inventory, stack.copy());

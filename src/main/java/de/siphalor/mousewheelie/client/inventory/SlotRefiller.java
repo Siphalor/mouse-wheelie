@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller.ConfigRule;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed.config.entry.BooleanEntry;
 import net.fabricmc.api.EnvType;

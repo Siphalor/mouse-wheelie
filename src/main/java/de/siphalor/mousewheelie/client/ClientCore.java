@@ -58,11 +58,11 @@ public class ClientCore implements ClientModInitializer {
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
 				} else {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findWeapon();
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
 				}
 			}
 			if (Config.holdBlockToolPick.value && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
@@ -70,7 +70,7 @@ public class ClientCore implements ClientModInitializer {
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(blockState);
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
 				}
 			}
 			return ItemStack.EMPTY;
