@@ -91,16 +91,22 @@ public class InteractionManager {
 	}
 
 	public static class PacketEvent implements InteractionEvent {
-		private Packet<?> packet;
+		private final Packet<?> packet;
+		private final int waitForTriggers;
 
 		public PacketEvent(Packet<?> packet) {
+			this(packet, 0);
+		}
+
+		public PacketEvent(Packet<?> packet, int waitForTriggers) {
 			this.packet = packet;
+			this.waitForTriggers = waitForTriggers;
 		}
 
 		@Override
 		public int send() {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
-			return 1;
+			return waitForTriggers;
 		}
 	}
 }
