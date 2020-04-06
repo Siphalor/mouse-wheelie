@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
-@Environment(EnvType.CLIENT)
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class SlotRefiller {
 	private static PlayerInventory playerInventory;
 	private static ItemStack stack;
@@ -31,6 +31,7 @@ public class SlotRefiller {
 	private static final Rule ITEM_HIERARCHY_RULE;
 	private static final Rule BLOCK_HIERARCHY_RULE;
 	private static final Rule FOOD_RULE;
+	private static final Rule EQUAL_ITEM_RULE;
 	private static final Rule EQUAL_STACK_RULE;
 
 	private static final ConcurrentLinkedDeque<Rule> rules = new ConcurrentLinkedDeque<>();
@@ -52,7 +53,7 @@ public class SlotRefiller {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
 					} else
-						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot)));
+						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), 2));
 					return true;
 				}
 			}
@@ -222,7 +223,23 @@ public class SlotRefiller {
 			}
 		};
 
-		EQUAL_STACK_RULE = new ConfigRule("equal-stacks", true, "Try to find equal stacks") {
+		EQUAL_ITEM_RULE = new ConfigRule("equal-items", true, "Try to find equal items (no nbt matching)") {
+			@Override
+			boolean matchesEnabled(ItemStack oldStack) {
+				return true;
+			}
+
+			@Override
+			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
+				for (int i = 0; i < playerInventory.size(); i++) {
+					if (playerInventory.getStack(i).getItem() == oldStack.getItem())
+						return i;
+				}
+				return -1;
+			}
+		};
+
+		EQUAL_STACK_RULE = new ConfigRule("equal-stacks", true, "Try to find equal stacks (nbt data must be equal too)") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return true;

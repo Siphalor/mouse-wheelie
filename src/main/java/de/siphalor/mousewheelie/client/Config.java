@@ -26,7 +26,7 @@ public class Config {
 			.setComment("General settings");
 	public static BooleanEntry enableItemScrolling = generalCategory.register("enable-item-scrolling", new BooleanEntry(true))
 			.setComment("Enables scrolling of items/stacks.\n" +
-					"(WHY WOULD YOU DARE TO TURN THIS OFF?)");
+					"(How dare you?)");
 	public static BooleanEntry directionalScrolling = generalCategory.register("directional-scrolling", new BooleanEntry(true))
 			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
 					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");

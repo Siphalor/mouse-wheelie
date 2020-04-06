@@ -31,6 +31,11 @@ public class MixinClientPlayNetworkHandler {
 		InteractionManager.triggerSend();
 	}
 
+	@Inject(method = "onScreenHandlerSlotUpdate", at = @At("HEAD"))
+	public void onGuiSlotUpdateBegin(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+		InteractionManager.triggerSend();
+	}
+
 	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (ClientCore.awaitSlotUpdate) {
@@ -39,7 +44,7 @@ public class MixinClientPlayNetworkHandler {
 		} else {
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && packet.getSlot() - 36 == inventory.selectedSlot && MinecraftClient.getInstance().currentScreen == null) {
-				ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
+				ItemStack stack = inventory.getStack(inventory.selectedSlot);
 				if (!stack.isEmpty()) {
 					mouseWheelie_scheduleRefill = true;
 					SlotRefiller.set(inventory, stack.copy());

@@ -22,10 +22,10 @@ public class ToolPicker {
 	public int findToolFor(BlockState blockState) {
 		float bestBreakSpeed = 1.0F;
 		int bestSpeedSlot = -1;
-		for (int i = 1; i <= inventory.getInvSize(); i++) {
-			int index = (i + lastToolPickSlot) % inventory.getInvSize();
+		for (int i = 1; i <= inventory.size(); i++) {
+			int index = (i + lastToolPickSlot) % inventory.size();
 			if (index == inventory.selectedSlot) continue;
-			ItemStack stack = inventory.getInvStack(index);
+			ItemStack stack = inventory.getStack(index);
 			if (stack.isEffectiveOn(blockState)) {
 				lastToolPickSlot = index;
 				return index;
@@ -38,7 +38,7 @@ public class ToolPicker {
 			}
 		}
 		if (bestBreakSpeed == -1) {
-			ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
+			ItemStack stack = inventory.getStack(inventory.selectedSlot);
 			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeedMultiplier(blockState) > 1.0F)
 				return inventory.selectedSlot;
 		}
@@ -50,10 +50,10 @@ public class ToolPicker {
 	}
 
 	public int findWeapon() {
-		for (int i = 1; i <= inventory.getInvSize(); i++) {
-			int index = (i + lastToolPickSlot) % inventory.getInvSize();
+		for (int i = 1; i <= inventory.size(); i++) {
+			int index = (i + lastToolPickSlot) % inventory.size();
 			if (index == inventory.selectedSlot) continue;
-			if (ClientCore.isWeapon(inventory.getInvStack(index).getItem()))
+			if (ClientCore.isWeapon(inventory.getStack(index).getItem()))
 				return index;
 		}
 		return -1;

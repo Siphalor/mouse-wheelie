@@ -44,7 +44,7 @@ public class InventorySorter {
 
 			final int originInvSlot = ((ISlot) originSlot).mouseWheelie_getInvSlot();
 			final boolean originInHotbar = originInvSlot >= 0 && originInvSlot < 9;
-			final int offHandInvSlot = inventory.getInvSize() - 1;
+			final int offHandInvSlot = inventory.size() - 1;
 			final boolean originOffHand = originInvSlot == offHandInvSlot;
 			inventorySlots = inventorySlots.stream().filter(slot -> {
 				final int invSlot = ((ISlot) slot).mouseWheelie_getInvSlot();
