@@ -31,6 +31,7 @@ public class SlotRefiller {
 	private static final Rule ITEM_HIERARCHY_RULE;
 	private static final Rule BLOCK_HIERARCHY_RULE;
 	private static final Rule FOOD_RULE;
+	private static final Rule EQUAL_ITEM_RULE;
 	private static final Rule EQUAL_STACK_RULE;
 
 	private static final ConcurrentLinkedDeque<Rule> rules = new ConcurrentLinkedDeque<>();
@@ -130,8 +131,8 @@ public class SlotRefiller {
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
 				int currentRank = 0;
-				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
-				Class clazz = oldStack.getItem().getClass();
+				ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
+				Class<?> clazz = oldStack.getItem().getClass();
 				while (clazz != Item.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
@@ -148,7 +149,7 @@ public class SlotRefiller {
 					clazz = mainInv.get(i).getItem().getClass();
 					while (clazz != Item.class) {
 						int classRank = classesSize;
-						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
+						for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
 							if (classRank <= 0) break;
 							if (classRank <= currentRank) continue outer;
 							if (clazz.equals(iterator.next())) {
@@ -174,8 +175,8 @@ public class SlotRefiller {
 			@Override
 			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
 				int currentRank = 0;
-				ConcurrentLinkedQueue<Class> classes = new ConcurrentLinkedQueue<>();
-				Class clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
+				ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
+				Class<?> clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
 				while (clazz != Block.class) {
 					classes.add(clazz);
 					clazz = clazz.getSuperclass();
@@ -193,7 +194,7 @@ public class SlotRefiller {
 					clazz = ((BlockItem) mainInv.get(i).getItem()).getBlock().getClass();
 					while (clazz != Block.class) {
 						int classRank = classesSize;
-						for (Iterator iterator = classes.iterator(); iterator.hasNext(); classRank--) {
+						for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
 							if (classRank <= 0) break;
 							if (classRank <= currentRank) continue outer;
 							if (clazz.equals(iterator.next())) {
@@ -222,7 +223,23 @@ public class SlotRefiller {
 			}
 		};
 
-		EQUAL_STACK_RULE = new ConfigRule("equal-stacks", true, "Try to find equal stacks") {
+		EQUAL_ITEM_RULE = new ConfigRule("equal-items", true, "Try to find equal items (no nbt matching)") {
+			@Override
+			boolean matchesEnabled(ItemStack oldStack) {
+				return true;
+			}
+
+			@Override
+			public int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
+				for (int i = 0; i < playerInventory.getInvSize(); i++) {
+					if (playerInventory.getInvStack(i).getItem() == oldStack.getItem())
+						return i;
+				}
+				return -1;
+			}
+		};
+
+		EQUAL_STACK_RULE = new ConfigRule("equal-stacks", true, "Try to find equal stacks (nbt data must be equal too)") {
 			@Override
 			boolean matchesEnabled(ItemStack oldStack) {
 				return true;
