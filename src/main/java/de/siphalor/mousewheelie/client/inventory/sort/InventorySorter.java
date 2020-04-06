@@ -2,6 +2,8 @@ package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.container.Container;
@@ -16,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Environment(EnvType.CLIENT)
 public class InventorySorter {
 	private Container container;
 	private List<Slot> inventorySlots;

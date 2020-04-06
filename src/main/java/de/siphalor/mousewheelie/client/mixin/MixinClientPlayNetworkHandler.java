@@ -31,6 +31,11 @@ public class MixinClientPlayNetworkHandler {
 		InteractionManager.triggerSend();
 	}
 
+	@Inject(method = "onGuiSlotUpdate", at = @At("HEAD"))
+	public void onGuiSlotUpdateBegin(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+		InteractionManager.triggerSend();
+	}
+
 	@Inject(method = "onGuiSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(GuiSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (ClientCore.awaitSlotUpdate) {
@@ -44,8 +49,6 @@ public class MixinClientPlayNetworkHandler {
 					mouseWheelie_scheduleRefill = true;
 					SlotRefiller.set(inventory, stack.copy());
 				}
-			} else {
-				InteractionManager.triggerSend();
 			}
 		}
 	}
