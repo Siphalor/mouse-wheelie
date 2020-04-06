@@ -26,12 +26,12 @@
 	"tweed.cloth.mousewheelie.refill.drop": "Refill when dropping items",
 	"tweed.cloth.mousewheelie.refill.use": "Refill when using items",
 	"tweed.cloth.mousewheelie.refill.other": "Refill on other occasions",
-
 	"tweed.cloth.mousewheelie.refill.rules": "Refill rules",
 	"tweed.cloth.mousewheelie.refill.rules.any-block": "Refill with any blocks",
 	"tweed.cloth.mousewheelie.refill.rules.itemgroup": "Refill by item groups",
 	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "Refill items with similar functionality",
 	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "Refill blocks with similar functionality",
 	"tweed.cloth.mousewheelie.refill.rules.food": "Refill foods",
-	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Refill with same item"
+	"tweed.cloth.mousewheelie.refill.rules.equal-items": "Refill with same item (no nbt)",
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Refill with same stack (nbt)"
 }
