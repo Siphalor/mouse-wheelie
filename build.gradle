@@ -32,28 +32,30 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c41"
-	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.0+04b9979441"
-	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.2+b7f9825d41"
-	include "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.1+dfdb52d641"
-	include "net.fabricmc.fabric-api:fabric-mining-levels-v0:0.1.2+5b8a535a41"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+d249f7b641"
-	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.12+5b8a535a41"
-	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.2+2dc54f9941"
-	modImplementation "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c41"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.0+04b9979441"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.2+b7f9825d41"
-	modImplementation "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.1+dfdb52d641"
-	modImplementation "net.fabricmc.fabric-api:fabric-mining-levels-v0:0.1.2+5b8a535a41"
-	modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+d249f7b641"
-	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.12+5b8a535a41"
-	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.2+2dc54f9941"
+	include "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c34"
+	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.0+04b9979434"
+	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.2+1a47cd7834"
+	include "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.1+dfdb52d634"
+	include "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.0.2+526cfc4b34"
+	include "net.fabricmc.fabric-api:fabric-mining-levels-v0:0.1.2+b764ce9934"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7834"
+	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.14+2fd224ca34"
+	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.4+2fd224ca34"
+	modImplementation "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c34"
+	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.0+04b9979434"
+	modImplementation "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.2+1a47cd7834"
+	modImplementation "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.1+dfdb52d634"
+	modImplementation "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.0.2+526cfc4b34"
+	modImplementation "net.fabricmc.fabric-api:fabric-mining-levels-v0:0.1.2+b764ce9934"
+	modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7834"
+	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.14+2fd224ca34"
+	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.4+2fd224ca34"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.10+d249f7b641"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.12+2fd224ca34"
 
-	modImplementation("io.github.prospector:modmenu:+") {
+	/*modImplementation("io.github.prospector:modmenu:+") {
 		exclude group: "net.fabricmc.fabric-api"
-	}
+	}*/
 
 	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -72,6 +74,8 @@ dependencies {
 	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
+
+sourceSets.main.java.exclude("**/ModMenu*")
 
 processResources {
 	inputs.property "version", version
