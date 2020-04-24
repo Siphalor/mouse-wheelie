@@ -53,9 +53,9 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.12+2fd224ca34"
 
-	/*modImplementation("io.github.prospector:modmenu:+") {
+	modImplementation("io.github.prospector:modmenu:+") {
 		exclude group: "net.fabricmc.fabric-api"
-	}*/
+	}
 
 	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -75,7 +75,7 @@ dependencies {
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
 
-sourceSets.main.java.exclude("**/ModMenu*")
+//sourceSets.main.java.exclude("**/ModMenu*")
 
 processResources {
 	inputs.property "version", version
