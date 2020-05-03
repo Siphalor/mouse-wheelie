@@ -30,12 +30,12 @@
 		],
 		"main": [
 			{
-			  "value": "de.siphalor.mousewheelie.MouseWheelie"
+				"value": "de.siphalor.mousewheelie.MouseWheelie"
 			}
 		],
-		"modmenu": [
+		"tweed:config": [
 			{
-				"value": "de.siphalor.mousewheelie.client.compat.ModMenuEntryPoint"
+				"value": "de.siphalor.mousewheelie.MouseWheelie::CONFIG"
 			}
 		]
 	},
@@ -45,7 +45,7 @@
 
 	"depends": {
 		"fabricloader": ">=0.4.0",
-		"minecraft": ">=1.15-rc.2"
+		"minecraft": ">=1.16-alpha"
 	},
 
 	"custom": {

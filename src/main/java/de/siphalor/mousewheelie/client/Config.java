@@ -1,84 +1,85 @@
 package de.siphalor.mousewheelie.client;
 
-import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
-import de.siphalor.tweed.config.ConfigCategory;
 import de.siphalor.tweed.config.ConfigEnvironment;
-import de.siphalor.tweed.config.ConfigFile;
-import de.siphalor.tweed.config.TweedRegistry;
-import de.siphalor.tweed.config.entry.BooleanEntry;
-import de.siphalor.tweed.config.entry.EnumEntry;
-import de.siphalor.tweed.config.entry.FloatEntry;
-import de.siphalor.tweed.config.fixers.ConfigEntryFixer;
-import de.siphalor.tweed.data.DataObject;
-import de.siphalor.tweed.data.DataValue;
-import de.siphalor.tweed.data.serializer.HjsonSerializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import de.siphalor.tweed.config.ConfigScope;
+import de.siphalor.tweed.config.annotated.AConfigEntry;
+import de.siphalor.tweed.config.annotated.ATweedConfig;
 
-@SuppressWarnings({"unchecked", "WeakerAccess"})
-@Environment(EnvType.CLIENT)
+@SuppressWarnings({"WeakerAccess", "unused"})
+@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth")
 public class Config {
-	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
+	@AConfigEntry(comment = "General settings")
+	public General general = new General();
 
-	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory())
-			.setComment("General settings");
-	public static BooleanEntry enableItemScrolling = generalCategory.register("enable-item-scrolling", new BooleanEntry(true))
-			.setComment("Enables scrolling of items/stacks.\n" +
-					"(How dare you?)");
-	public static BooleanEntry directionalScrolling = generalCategory.register("directional-scrolling", new BooleanEntry(true))
-			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
-					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
-	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
-			.setComment("Set the scroll factor for item scrolling.\n" +
-					"To invert the scrolling use negative numbers");
-	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
-			.setComment("Pick correct tool when middle clicking whilst holding a tool.");
-	public static BooleanEntry holdBlockToolPick = generalCategory.register("hold-block-tool-pick", new BooleanEntry(false))
-			.setComment("Pick correct tool when middle clicking the held block.");
-	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
-			.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
+	public static class General {
+		@AConfigEntry(name = "enable-item-scrolling", comment = "Enables scrolling of stacks")
+		public boolean enableItemScrolling = true;
 
-	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
-			.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
-	public static EnumEntry<SortMode.Predefined> primarySort = (EnumEntry<SortMode.Predefined>) sortCategory.register("primary-sort", new EnumEntry<>(SortMode.Predefined.RAW_ID))
-			.setComment("Sets the sort mode for sorting via middle mouse click.");
-	public static EnumEntry<SortMode.Predefined> shiftSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("shift-sort", new EnumEntry<>(SortMode.Predefined.QUANTITY))
-			.setComment("Sets the sort mode for sorting via shift + middle mouse click.");
-	public static EnumEntry<SortMode.Predefined> controlSort = (EnumEntry<SortMode.Predefined>) sortCategory.register("control-sort", new EnumEntry<>(SortMode.Predefined.ALPHABET))
-			.setComment("Sets the sort mode for sorting via control + middle mouse click.");
+		@AConfigEntry(name = "directional-scrolling", comment = "If enabled items will be moved according to whether your scrolling up or down.\nIf disabled you will scroll to change the amount of items present (up will increase - down will decrease")
+		public boolean directionalScrolling = true;
 
-	public static ConfigCategory refillCategory = configFile.register("refill", new ConfigCategory())
-			.setComment("Configure refill related stuff here.");
-	public static BooleanEntry eatRefill = refillCategory.register("eat", new BooleanEntry(true))
-			.setComment("Refill when eating items");
-	public static BooleanEntry dropRefill = refillCategory.register("drop", new BooleanEntry(true))
-			.setComment("Refill when dropping items");
-	public static BooleanEntry useRefill = refillCategory.register("use", new BooleanEntry(true))
-			.setComment("Refill when using items");
-	public static BooleanEntry otherRefill = refillCategory.register("other", new BooleanEntry(true))
-			.setComment("Refill on other occasions");
-	public static ConfigCategory refillRules = refillCategory.register("rules", new ConfigCategory())
-			.setComment("Enable/Disable specific rules for how to refill items");
+		@AConfigEntry(name = "scroll-factor", comment = "Set the scroll factor for item scrolling.\nTo invert the scrolling use negative numbers")
+		public float scrollFactor = -1F;
 
-	public static void initialize() {
-		SlotRefiller.initialize();
+		@AConfigEntry(name = "hold-tool-pick", comment = "Pick correct tool when middle clicking whilst holding a tool.")
+		public boolean holdToolPick = true;
 
-		configFile.register("general.tool-pick-mode", new ConfigEntryFixer() {
-			@Override
-			public void fix(DataObject dataObject, String propertyName, DataObject mainCompound) {
-				if (dataObject.has(propertyName)) {
-					DataValue<?> dataValue = dataObject.get(propertyName);
-					if (!dataValue.isString()) return;
-					if (dataValue.asString().equals("HOLD_TOOL")) {
-						mainCompound.set("hold-tool-pick", true);
-					} else if (dataValue.asString().equals("SHIFT")) {
-						mainCompound.set("hold-tool-pick", false);
-					}
-					dataObject.remove(propertyName);
-				}
-			}
-		});
+		@AConfigEntry(name = "hold-block-tool-pick", comment = "Pick correct tool when middle clicking the held block.")
+		public boolean holdBlockToolPick = false;
+
+		@AConfigEntry(name = "enable-quick-craft", comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
+		public boolean enableQuickCraft = true;
+	}
+
+	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
+	public Sort sort = new Sort();
+
+	public static class Sort {
+		@AConfigEntry(name = "primary-sort", comment = "Sets the sort mode for normal sorting.")
+		public SortMode.Predefined primarySort = SortMode.Predefined.RAW_ID;
+
+		@AConfigEntry(name = "shift-sort", comment = "Sets the sort mode for sorting whilst pressing shift.")
+		public SortMode.Predefined shiftSort = SortMode.Predefined.QUANTITY;
+
+		@AConfigEntry(name = "control-sort", comment = "Sets the sort mode for sorting whilst pressing control.")
+		public SortMode.Predefined controlSort = SortMode.Predefined.ALPHABET;
+	}
+
+	@AConfigEntry(comment = "Configure refill related stuff here.")
+	public Refill refill = new Refill();
+
+	public static class Refill {
+		@AConfigEntry(comment = "Refill when eating items")
+		public boolean eat = true;
+
+		@AConfigEntry(comment = "Refill when dropping items")
+		public boolean drop = true;
+
+		@AConfigEntry(comment = "Refill when using up items")
+		public boolean use = true;
+
+		@AConfigEntry(comment = "Refill on other occasions")
+		public boolean other = true;
+
+		@AConfigEntry(comment = "Enable/Disable specific rules for how to refill items")
+		public Rules rules = new Rules();
+
+		public static class Rules {
+			@AConfigEntry(name = "any-block", comment = "Tries to find any block items")
+			public boolean anyBlock = false;
+			@AConfigEntry(name = "itemgroup", comment = "Find items of the same item group")
+			public boolean itemgroup = false;
+			@AConfigEntry(name = "item-hierarchy", comment = "Try to find similar items through the item type hierarchy")
+			public boolean itemHierarchy = false;
+			@AConfigEntry(name = "block-hierarchy", comment = "Try to find similar block items through the block type hierarchy")
+			public boolean blockHierarchy = false;
+			@AConfigEntry(comment = "Try to find other food items")
+			public boolean food = false;
+			@AConfigEntry(name = "equal-items", comment = "Try to find equal items (no nbt matching)")
+			public boolean equalItems = true;
+			@AConfigEntry(name = "equal-stacks", comment = "Try to find equal stacks (nbt matching")
+			public boolean equalStacks = true;
+		}
 	}
 }

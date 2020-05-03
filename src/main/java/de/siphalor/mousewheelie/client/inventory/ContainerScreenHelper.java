@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
-import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,7 +25,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
 		boolean shallSend;
-		if (Config.directionalScrolling.value) {
+		if (MouseWheelie.CONFIG.general.directionalScrolling) {
 			shallSend = shallChangeInventory(referenceSlot, scrollUp);
 		} else {
 			shallSend = !scrollUp;

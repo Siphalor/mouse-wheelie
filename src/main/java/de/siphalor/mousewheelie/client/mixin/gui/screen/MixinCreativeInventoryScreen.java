@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
 import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
@@ -47,7 +47,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 		if (mouseY < this.y + 4 || mouseY >= this.y + this.backgroundHeight - 4) {
 			if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
-				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Config.scrollFactor.value), 0, ItemGroup.GROUPS.length - 1);
+				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * MouseWheelie.CONFIG.general.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
 				int newPage = helper.getPageForTabIndex(newIndex);
 				if (newPage < helper.getCurrentPage())
 					helper.previousPage();
@@ -55,11 +55,11 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 					helper.nextPage();
 				setSelectedTab(ItemGroup.GROUPS[newIndex]);
 			} else
-				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Config.scrollFactor.value)), 0, ItemGroup.GROUPS.length - 1)]);
+				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * MouseWheelie.CONFIG.general.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
 			return true;
 		}
 
-		if (Config.enableItemScrolling.value && selectedTab != ItemGroup.INVENTORY.getIndex()) {
+		if (MouseWheelie.CONFIG.general.enableItemScrolling && selectedTab != ItemGroup.INVENTORY.getIndex()) {
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
 				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType)).scroll(hoverSlot, scrollAmount < 0);

@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
@@ -141,7 +141,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Override
 	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
-		if (Config.enableItemScrolling.value) {
+		if (MouseWheelie.CONFIG.general.enableItemScrolling) {
 			if (hasAltDown()) return false;
 			Slot hoveredSlot = getSlotAt(mouseX, mouseY);
 			if (hoveredSlot == null)
@@ -177,11 +177,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		InventorySorter sorter = new InventorySorter(handler, focusedSlot);
 		SortMode sortMode;
 		if (hasShiftDown()) {
-			sortMode = Config.shiftSort.value.sortMode;
+			sortMode = MouseWheelie.CONFIG.sort.shiftSort.sortMode;
 		} else if (hasControlDown()) {
-			sortMode = Config.controlSort.value.sortMode;
+			sortMode = MouseWheelie.CONFIG.sort.controlSort.sortMode;
 		} else {
-			sortMode = Config.primarySort.value.sortMode;
+			sortMode = MouseWheelie.CONFIG.sort.primarySort.sortMode;
 		}
 		if (sortMode == null) return false;
 		sorter.sort(sortMode);

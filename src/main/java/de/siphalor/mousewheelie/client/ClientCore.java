@@ -10,14 +10,13 @@ import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
-import de.siphalor.tweed.client.TweedClothBridge;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
-import net.fabricmc.fabric.api.tools.FabricToolTags;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -29,17 +28,16 @@ import net.minecraft.util.hit.HitResult;
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
 public class ClientCore implements ClientModInitializer {
+
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
 
-	public static final FabricKeyBinding OPEN_CONFIG_SCREEN = new OpenConfigScreenKeybinding(new Identifier(MouseWheelie.MOD_ID, "open_config_screen"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
-	public static final FabricKeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
+	public static final FabricKeyBinding OPEN_CONFIG_SCREEN = new OpenConfigScreenKeybinding(new Identifier(MouseWheelie.MOD_ID, "open_config_screen"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final FabricKeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final FabricKeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
 	public static final FabricKeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
-	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, KeyModifiers.NONE);
-
-	public static TweedClothBridge tweedClothBridge;
+	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
 
 	public static boolean awaitSlotUpdate = false;
 
@@ -54,7 +52,7 @@ public class ClientCore implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if (Config.holdToolPick.value && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
+			if (MouseWheelie.CONFIG.general.holdToolPick && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
@@ -65,7 +63,7 @@ public class ClientCore implements ClientModInitializer {
 					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
 				}
 			}
-			if (Config.holdBlockToolPick.value && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+			if (MouseWheelie.CONFIG.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
@@ -75,10 +73,6 @@ public class ClientCore implements ClientModInitializer {
 			}
 			return ItemStack.EMPTY;
 		});
-
-		Config.initialize();
-
-		tweedClothBridge = new TweedClothBridge(Config.configFile);
 	}
 
 	public static boolean isTool(Item item) {

@@ -5,9 +5,9 @@
 	"key.mousewheelie.scroll_up": "Scroll Up",
 	"key.mousewheelie.scroll_down": "Scroll Down",
 	"key.mousewheelie.pick_tool": "Pick the correct tool",
-
+	"mousewheelie.gui.config-screen-unavailable": "Opening the config screen with the keybinding is currently unavailable.",
+	"mousewheelie.gui.config-screen-unavailable.note": "Please use Mod Menu to edit the config or use an external application to edit the config directly.",
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Config",
-
 	"tweed.cloth.mousewheelie.general": "General",
 	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Enable item scrolling",
 	"tweed.cloth.mousewheelie.general.directional-scrolling": "Directional Scrolling",
@@ -15,7 +15,6 @@
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Middle-click to the correct tool while holding a tool",
 	"tweed.cloth.mousewheelie.general.hold-block-tool-pick": "Middle-click to the correct tool while holding the same block",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Enable quick crafting",
-
 	"tweed.cloth.mousewheelie.sort": "Sorting",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Middle mouse click",
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + middle mouse click",

@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie;
 
+import de.siphalor.mousewheelie.client.Config;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.EquipmentSlot;
@@ -10,6 +11,7 @@ import net.minecraft.util.TypedActionResult;
 
 public class MouseWheelie implements ModInitializer {
 	public static final String MOD_ID = "mousewheelie";
+	public static final Config CONFIG = new Config();
 
 	@Override
 	public void onInitialize() {
