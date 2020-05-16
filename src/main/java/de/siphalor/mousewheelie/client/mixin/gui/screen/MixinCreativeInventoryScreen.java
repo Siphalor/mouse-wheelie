@@ -41,10 +41,13 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 
 	@Override
 	public boolean mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
-		// Exact box matching:
-		//if(mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28))) {
-		// Rough matching:
-		if (mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4) {
+		boolean overTabs;
+		if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+			overTabs = mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28));
+		} else {
+			overTabs = mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4;
+		}
+		if (overTabs) {
 			if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
 				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Config.scrollFactor.value), 0, ItemGroup.GROUPS.length - 1);
@@ -54,8 +57,9 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				if (newPage > helper.getCurrentPage())
 					helper.nextPage();
 				setSelectedTab(ItemGroup.GROUPS[newIndex]);
-			} else
+			} else {
 				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Config.scrollFactor.value)), 0, ItemGroup.GROUPS.length - 1)]);
+			}
 			return true;
 		}
 
