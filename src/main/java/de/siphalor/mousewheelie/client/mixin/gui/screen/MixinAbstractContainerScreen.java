@@ -101,7 +101,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				} else if (hasShiftDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
 				} else if (hasControlDown()) {
-					new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+					new ContainerScreenHelper<>((AbstractContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
@@ -120,9 +120,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasShiftDown()) {
-						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+						new ContainerScreenHelper<>((AbstractContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
 					} else {
-						new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						new ContainerScreenHelper<>((AbstractContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
@@ -156,7 +156,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 			}
 
-			ContainerScreenHelper containerScreenHelper = new ContainerScreenHelper((AbstractContainerScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((AbstractContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
 			return true;
 		}

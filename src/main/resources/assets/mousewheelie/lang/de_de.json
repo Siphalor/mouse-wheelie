@@ -5,16 +5,14 @@
 	"key.mousewheelie.scroll_up": "Hochscrollen",
 	"key.mousewheelie.scroll_down": "Runterscrollen",
 	"key.mousewheelie.pick_tool": "Optimales Werkzeug wählen",
-
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
-
 	"tweed.cloth.mousewheelie.general": "Allgemein",
 	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Scrollen zum Bewegen von Gegenständen",
+	"tweed.cloth.mousewheelie.general.push-hotbar-separately": "Hotbar separat scrollen",
 	"tweed.cloth.mousewheelie.general.directional-scrolling": "Richtungsgesteuerters Scrollen",
 	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Zum Abbauen optimale Werkzeug wählen (siehe Beschreibung)",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Schnelles Herstellen",
-
 	"tweed.cloth.mousewheelie.sort": "Sortierung",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Mittlere Maustaste",
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Umschalt & mittlere Maustaste",

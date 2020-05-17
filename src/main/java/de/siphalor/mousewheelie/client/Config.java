@@ -14,8 +14,11 @@ import de.siphalor.tweed.config.fixers.ConfigEntryFixer;
 import de.siphalor.tweed.data.DataObject;
 import de.siphalor.tweed.data.DataValue;
 import de.siphalor.tweed.data.serializer.HjsonSerializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 @SuppressWarnings({"unchecked", "WeakerAccess"})
+@Environment(EnvType.CLIENT)
 public class Config {
 	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
 
@@ -27,6 +30,8 @@ public class Config {
 	public static BooleanEntry directionalScrolling = generalCategory.register("directional-scrolling", new BooleanEntry(true))
 			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
 					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
+	public static BooleanEntry pushHotbarSeparately = generalCategory.register("push-hotbar-separately", new BooleanEntry(false))
+			.setComment("If enabled the player inventory and the hotbar will be treated as different sections when pushing the inventory");
 	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
 			.setComment("Set the scroll factor for item scrolling.\n" +
 					"To invert the scrolling use negative numbers");
