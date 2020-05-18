@@ -7,11 +7,14 @@ import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
 import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
+import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import de.siphalor.tweed.client.TweedClothBridge;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
@@ -25,7 +28,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
 @SuppressWarnings("WeakerAccess")
-public class ClientCore implements ClientModInitializer {
+@Environment(EnvType.CLIENT)
+public class MWClient implements ClientModInitializer {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
@@ -51,7 +55,7 @@ public class ClientCore implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if (Config.holdToolPick.value && (ClientCore.isTool(item) || ClientCore.isWeapon(item))) {
+			if (Config.holdToolPick.value && (MWClient.isTool(item) || MWClient.isWeapon(item))) {
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
@@ -96,20 +100,23 @@ public class ClientCore implements ClientModInitializer {
 
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {
 		double scrollAmount = scrollY * CLIENT.options.mouseWheelSensitivity;
+		ScrollAction result;
 		if (CLIENT.currentScreen instanceof ISpecialScrollableScreen) {
-			if (((ISpecialScrollableScreen) CLIENT.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount)) {
-				return true;
+			result = ((ISpecialScrollableScreen) CLIENT.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount);
+			if (result.cancelsCustomActions()) {
+				return result.cancelsAllActions();
 			}
 		}
 		if (CLIENT.currentScreen instanceof IContainerScreen) {
-			if (((IContainerScreen) CLIENT.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollAmount)) {
-				return true;
+			result = ((IContainerScreen) CLIENT.currentScreen).mouseWheelie_onMouseScroll(mouseX, mouseY, scrollY);
+			if (result.cancelsCustomActions()) {
+				return result.cancelsAllActions();
 			}
 		}
 		if (CLIENT.currentScreen instanceof IScrollableRecipeBook) {
-			//noinspection RedundantIfStatement
-			if (((IScrollableRecipeBook) CLIENT.currentScreen).mouseWheelie_onMouseScrollRecipeBook(mouseX, mouseY, scrollAmount)) {
-				return true;
+			result = ((IScrollableRecipeBook) CLIENT.currentScreen).mouseWheelie_onMouseScrollRecipeBook(mouseX, mouseY, scrollY);
+			if (result.cancelsCustomActions()) {
+				return result.cancelsAllActions();
 			}
 		}
 		return false;

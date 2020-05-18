@@ -36,7 +36,7 @@ public class Config {
 	public static BooleanEntry enableItemScrolling = scrollingCategory.register("enable", new BooleanEntry(true))
 			.setComment("Enables scrolling of items/stacks.\n" +
 					"(How dare you?)");
-	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
+	public static FloatEntry scrollFactor = scrollingCategory.register("scroll-factor", new FloatEntry(1F))
 			.setComment("Set the scroll factor for item scrolling.\n" +
 					"To invert the scrolling use negative numbers");
 	public static BooleanEntry directionalScrolling = scrollingCategory.register("directional-scrolling", new BooleanEntry(true))
@@ -44,6 +44,8 @@ public class Config {
 					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
 	public static BooleanEntry pushHotbarSeparately = scrollingCategory.register("push-hotbar-separately", new BooleanEntry(false))
 			.setComment("If enabled the player inventory and the hotbar will be treated as different sections when pushing the inventory");
+	public static BooleanEntry scrollCreativeMenu = scrollingCategory.register("scroll-creative-menu", new BooleanEntry(false))
+			.setComment("Sets whether scrolling in creative mode by default scrolls the items or the menu.");
 
 	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
 			.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");

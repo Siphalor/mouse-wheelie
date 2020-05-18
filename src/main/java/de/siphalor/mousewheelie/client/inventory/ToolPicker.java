@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
-import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
@@ -50,7 +50,7 @@ public class ToolPicker {
 		for (int i = 1; i <= inventory.getInvSize(); i++) {
 			int index = (i + lastToolPickSlot) % inventory.getInvSize();
 			if (index == inventory.selectedSlot) continue;
-			if (ClientCore.isWeapon(inventory.getInvStack(index).getItem()))
+			if (MWClient.isWeapon(inventory.getInvStack(index).getItem()))
 				return index;
 		}
 		return -1;

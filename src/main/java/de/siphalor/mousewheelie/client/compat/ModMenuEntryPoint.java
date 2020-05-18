@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.compat;
 
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.MWClient;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import net.minecraft.client.gui.screen.Screen;
 
@@ -15,6 +15,6 @@ public class ModMenuEntryPoint implements ModMenuApi {
 
 	@Override
 	public Function<Screen, ? extends Screen> getConfigScreenFactory() {
-		return screen -> ClientCore.tweedClothBridge.buildScreen();
+		return screen -> MWClient.tweedClothBridge.buildScreen();
 	}
 }
