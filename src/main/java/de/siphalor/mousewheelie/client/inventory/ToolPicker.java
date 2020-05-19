@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
-import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -53,7 +53,7 @@ public class ToolPicker {
 		for (int i = 1; i <= inventory.size(); i++) {
 			int index = (i + lastToolPickSlot) % inventory.size();
 			if (index == inventory.selectedSlot) continue;
-			if (ClientCore.isWeapon(inventory.getStack(index).getItem()))
+			if (MWClient.isWeapon(inventory.getStack(index).getItem()))
 				return index;
 		}
 		return -1;

@@ -5,21 +5,20 @@
 	"key.mousewheelie.scroll_up": "Hochscrollen",
 	"key.mousewheelie.scroll_down": "Runterscrollen",
 	"key.mousewheelie.pick_tool": "Optimales Werkzeug wählen",
-
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
-
 	"tweed.cloth.mousewheelie.general": "Allgemein",
-	"tweed.cloth.mousewheelie.general.enable-item-scrolling": "Scrollen zum Bewegen von Gegenständen",
-	"tweed.cloth.mousewheelie.general.directional-scrolling": "Richtungsgesteuerters Scrollen",
-	"tweed.cloth.mousewheelie.general.scroll-factor": "Scroll-Faktor",
 	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Zum Abbauen optimale Werkzeug wählen (siehe Beschreibung)",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Schnelles Herstellen",
-
+	"tweed.cloth.mousewheelie.scrolling": "Scrollen",
+	"tweed.cloth.mousewheelie.scrolling.enable": "Scrollen zum Bewegen von Gegenständen",
+	"tweed.cloth.mousewheelie.scrolling.scroll-factor": "Scroll-Faktor",
+	"tweed.cloth.mousewheelie.scrolling.directional-scrolling": "Richtungsgesteuerters Scrollen",
+	"tweed.cloth.mousewheelie.scrolling.push-hotbar-separately": "Hotbar separat scrollen",
+	"tweed.cloth.mousewheelie.scrolling.scroll-creative-menu": "Das Kreativ-Inventar scrollen",
 	"tweed.cloth.mousewheelie.sort": "Sortierung",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "Mittlere Maustaste",
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Umschalt & mittlere Maustaste",
 	"tweed.cloth.mousewheelie.sort.control-sort": "Steuerung & mittlere Maustaste",
-
 	"tweed.cloth.mousewheelie.refill": "Auffüllen",
 	"tweed.cloth.mousewheelie.refill.eat": "Essen nachladen",
 	"tweed.cloth.mousewheelie.refill.drop": "Fallengelassene Gegenstände nachladen",

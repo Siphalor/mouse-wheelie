@@ -25,7 +25,7 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "de.siphalor.mousewheelie.client.ClientCore"
+				"value": "de.siphalor.mousewheelie.client.MWClient"
 			}
 		],
 		"main": [

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.7-SNAPSHOT'
+	id 'fabric-loom' version '0.4.3'
 	id 'maven-publish'
 }
 
@@ -60,7 +60,7 @@ dependencies {
 		exclude module: "modmenu"
 	}
 	include "com.github.siphalor:tweed-api:${project.tweed_version}"
-	
+
 	modImplementation("com.github.siphalor:amecs-api:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}

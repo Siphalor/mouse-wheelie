@@ -5,6 +5,7 @@ import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
@@ -140,14 +141,14 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	}
 
 	@Override
-	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
-		if (MouseWheelie.CONFIG.general.enableItemScrolling) {
-			if (hasAltDown()) return false;
+	public ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
+		if (MouseWheelie.CONFIG.scrolling.enable) {
+			if (hasAltDown()) return ScrollAction.FAILURE;
 			Slot hoveredSlot = getSlotAt(mouseX, mouseY);
 			if (hoveredSlot == null)
-				return false;
+				return ScrollAction.PASS;
 			if (hoveredSlot.getStack().isEmpty())
-				return false;
+				return ScrollAction.PASS;
 
 			//noinspection ConstantConditions
 			if (scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
@@ -156,16 +157,17 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
 					InteractionManager.pushClickEvent(handler.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
 					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
-					return true;
+					return ScrollAction.SUCCESS;
 				}
 			}
 
 			//noinspection ConstantConditions
 			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
-			return true;
+
+			return ScrollAction.SUCCESS;
 		}
-		return false;
+		return ScrollAction.PASS;
 	}
 
 	@Override

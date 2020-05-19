@@ -25,7 +25,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
 		boolean shallSend;
-		if (MouseWheelie.CONFIG.general.directionalScrolling) {
+		if (MouseWheelie.CONFIG.scrolling.directionalScrolling) {
 			shallSend = shallChangeInventory(referenceSlot, scrollUp);
 		} else {
 			shallSend = !scrollUp;
@@ -76,9 +76,13 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		return isLowerSlot(slot) == scrollUp;
 	}
 
+	public boolean isHotbarSlot(Slot slot) {
+		return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+	}
+
 	public boolean isLowerSlot(Slot slot) {
 		if (screen instanceof AbstractInventoryScreen) {
-			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+			return isHotbarSlot(slot);
 		} else {
 			return (slot.inventory instanceof PlayerInventory);
 		}
@@ -114,6 +118,11 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
+		if (MouseWheelie.CONFIG.scrolling.pushHotbarSeparately) {
+			if (slot1.inventory instanceof PlayerInventory && slot2.inventory instanceof PlayerInventory) {
+				return isHotbarSlot(slot1) == isHotbarSlot(slot2);
+			}
+		}
 		return isLowerSlot(slot1) == isLowerSlot(slot2);
 	}
 

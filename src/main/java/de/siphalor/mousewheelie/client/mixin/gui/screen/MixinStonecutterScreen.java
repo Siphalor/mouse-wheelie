@@ -2,6 +2,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -20,7 +21,7 @@ public abstract class MixinStonecutterScreen extends HandledScreen<StonecutterSc
 	}
 
 	@Override
-	public boolean mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
+	public ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		Slot slot = mouseWheelie_getSlotAt(mouseX, mouseY);
 
 		if (slot != null) {
@@ -28,9 +29,9 @@ public abstract class MixinStonecutterScreen extends HandledScreen<StonecutterSc
 				onMouseClick(slot1, ((ISlot) slot1).mouseWheelie_getInvSlot(), data, slotActionType);
 				return 1;
 			}))).scroll(slot, scrollAmount < 0);
-			return true;
+			return ScrollAction.SUCCESS;
 		}
 
-		return false;
+		return ScrollAction.PASS;
 	}
 }

@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin.entity;
 
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.ClientCore;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +22,7 @@ public class MixinLivingEntity {
 		if ((Object) this instanceof PlayerEntity && MouseWheelie.CONFIG.refill.eat) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
 			SlotRefiller.set(playerInventory, playerInventory.getMainHandStack().copy());
-			ClientCore.awaitSlotUpdate = true;
+			MWClient.awaitSlotUpdate = true;
 		}
 	}
 }
