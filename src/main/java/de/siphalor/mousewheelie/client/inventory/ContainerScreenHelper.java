@@ -2,6 +2,8 @@ package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
@@ -11,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 @SuppressWarnings("WeakerAccess")
+@Environment(EnvType.CLIENT)
 public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 	protected final T screen;
 	protected final ClickHandler clickHandler;
@@ -73,9 +76,13 @@ public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 		return isLowerSlot(slot) == scrollUp;
 	}
 
+	public boolean isHotbarSlot(Slot slot) {
+		return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+	}
+
 	public boolean isLowerSlot(Slot slot) {
 		if (screen instanceof AbstractInventoryScreen) {
-			return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+			return isHotbarSlot(slot);
 		} else {
 			return (slot.inventory instanceof PlayerInventory);
 		}
@@ -111,6 +118,11 @@ public class ContainerScreenHelper<T extends AbstractContainerScreen<?>> {
 	}
 
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
+		if (Config.pushHotbarSeparately.value) {
+			if (slot1.inventory instanceof PlayerInventory && slot2.inventory instanceof PlayerInventory) {
+				return isHotbarSlot(slot1) == isHotbarSlot(slot2);
+			}
+		}
 		return isLowerSlot(slot1) == isLowerSlot(slot2);
 	}
 

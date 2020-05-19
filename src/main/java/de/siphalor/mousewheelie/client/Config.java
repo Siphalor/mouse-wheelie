@@ -11,31 +11,41 @@ import de.siphalor.tweed.config.entry.BooleanEntry;
 import de.siphalor.tweed.config.entry.EnumEntry;
 import de.siphalor.tweed.config.entry.FloatEntry;
 import de.siphalor.tweed.config.fixers.ConfigEntryFixer;
+import de.siphalor.tweed.config.fixers.ConfigEntryLocationFixer;
 import de.siphalor.tweed.data.DataObject;
 import de.siphalor.tweed.data.DataValue;
 import de.siphalor.tweed.data.serializer.HjsonSerializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 @SuppressWarnings({"unchecked", "WeakerAccess"})
+@Environment(EnvType.CLIENT)
 public class Config {
 	public static ConfigFile configFile = TweedRegistry.registerConfigFile(MouseWheelie.MOD_ID, HjsonSerializer.INSTANCE).setEnvironment(ConfigEnvironment.CLIENT);
 
 	public static ConfigCategory generalCategory = configFile.register("general", new ConfigCategory())
 			.setComment("General settings");
-	public static BooleanEntry enableItemScrolling = generalCategory.register("enable-item-scrolling", new BooleanEntry(true))
-			.setComment("Enables scrolling of items/stacks.\n" +
-					"(How dare you?)");
-	public static BooleanEntry directionalScrolling = generalCategory.register("directional-scrolling", new BooleanEntry(true))
-			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
-					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
-	public static FloatEntry scrollFactor = generalCategory.register("scroll-factor", new FloatEntry(-1.0F))
-			.setComment("Set the scroll factor for item scrolling.\n" +
-					"To invert the scrolling use negative numbers");
 	public static BooleanEntry holdToolPick = generalCategory.register("hold-tool-pick", new BooleanEntry(true))
 			.setComment("Pick correct tool when middle clicking whilst holding a tool.");
 	public static BooleanEntry holdBlockToolPick = generalCategory.register("hold-block-tool-pick", new BooleanEntry(false))
 			.setComment("Pick correct tool when middle clicking the held block.");
 	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
 			.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
+
+	public static ConfigCategory scrollingCategory = configFile.register("scrolling", new ConfigCategory());
+	public static BooleanEntry enableItemScrolling = scrollingCategory.register("enable", new BooleanEntry(true))
+			.setComment("Enables scrolling of items/stacks.\n" +
+					"(How dare you?)");
+	public static FloatEntry scrollFactor = scrollingCategory.register("scroll-factor", new FloatEntry(1F))
+			.setComment("Set the scroll factor for item scrolling.\n" +
+					"To invert the scrolling use negative numbers");
+	public static BooleanEntry directionalScrolling = scrollingCategory.register("directional-scrolling", new BooleanEntry(true))
+			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
+					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
+	public static BooleanEntry pushHotbarSeparately = scrollingCategory.register("push-hotbar-separately", new BooleanEntry(false))
+			.setComment("If enabled the player inventory and the hotbar will be treated as different sections when pushing the inventory");
+	public static BooleanEntry scrollCreativeMenu = scrollingCategory.register("scroll-creative-menu", new BooleanEntry(false))
+			.setComment("Sets whether scrolling in creative mode by default scrolls the items or the menu.");
 
 	public static ConfigCategory sortCategory = configFile.register("sort", new ConfigCategory())
 			.setComment("Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY");
@@ -77,5 +87,10 @@ public class Config {
 				}
 			}
 		});
+
+		configFile.register("general.enable-item-scrolling", new ConfigEntryLocationFixer("enable", "scrolling"));
+		configFile.register("general.scroll-factor", new ConfigEntryLocationFixer("scroll-factor", "scrolling"));
+		configFile.register("general.directional-scrolling", new ConfigEntryLocationFixer("directional-scrolling", "scrolling"));
+		configFile.register("general.push-hotbar-separately", new ConfigEntryLocationFixer("push-hotbar-separately", "scrolling"));
 	}
 }

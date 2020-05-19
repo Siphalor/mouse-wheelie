@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.TypedActionResult;
 
 public class MouseWheelie implements ModInitializer {
@@ -15,7 +14,8 @@ public class MouseWheelie implements ModInitializer {
 	public void onInitialize() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getStackInHand(hand);
-			if (world instanceof ServerWorld) {
+			if (!world.isClient()) {
+				ItemStack stack = player.getStackInHand(hand);
 				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 					ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);

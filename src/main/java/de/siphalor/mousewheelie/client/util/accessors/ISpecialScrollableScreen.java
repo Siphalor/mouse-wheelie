@@ -1,5 +1,7 @@
 package de.siphalor.mousewheelie.client.util.accessors;
 
+import de.siphalor.mousewheelie.client.util.ScrollAction;
+
 public interface ISpecialScrollableScreen {
-	boolean mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount);
+	ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount);
 }

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.6-SNAPSHOT'
+	id 'fabric-loom' version '0.4.3'
 	id 'maven-publish'
 }
 
@@ -19,6 +19,10 @@ repositories {
 	maven {
 		name "Fabric"
 		url "http://maven.fabricmc.net/"
+	}
+    maven {
+		name "Masa's Maven"
+		url "https://masa.dy.fi/maven/"
 	}
 	maven {
 		name "jitpack"
@@ -68,6 +72,13 @@ dependencies {
 		exclude module: "modmenu"
 	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+
+	modCompile("fi.dy.masa.litematica:litematica:+") {
+		transitive false
+	}
+	modCompile("fi.dy.masa.malilib:malilib-fabric-1.14.4:+") {
+		transitive false
+	}
 }
 
 processResources {
