@@ -20,6 +20,10 @@ repositories {
 		name "Fabric"
 		url "http://maven.fabricmc.net/"
 	}
+    maven {
+		name "Masa's Maven"
+		url "https://masa.dy.fi/maven/"
+	}
 	maven {
 		name "jitpack"
 		url "https://jitpack.io"
@@ -65,6 +69,13 @@ dependencies {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+
+	modCompile("fi.dy.masa.litematica:litematica:+") {
+		transitive false
+	}
+	modCompile("fi.dy.masa.malilib:malilib-fabric-1.14.4:+") {
+		transitive false
+	}
 }
 
 processResources {
