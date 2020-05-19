@@ -72,13 +72,6 @@ dependencies {
 		exclude module: "modmenu"
 	}
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
-
-	modCompile("fi.dy.masa.litematica:litematica:+") {
-		transitive false
-	}
-	modCompile("fi.dy.masa.malilib:malilib-fabric-1.14.4:+") {
-		transitive false
-	}
 }
 
 processResources {

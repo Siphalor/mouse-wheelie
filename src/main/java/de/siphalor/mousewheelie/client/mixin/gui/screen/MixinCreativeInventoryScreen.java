@@ -39,9 +39,9 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 	public ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
 		boolean overTabs;
 		if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
-			overTabs = mouseX >= this.left && mouseX < this.left + this.width && ((mouseY >= this.top - 28 && mouseY < this.top + 4) || (mouseY >= this.top + this.height - 4 && mouseY < this.top + this.height + 28));
+			overTabs = mouseX >= this.x && mouseX < this.x + this.width && ((mouseY >= this.y - 28 && mouseY < this.y + 4) || (mouseY >= this.y + this.height - 4 && mouseY < this.y + this.height + 28));
 		} else {
-			overTabs = mouseY < this.top + 4 || mouseY >= this.top + this.containerHeight - 4;
+			overTabs = mouseY < this.y + 4 || mouseY >= this.y + this.containerHeight - 4;
 		}
 		if (overTabs) {
 			if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
