@@ -34,8 +34,7 @@ public class Config {
 
 	public static ConfigCategory scrollingCategory = configFile.register("scrolling", new ConfigCategory());
 	public static BooleanEntry enableItemScrolling = scrollingCategory.register("enable", new BooleanEntry(true))
-			.setComment("Enables scrolling of items/stacks.\n" +
-					"(How dare you?)");
+			.setComment("Enables scrolling of items/stacks.");
 	public static FloatEntry scrollFactor = scrollingCategory.register("scroll-factor", new FloatEntry(1F))
 			.setComment("Set the scroll factor for item scrolling.\n" +
 					"To invert the scrolling use negative numbers");
