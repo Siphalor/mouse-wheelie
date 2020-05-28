@@ -117,6 +117,24 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 		}
 	}
 
+	public void removeAllOfAKind(Slot referenceSlot) {
+		ItemStack referenceStack = referenceSlot.getStack().copy();
+		for (Slot slot : screen.getContainer().slots) {
+			if (slotsInSameScope(slot, referenceSlot)) {
+				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
+					clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+			}
+		}
+	}
+
+	public void removeAllFrom(Slot referenceSlot) {
+		for (Slot slot : screen.getContainer().slots) {
+			if (slotsInSameScope(slot, referenceSlot)) {
+				clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+			}
+		}
+	}
+
 	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
 		if (Config.pushHotbarSeparately.value) {
 			if (slot1.inventory instanceof PlayerInventory && slot2.inventory instanceof PlayerInventory) {
