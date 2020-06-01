@@ -40,6 +40,7 @@ public class MWClient implements ClientModInitializer {
 	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
 
 	public static boolean awaitSlotUpdate = false;
+	public static int lastUpdatedSlot = -1;
 
 	@Override
 	public void onInitializeClient() {

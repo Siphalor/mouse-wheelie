@@ -27,7 +27,7 @@ public abstract class MixinStonecutterScreen extends HandledScreen<StonecutterSc
 		if (slot != null) {
 			new ContainerScreenHelper<>((StonecutterScreen) (Object) this, (slot1, data, slotActionType) -> InteractionManager.push(new InteractionManager.CallbackEvent(() -> {
 				onMouseClick(slot1, ((ISlot) slot1).mouseWheelie_getInvSlot(), data, slotActionType);
-				return 1;
+				return new InteractionManager.GuiConfirmWaiter(1);
 			}))).scroll(slot, scrollAmount < 0);
 			return ScrollAction.SUCCESS;
 		}

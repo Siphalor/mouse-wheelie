@@ -88,7 +88,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				} else {
 					playerInventory.setCursorStack(offHandStack);
 				}
-				return 1;
+				return InteractionManager.DUMMY_WAITER;
 			});
 		}
 	}
@@ -98,13 +98,30 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
-				if (hasAltDown()) {
-					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
-				} else if (hasShiftDown()) {
-					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
-				} else if (hasControlDown()) {
-					// noinspection ConstantConditions
-					new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+				boolean alt = hasAltDown();
+				boolean ctrl = hasControlDown();
+				boolean shift = hasShiftDown();
+				if (!ctrl) {
+					if (alt) {
+						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+					} else if (shift) {
+						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
+					}
+				} else {
+					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+					if (alt) {
+						if (shift) {
+							containerScreenHelper.dropAllFrom(hoveredSlot);
+						} else {
+							containerScreenHelper.dropAllOfAKind(hoveredSlot);
+						}
+					} else {
+						if (shift) {
+							containerScreenHelper.sendAllFrom(hoveredSlot);
+						} else {
+							containerScreenHelper.sendAllOfAKind(hoveredSlot);
+						}
+					}
 				}
 			}
 		}
@@ -114,20 +131,28 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			if (hasAltDown()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
+			Slot hoveredSlot = getSlotAt(x, y);
+			if (hoveredSlot != null) {
+				boolean alt = hasAltDown();
+				boolean ctrl = hasControlDown();
+				boolean shift = hasShiftDown();
+				if (alt && !ctrl) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
-				}
-			} else if (hasControlDown()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
-					if (hasShiftDown()) {
-						//noinspection ConstantConditions
-						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+				} else if (ctrl) {
+					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+					if (alt) {
+						if (shift) {
+							containerScreenHelper.dropAllFrom(hoveredSlot);
+						} else {
+							containerScreenHelper.dropAllOfAKind(hoveredSlot);
+						}
 					} else {
-						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						if (shift) {
+							containerScreenHelper.sendAllFrom(hoveredSlot);
+						} else {
+							containerScreenHelper.sendAllOfAKind(hoveredSlot);
+						}
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
