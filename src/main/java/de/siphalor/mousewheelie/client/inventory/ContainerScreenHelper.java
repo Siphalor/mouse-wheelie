@@ -117,7 +117,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 		}
 	}
 
-	public void removeAllOfAKind(Slot referenceSlot) {
+	public void dropAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
 		for (Slot slot : screen.getContainer().slots) {
 			if (slotsInSameScope(slot, referenceSlot)) {
@@ -127,7 +127,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 		}
 	}
 
-	public void removeAllFrom(Slot referenceSlot) {
+	public void dropAllFrom(Slot referenceSlot) {
 		for (Slot slot : screen.getContainer().slots) {
 			if (slotsInSameScope(slot, referenceSlot)) {
 				clickHandler.handleClick(slot, 1, SlotActionType.THROW);

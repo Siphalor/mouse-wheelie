@@ -110,9 +110,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 					if (alt) {
 						if (shift) {
-							containerScreenHelper.removeAllFrom(hoveredSlot);
+							containerScreenHelper.dropAllFrom(hoveredSlot);
 						} else {
-							containerScreenHelper.removeAllOfAKind(hoveredSlot);
+							containerScreenHelper.dropAllOfAKind(hoveredSlot);
 						}
 					}
 					else {
@@ -142,9 +142,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 					if (alt) {
 						if (shift) {
-							containerScreenHelper.removeAllFrom(hoveredSlot);
+							containerScreenHelper.dropAllFrom(hoveredSlot);
 						} else {
-							containerScreenHelper.removeAllOfAKind(hoveredSlot);
+							containerScreenHelper.dropAllOfAKind(hoveredSlot);
 						}
 					}
 					else {
