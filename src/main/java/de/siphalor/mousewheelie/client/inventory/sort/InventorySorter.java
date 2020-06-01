@@ -80,7 +80,7 @@ public class InventorySorter {
 				continue;
 			}
 			InteractionManager.interactionEventQueue.addAll(clickEvents);
-			InteractionManager.triggerSend();
+			InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 			clickEvents.clear();
 			if (stackSize > 0) {
 				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);

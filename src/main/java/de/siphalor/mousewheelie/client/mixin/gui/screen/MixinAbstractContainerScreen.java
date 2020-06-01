@@ -87,7 +87,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				} else {
 					playerInventory.setCursorStack(offHandStack);
 				}
-				return 1;
+				return InteractionManager.DUMMY_WAITER;
 			});
 		}
 	}

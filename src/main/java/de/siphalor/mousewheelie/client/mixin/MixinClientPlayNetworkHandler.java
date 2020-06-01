@@ -28,12 +28,13 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
-		InteractionManager.triggerSend();
+		InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 	}
 
-	@Inject(method = "onContainerSlotUpdate", at = @At("HEAD"))
+	@Inject(method = "onContainerSlotUpdate", at = @At("RETURN"))
 	public void onGuiSlotUpdateBegin(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		InteractionManager.triggerSend();
+		MWClient.lastUpdatedSlot = packet.getSlot();
+		InteractionManager.triggerSend(InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE);
 	}
 
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))

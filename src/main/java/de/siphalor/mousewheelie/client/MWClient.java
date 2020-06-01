@@ -43,6 +43,7 @@ public class MWClient implements ClientModInitializer {
 	public static TweedClothBridge tweedClothBridge;
 
 	public static boolean awaitSlotUpdate = false;
+	public static int lastUpdatedSlot = -1;
 
 	@Override
 	public void onInitializeClient() {

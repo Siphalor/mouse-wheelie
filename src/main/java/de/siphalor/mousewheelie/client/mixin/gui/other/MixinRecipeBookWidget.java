@@ -13,12 +13,18 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
+import net.minecraft.client.recipe.book.ClientRecipeBook;
 import net.minecraft.container.CraftingContainer;
 import net.minecraft.container.SlotActionType;
+import net.minecraft.network.packet.c2s.play.CraftRequestC2SPacket;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -41,17 +47,27 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Shadow protected abstract void refreshResults(boolean boolean_1);
 
-	@Shadow private int parentHeight;
+	@Shadow
+	private int parentHeight;
 
-	@Shadow public abstract boolean isOpen();
+	@Shadow
+	public abstract boolean isOpen();
 
-	@Shadow protected CraftingContainer<?> craftingContainer;
+	@Shadow
+	protected CraftingContainer<?> craftingContainer;
 
-	@Shadow private boolean searching;
+	@Shadow
+	private boolean searching;
 
-	@Shadow protected MinecraftClient client;
+	@Shadow
+	protected MinecraftClient client;
 
-	@Shadow public abstract boolean mouseClicked(double double_1, double double_2, int int_1);
+	@Shadow
+	@Final
+	protected RecipeFinder recipeFinder;
+
+	@Shadow
+	protected ClientRecipeBook recipeBook;
 
 	@Override
 	public ScrollAction mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
@@ -84,20 +100,66 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;clickRecipe(ILnet/minecraft/recipe/Recipe;Z)V", shift = At.Shift.AFTER))
 	public void mouseClicked(double x, double y, int mouseButton, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (Config.enableQuickCraft.value && mouseButton == 1) {
-			InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, Screen.hasShiftDown() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
+			int resSlot = craftingContainer.getCraftingResultSlotIndex();
+			Recipe<?> recipe = recipesArea.getLastClickedRecipe();
+			if (canCraftMore(recipe)) {
+				InteractionManager.clear();
+				InteractionManager.setWaiter((InteractionManager.TriggerType triggerType) -> MWClient.lastUpdatedSlot >= craftingContainer.getCraftingSlotCount());
+			}
+			InteractionManager.pushClickEvent(craftingContainer.syncId, resSlot, 0, Screen.hasShiftDown() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
 		}
 	}
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if(isOpen() && !client.player.isSpectator()) {
+		if (Config.enableQuickCraft.value && isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
 				searching = false;
-				if (mouseClicked(MWClient.getMouseX(), MWClient.getMouseY(), 0)) {
-					InteractionManager.pushClickEvent(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW);
+				Recipe<?> oldRecipe = recipesArea.getLastClickedRecipe();
+				if (this.recipesArea.mouseClicked(MWClient.getMouseX(), MWClient.getMouseY(), 0, (this.parentWidth - 147) / 2 - this.leftOffset, (this.parentHeight - 166) / 2, 147, 166)) {
+					Recipe<?> recipe = recipesArea.getLastClickedRecipe();
+					RecipeResultCollection resultCollection = recipesArea.getLastClickedResults();
+					if (!resultCollection.isCraftable(recipe)) {
+						return;
+					}
+					int resSlot = craftingContainer.getCraftingResultSlotIndex();
+					if (Screen.hasControlDown()) {
+						if (oldRecipe != recipe || craftingContainer.slots.get(resSlot).getStack().isEmpty() || canCraftMore(recipe)) {
+							InteractionManager.push(new InteractionManager.PacketEvent(new CraftRequestC2SPacket(craftingContainer.syncId, recipe, true), (triggerType) -> MWClient.lastUpdatedSlot >= craftingContainer.getCraftingSlotCount()));
+						}
+						int cnt = recipeFinder.countRecipeCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+						for (int i = 1; i < cnt; i++) {
+							InteractionManager.pushClickEvent(craftingContainer.syncId, resSlot, 0, SlotActionType.THROW);
+						}
+					} else {
+						if (oldRecipe != recipe || craftingContainer.slots.get(resSlot).getStack().isEmpty()) {
+							InteractionManager.push(new InteractionManager.PacketEvent(new CraftRequestC2SPacket(craftingContainer.syncId, recipe, false), (triggerType) -> MWClient.lastUpdatedSlot >= craftingContainer.getCraftingSlotCount()));
+						}
+					}
+					InteractionManager.push(new InteractionManager.CallbackEvent(() -> {
+						client.interactionManager.clickSlot(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
+						refreshResults(false);
+						return new InteractionManager.GuiConfirmWaiter(1);
+					}));
 					callbackInfoReturnable.setReturnValue(true);
 				}
 			}
 		}
+	}
+
+	@Unique
+	private boolean canCraftMore(Recipe<?> recipe) {
+		return getBiggestCraftingStackSize() < recipeFinder.countRecipeCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+	}
+
+	@Unique
+	private int getBiggestCraftingStackSize() {
+		int resSlot = craftingContainer.getCraftingResultSlotIndex();
+		int cnt = 0;
+		for (int i = 0; i < craftingContainer.getCraftingSlotCount(); i++) {
+			if (i == resSlot) continue;
+			cnt = Math.max(cnt, craftingContainer.slots.get(i).getStack().getCount());
+		}
+		return cnt;
 	}
 }

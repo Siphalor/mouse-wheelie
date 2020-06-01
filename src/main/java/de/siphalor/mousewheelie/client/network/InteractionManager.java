@@ -14,12 +14,14 @@ import java.util.function.Supplier;
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
 
-	private static int awaitedTriggers = 0;
+	public static final Waiter DUMMY_WAITER = (TriggerType triggerType) -> true;
+
+	private static Waiter waiter = null;
 
 	public static void push(InteractionEvent interactionEvent) {
 		interactionEventQueue.add(interactionEvent);
-		if (awaitedTriggers <= 0)
-			triggerSend();
+		if (waiter == null)
+			triggerSend(TriggerType.INITIAL);
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
@@ -27,19 +29,46 @@ public class InteractionManager {
 		push(clickEvent);
 	}
 
-	public static void triggerSend() {
-		if (--awaitedTriggers <= 0 && interactionEventQueue.size() > 0) {
-			while ((awaitedTriggers = interactionEventQueue.remove().send()) == 0) {
+	public static void triggerSend(TriggerType triggerType) {
+		if (waiter == null || waiter.trigger(triggerType)) {
+			do {
 				if (interactionEventQueue.isEmpty()) {
+					waiter = null;
 					break;
 				}
-			}
+			} while ((waiter = interactionEventQueue.remove().send()).trigger(TriggerType.INITIAL));
 		}
 	}
 
+	public static void setWaiter(Waiter waiter) {
+		InteractionManager.waiter = waiter;
+	}
+
 	public static void clear() {
-		awaitedTriggers = 0;
 		interactionEventQueue.clear();
+		waiter = null;
+	}
+
+	@FunctionalInterface
+	public interface Waiter {
+		boolean trigger(TriggerType triggerType);
+	}
+
+	public static class GuiConfirmWaiter implements Waiter {
+		int triggers;
+
+		public GuiConfirmWaiter(int triggers) {
+			this.triggers = triggers;
+		}
+
+		@Override
+		public boolean trigger(TriggerType triggerType) {
+			return triggerType == TriggerType.GUI_CONFIRM && --triggers == 0;
+		}
+	}
+
+	public enum TriggerType {
+		INITIAL, CONTAINER_SLOT_UPDATE, GUI_CONFIRM
 	}
 
 	public interface InteractionEvent {
@@ -48,65 +77,73 @@ public class InteractionManager {
 		 *
 		 * @return the number of inventory packets to wait for
 		 */
-		int send();
+		Waiter send();
 	}
 
 	public static class ClickEvent implements InteractionEvent {
-		private final int awaitedTriggers;
+		private final Waiter waiter;
 		private int containerSyncId;
 		private int slotId;
 		private int buttonId;
 		private SlotActionType slotAction;
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
-			this(1, containerSyncId, slotId, buttonId, slotAction);
+			this(containerSyncId, slotId, buttonId, slotAction, 1);
 		}
 
-		public ClickEvent(int awaitedTriggers, int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
-			this.awaitedTriggers = awaitedTriggers;
+		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction, int awaitedTriggers) {
+			this(containerSyncId, slotId, buttonId, slotAction, new GuiConfirmWaiter(awaitedTriggers));
+		}
+
+		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction, Waiter waiter) {
 			this.containerSyncId = containerSyncId;
 			this.slotId = slotId;
 			this.buttonId = buttonId;
 			this.slotAction = slotAction;
+			this.waiter = waiter;
 		}
 
 		@Override
-		public int send() {
+		public Waiter send() {
 			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
-			return awaitedTriggers;
+			return waiter;
 		}
 	}
 
 	public static class CallbackEvent implements InteractionEvent {
-		private final Supplier<Integer> callback;
+		private final Supplier<Waiter> callback;
 
-		public CallbackEvent(Supplier<Integer> callback) {
+		public CallbackEvent(Supplier<Waiter> callback) {
 			this.callback = callback;
 		}
 
 		@Override
-		public int send() {
+		public Waiter send() {
 			return callback.get();
 		}
 	}
 
 	public static class PacketEvent implements InteractionEvent {
 		private final Packet<?> packet;
-		private final int waitForTriggers;
+		private final Waiter waiter;
 
 		public PacketEvent(Packet<?> packet) {
-			this(packet, 0);
+			this(packet, DUMMY_WAITER);
 		}
 
-		public PacketEvent(Packet<?> packet, int waitForTriggers) {
+		public PacketEvent(Packet<?> packet, int triggers) {
+			this(packet, new GuiConfirmWaiter(triggers));
+		}
+
+		public PacketEvent(Packet<?> packet, Waiter waiter) {
 			this.packet = packet;
-			this.waitForTriggers = waitForTriggers;
+			this.waiter = waiter;
 		}
 
 		@Override
-		public int send() {
+		public Waiter send() {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
-			return waitForTriggers;
+			return waiter;
 		}
 	}
 }
