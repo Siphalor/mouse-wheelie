@@ -72,7 +72,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 			}
 			InteractionManager.pushClickEvent(handler.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN)));
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN)));
 			InteractionManager.pushClickEvent(handler.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
 			if (putBack) {
 				InteractionManager.pushClickEvent(handler.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);

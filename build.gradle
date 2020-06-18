@@ -32,24 +32,24 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474cb2"
-	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.1+6d41837ab2"
-	include "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.3+0d474ec4b2"
-	include "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.2+4a08d6b2b2"
-	include "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.1.2+f6620c48b2"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd78b2"
-	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.2.3+f6620c48b2"
-	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.4+2fd224cab2"
-	modImplementation "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474cb2"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.3.1+6d41837ab2"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-lifecycle-v0:0.1.3+0d474ec4b2"
-	modImplementation "net.fabricmc.fabric-api:fabric-keybindings-v0:0.1.2+4a08d6b2b2"
-	modImplementation "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.1.2+f6620c48b2"
-	modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd78b2"
-	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.2.3+f6620c48b2"
-	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.4+2fd224cab2"
+	def fabric_deps = [
+	        'fabric-api-base': '0.1.3+12a8474cb0',
+            'fabric-events-interaction-v0': '0.3.3+7066030fb0',
+			'fabric-events-lifecycle-v0': '0.1.3+0d474ec4b0',
+			'fabric-keybindings-v0': '0.2.0+3fa9f7c5b0',
+			'fabric-key-binding-api-v1': '1.0.0+e16a9774b0',
+            'fabric-networking-v0': '0.1.9+1a47cd78b0',
+			'fabric-tag-extensions-v0': '0.2.5+5a6e8f4cb0',
+			'fabric-tool-attribute-api-v1': '1.1.4+5794386eb0',
+			'fabric-resource-loader-v0': '0.2.5+059ea866b0'
+	]
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.1.12+63435d4bb2"
+	for (entry in fabric_deps.entrySet()) {
+		modImplementation "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
+		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
+	}
+
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+438f9636b0"
 
 	modImplementation("io.github.prospector:modmenu:+") {
 		exclude group: "net.fabricmc.fabric-api"

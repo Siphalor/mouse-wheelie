@@ -14,12 +14,12 @@ import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
@@ -33,23 +33,22 @@ public class MWClient implements ClientModInitializer {
 
 	public static final String KEY_BINDING_CATEGORY = "key.categories." + MouseWheelie.MOD_ID;
 
-	public static final FabricKeyBinding OPEN_CONFIG_SCREEN = new OpenConfigScreenKeybinding(new Identifier(MouseWheelie.MOD_ID, "open_config_screen"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
-	public static final FabricKeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, new KeyModifiers());
-	public static final FabricKeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
-	public static final FabricKeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
-	public static final FabricKeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final KeyBinding OPEN_CONFIG_SCREEN = new OpenConfigScreenKeybinding(new Identifier(MouseWheelie.MOD_ID, "open_config_screen"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final KeyBinding SORT_KEY_BINDING = new SortKeyBinding(new Identifier(MouseWheelie.MOD_ID, "sort_inventory"), InputUtil.Type.MOUSE, 2, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final KeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
+	public static final KeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
+	public static final KeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
 
 	public static boolean awaitSlotUpdate = false;
 	public static int lastUpdatedSlot = -1;
 
 	@Override
 	public void onInitializeClient() {
-		KeyBindingRegistry.INSTANCE.addCategory(KEY_BINDING_CATEGORY);
-		KeyBindingRegistry.INSTANCE.register(OPEN_CONFIG_SCREEN);
-		KeyBindingRegistry.INSTANCE.register(SORT_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(SCROLL_UP_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(SCROLL_DOWN_KEY_BINDING);
-		KeyBindingRegistry.INSTANCE.register(PICK_TOOL_KEY_BINDING);
+		KeyBindingHelper.registerKeyBinding(OPEN_CONFIG_SCREEN);
+		KeyBindingHelper.registerKeyBinding(SORT_KEY_BINDING);
+		KeyBindingHelper.registerKeyBinding(SCROLL_UP_KEY_BINDING);
+		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN_KEY_BINDING);
+		KeyBindingHelper.registerKeyBinding(PICK_TOOL_KEY_BINDING);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
