@@ -7,21 +7,16 @@ import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,46 +48,6 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Shadow
 	protected Slot focusedSlot;
 
-	@Inject(method = "keyPressed", at = @At(value = "RETURN", ordinal = 1))
-	public void onKeyPressed(int key, int scanCode, int int_3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		//noinspection ConstantConditions
-		if (this.client.options.keySwapHands.matchesKey(key, scanCode) && focusedSlot != null) {
-			boolean putBack = false;
-			Slot swapSlot = handler.slots.stream().filter(slot -> slot.inventory == playerInventory && ((ISlot) slot).mouseWheelie_getInvSlot() == playerInventory.selectedSlot).findAny().orElse(null);
-			if (swapSlot == null) return;
-			ItemStack swapStack = playerInventory.getCursorStack().copy();
-			ItemStack offHandStack = playerInventory.offHand.get(0).copy();
-			if (playerInventory.getCursorStack().isEmpty()) {
-				putBack = true;
-				if (!focusedSlot.getStack().isEmpty()) {
-					swapStack = focusedSlot.getStack().copy();
-					InteractionManager.pushClickEvent(handler.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
-				} else if (offHandStack.isEmpty()) {
-					return;
-				}
-			}
-			InteractionManager.pushClickEvent(handler.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN)));
-			InteractionManager.pushClickEvent(handler.syncId, swapSlot.id, 0, SlotActionType.PICKUP);
-			if (putBack) {
-				InteractionManager.pushClickEvent(handler.syncId, focusedSlot.id, 0, SlotActionType.PICKUP);
-			}
-			ItemStack finalSwapStack = swapStack;
-			boolean finalPutBack = putBack;
-			// Fix the display up since swapping items doesn't have a confirm packet so we have to trigger the click event too quick afterwards
-			InteractionManager.push(() -> {
-				playerInventory.offHand.set(0, finalSwapStack);
-				if (finalPutBack) {
-					focusedSlot.setStack(offHandStack);
-					playerInventory.setCursorStack(ItemStack.EMPTY);
-				} else {
-					playerInventory.setCursorStack(offHandStack);
-				}
-				return InteractionManager.DUMMY_WAITER;
-			});
-		}
-	}
-
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
@@ -108,6 +63,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
 					}
 				} else {
+					@SuppressWarnings("ConstantConditions")
 					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 					if (alt) {
 						if (shift) {
