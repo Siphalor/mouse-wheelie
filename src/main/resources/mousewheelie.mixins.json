@@ -5,12 +5,10 @@
 	"mixins": [],
 	"client": [
 		"MixinClientPlayNetworkHandler",
-		"MixinContainer",
 		"MixinCreativeSlot",
-		"MixinMinecraftClient",
+		"MixinItemStack",
 		"MixinSlot",
 		"entity.MixinClientPlayerEntity",
-		"entity.MixinLivingEntity",
 		"gui.other.MixinAbstractButtonWidget",
 		"gui.other.MixinMerchantWidgetButtonPage",
 		"gui.other.MixinRecipeBookResults",

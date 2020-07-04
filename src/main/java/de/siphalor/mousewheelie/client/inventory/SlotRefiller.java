@@ -52,6 +52,16 @@ public class SlotRefiller {
 		return false;
 	}
 
+	static {
+		rules.add(new BlockRule());
+		rules.add(new ItemGroupRule());
+		rules.add(new ItemHierarchyRule());
+		rules.add(new BlockHierarchyRule());
+		rules.add(new FoodRule());
+		rules.add(new EqualItemRule());
+		rules.add(new EqualStackRule());
+	}
+
 	public static abstract class Rule {
 		public Rule() {
 			rules.add(this);
