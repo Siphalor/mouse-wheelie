@@ -2,7 +2,6 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.Config;
 import de.siphalor.mousewheelie.client.MWClient;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,6 +11,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ConfirmGuiActionS2CPacket;
 import net.minecraft.network.packet.s2c.play.ContainerSlotUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
+import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,11 +25,14 @@ public class MixinClientPlayNetworkHandler {
 	@Shadow
 	private MinecraftClient client;
 
-	private boolean mouseWheelie_scheduleRefill = false;
-
 	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
+	}
+
+	@Inject(method = "onHeldItemChange", at = @At("HEAD"))
+	public void onHeldItemChangeBegin(HeldItemChangeS2CPacket packet, CallbackInfo callbackInfo) {
+		InteractionManager.triggerSend(InteractionManager.TriggerType.HELD_ITEM_CHANGE);
 	}
 
 	@Inject(method = "onContainerSlotUpdate", at = @At("RETURN"))
@@ -39,16 +43,19 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (MWClient.awaitSlotUpdate) {
-			MWClient.awaitSlotUpdate = false;
-			SlotRefiller.refill();
-		} else {
+		if (!MWClient.performRefill() && Config.otherRefill.value) {
 			PlayerInventory inventory = client.player.inventory;
-			if (packet.getItemStack().isEmpty() && packet.getSlot() - 36 == inventory.selectedSlot && MinecraftClient.getInstance().currentScreen == null) {
-				ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
-				if (!stack.isEmpty()) {
-					mouseWheelie_scheduleRefill = true;
-					SlotRefiller.set(inventory, stack.copy());
+			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
+				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
+					ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
+					if (!stack.isEmpty()) {
+						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
+					}
+				} else if (packet.getSlot() == 40) { // OFF_HAND
+					ItemStack stack = inventory.getInvStack(40);
+					if (!stack.isEmpty()) {
+						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
+					}
 				}
 			}
 		}
@@ -56,10 +63,6 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 	public void onGuiSlotUpdated(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (mouseWheelie_scheduleRefill) {
-			if (Config.otherRefill.value)
-				SlotRefiller.refill();
-			mouseWheelie_scheduleRefill = false;
-		}
+		MWClient.performRefill();
 	}
 }

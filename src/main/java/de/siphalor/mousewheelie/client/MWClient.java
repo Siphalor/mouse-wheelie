@@ -2,11 +2,13 @@ package de.siphalor.mousewheelie.client;
 
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.ToolPicker;
 import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
 import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
@@ -22,10 +24,15 @@ import net.fabricmc.fabric.api.tools.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 @SuppressWarnings("WeakerAccess")
 @Environment(EnvType.CLIENT)
@@ -42,7 +49,7 @@ public class MWClient implements ClientModInitializer {
 
 	public static TweedClothBridge tweedClothBridge;
 
-	public static boolean awaitSlotUpdate = false;
+	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
 
 	@Override
@@ -81,6 +88,27 @@ public class MWClient implements ClientModInitializer {
 		Config.initialize();
 
 		tweedClothBridge = new TweedClothBridge(Config.configFile);
+	}
+
+	public static void scheduleRefill(Hand hand, PlayerInventory inventory, ItemStack stack) {
+		refillHand = hand;
+		SlotRefiller.set(inventory, stack);
+	}
+
+	public static boolean performRefill() {
+		if (refillHand == null) return false;
+
+		Hand hand = refillHand;
+		refillHand = null;
+		if (hand.equals(Hand.OFF_HAND)) {
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+		}
+		SlotRefiller.refill();
+		if (hand.equals(Hand.OFF_HAND)) {
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+		}
+
+		return true;
 	}
 
 	public static boolean isTool(Item item) {

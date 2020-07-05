@@ -2,12 +2,13 @@ package de.siphalor.mousewheelie.client.mixin.entity;
 
 import com.mojang.authlib.GameProfile;
 import de.siphalor.mousewheelie.client.Config;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,13 +28,12 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "dropSelectedItem", at = @At("HEAD"))
 	public void onDropSelectedItem(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
-		SlotRefiller.set(inventory, getMainHandStack().copy());
+		if (Config.dropRefill.value)
+			MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, getMainHandStack().copy());
 	}
 
 	@Inject(method = "dropSelectedItem", at = @At("RETURN"))
 	public void onSelectedItemDropped(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
-		if (Config.dropRefill.value && getMainHandStack().isEmpty()) {
-			SlotRefiller.refill();
-		}
+		MWClient.performRefill();
 	}
 }
