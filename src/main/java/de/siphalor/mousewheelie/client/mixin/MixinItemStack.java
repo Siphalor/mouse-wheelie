@@ -1,12 +1,12 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.client.MWClient;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,14 +20,15 @@ public abstract class MixinItemStack {
 	@Shadow
 	public abstract ItemStack copy();
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "setCount", at = @At("HEAD"))
 	public void onSetCount(int newCount, CallbackInfo callbackInfo) {
 		if (newCount == 0) {
 			ClientPlayerEntity playerEntity = MinecraftClient.getInstance().player;
-			//noinspection ConstantConditions
 			if (playerEntity.getMainHandStack() == (Object) this) {
-				SlotRefiller.set(playerEntity.inventory, copy());
-				MWClient.awaitSlotUpdate = true;
+				MWClient.scheduleRefill(Hand.MAIN_HAND, playerEntity.inventory, copy());
+			} else if (playerEntity.getOffHandStack() == (Object) this) {
+				MWClient.scheduleRefill(Hand.OFF_HAND, playerEntity.inventory, copy());
 			}
 		}
 	}

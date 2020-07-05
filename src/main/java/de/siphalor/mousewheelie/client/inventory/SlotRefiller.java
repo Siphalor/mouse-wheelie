@@ -44,7 +44,7 @@ public class SlotRefiller {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
 					} else
-						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), 2));
+						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE));
 					return true;
 				}
 			}

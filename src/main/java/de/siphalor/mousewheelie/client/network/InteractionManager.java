@@ -68,9 +68,10 @@ public class InteractionManager {
 	}
 
 	public enum TriggerType {
-		INITIAL, CONTAINER_SLOT_UPDATE, GUI_CONFIRM
+		INITIAL, CONTAINER_SLOT_UPDATE, GUI_CONFIRM, HELD_ITEM_CHANGE
 	}
 
+	@FunctionalInterface
 	public interface InteractionEvent {
 		/**
 		 * Sends the interaction to the server
@@ -82,10 +83,10 @@ public class InteractionManager {
 
 	public static class ClickEvent implements InteractionEvent {
 		private final Waiter waiter;
-		private int containerSyncId;
-		private int slotId;
-		private int buttonId;
-		private SlotActionType slotAction;
+		private final int containerSyncId;
+		private final int slotId;
+		private final int buttonId;
+		private final SlotActionType slotAction;
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
 			this(containerSyncId, slotId, buttonId, slotAction, 1);
