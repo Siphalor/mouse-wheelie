@@ -41,9 +41,10 @@ public class MixinClientPlayNetworkHandler {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE);
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (!MWClient.performRefill() && MouseWheelie.CONFIG.refill.other) {
+			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
 				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
@@ -61,7 +62,7 @@ public class MixinClientPlayNetworkHandler {
 		}
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
 	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		MWClient.performRefill();
 	}
