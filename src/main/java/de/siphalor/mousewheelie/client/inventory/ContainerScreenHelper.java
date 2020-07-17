@@ -12,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
+import java.util.function.Consumer;
+
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
 public class ContainerScreenHelper<T extends HandledScreen<?>> {
@@ -44,9 +46,10 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			}
 		} else {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
+			int referenceScope = getScope(referenceSlot);
 			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
 				for (Slot slot : screen.getScreenHandler().slots) {
-					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (getScope(slot) == referenceScope) continue;
 					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						sendStack(slot);
 						if (!Screen.hasControlDown())
@@ -57,7 +60,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
 				for (Slot slot : screen.getScreenHandler().slots) {
-					if (slotsInSameScope(slot, referenceSlot)) continue;
+					if (getScope(slot) == referenceScope) continue;
 					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						if (slot.getStack().getCount() < stackSize) {
 							stackSize = slot.getStack().getCount();
@@ -73,18 +76,37 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public boolean shallChangeInventory(Slot slot, boolean scrollUp) {
-		return isLowerSlot(slot) == scrollUp;
+		return (getScope(slot) <= 0) == scrollUp;
 	}
 
 	public boolean isHotbarSlot(Slot slot) {
 		return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
 	}
 
-	public boolean isLowerSlot(Slot slot) {
+	public int getScope(Slot slot) {
 		if (screen instanceof AbstractInventoryScreen) {
-			return isHotbarSlot(slot);
+			if (isHotbarSlot(slot)) {
+				return 0;
+			} else {
+				if (((ISlot) slot).mouseWheelie_getInvSlot() < 36)
+					return 1;
+				return 2;
+			}
 		} else {
-			return (slot.inventory instanceof PlayerInventory);
+			if (slot.inventory instanceof PlayerInventory) {
+				if (Config.pushHotbarSeparately.value && isHotbarSlot(slot))
+					return -1;
+				return 0;
+			}
+			return 1;
+		}
+	}
+
+	public void runInScope(int scope, Consumer<Slot> slotConsumer) {
+		for (Slot slot : screen.getContainer().slots) {
+			if (getScope(slot) == scope) {
+				slotConsumer.accept(slot);
+			}
 		}
 	}
 
@@ -101,47 +123,30 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
-		for (Slot slot : screen.getScreenHandler().slots) {
-			if (slotsInSameScope(slot, referenceSlot)) {
-				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
-					clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
-			}
-		}
+		runInScope(getScope(referenceSlot), slot -> {
+			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
+				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+		});
 	}
 
 	public void sendAllFrom(Slot referenceSlot) {
-		for (Slot slot : screen.getScreenHandler().slots) {
-			if (slotsInSameScope(slot, referenceSlot)) {
-				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
-			}
-		}
+		runInScope(getScope(referenceSlot), slot -> {
+			clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+		});
 	}
 
 	public void dropAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
-		for (Slot slot : screen.getScreenHandler().slots) {
-			if (slotsInSameScope(slot, referenceSlot)) {
-				if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
-					clickHandler.handleClick(slot, 1, SlotActionType.THROW);
-			}
-		}
+		runInScope(getScope(referenceSlot), slot -> {
+			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
+				clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+		});
 	}
 
 	public void dropAllFrom(Slot referenceSlot) {
-		for (Slot slot : screen.getScreenHandler().slots) {
-			if (slotsInSameScope(slot, referenceSlot)) {
-				clickHandler.handleClick(slot, 1, SlotActionType.THROW);
-			}
-		}
-	}
-
-	public boolean slotsInSameScope(Slot slot1, Slot slot2) {
-		if (MouseWheelie.CONFIG.scrolling.pushHotbarSeparately) {
-			if (slot1.inventory instanceof PlayerInventory && slot2.inventory instanceof PlayerInventory) {
-				return isHotbarSlot(slot1) == isHotbarSlot(slot2);
-			}
-		}
-		return isLowerSlot(slot1) == isLowerSlot(slot2);
+		runInScope(getScope(referenceSlot), slot -> {
+			clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+		});
 	}
 
 	public interface ClickHandler {

@@ -20,8 +20,9 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 		if (slot.inventory instanceof PlayerInventory) {
 			super.sendSingleItem(slot);
 		} else {
+			int scope = getScope(slot);
 			for (Slot testSlot : screen.getScreenHandler().slots) {
-				if (!slotsInSameScope(slot, testSlot)) {
+				if (getScope(testSlot) != scope) {
 					ItemStack itemStack = testSlot.getStack();
 					if (ScreenHandler.canStacksCombine(slot.getStack(), itemStack) && itemStack.getCount() < itemStack.getMaxCount()) {
 						clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
@@ -31,7 +32,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 				}
 			}
 			for (Slot testSlot : screen.getScreenHandler().slots) {
-				if (!slotsInSameScope(slot, testSlot)) {
+				if (getScope(testSlot) != scope) {
 					if (!testSlot.hasStack()) {
 						clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
 						clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
@@ -43,8 +44,8 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 	}
 
 	@Override
-	public boolean isLowerSlot(Slot slot) {
-		return slot.inventory instanceof PlayerInventory;
+	public int getScope(Slot slot) {
+		return slot.inventory instanceof PlayerInventory ? 1 : 0;
 	}
 
 	@Override
