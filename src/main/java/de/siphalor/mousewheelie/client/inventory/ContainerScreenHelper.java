@@ -94,7 +94,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			}
 		} else {
 			if (slot.inventory instanceof PlayerInventory) {
-				if (Config.pushHotbarSeparately.value && isHotbarSlot(slot))
+				if (MouseWheelie.CONFIG.scrolling.pushHotbarSeparately && isHotbarSlot(slot))
 					return -1;
 				return 0;
 			}
@@ -103,7 +103,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void runInScope(int scope, Consumer<Slot> slotConsumer) {
-		for (Slot slot : screen.getContainer().slots) {
+		for (Slot slot : screen.getScreenHandler().slots) {
 			if (getScope(slot) == scope) {
 				slotConsumer.accept(slot);
 			}
