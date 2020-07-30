@@ -46,7 +46,7 @@
 	"depends": {
 		"fabricloader": ">=0.4.0",
 		"minecraft": ">=1.16-alpha",
-		"tweed": ">=3.0.0-beta.3"
+		"tweed": ">=3.0.0-beta"
 	},
 
 	"custom": {
