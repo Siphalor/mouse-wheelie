@@ -1,5 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import de.siphalor.tweed.tailor.DropdownMaterial;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.language.I18n;
@@ -7,63 +8,84 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
 @Environment(EnvType.CLIENT)
-public abstract class SortMode implements Comparator<Integer> {
-	public static final SortMode ALPHABET, QUANTITY, RAW_ID;
+public abstract class SortMode implements DropdownMaterial<SortMode> {
+	private static final Map<String, SortMode> SORT_MODES = new HashMap<>();
+	private final String name;
 
-	void init(Integer[] sortIds, ItemStack[] stacks) {
+	public static final SortMode NONE, ALPHABET, QUANTITY, RAW_ID;
+
+	protected SortMode(String name) {
+		this.name = name;
+		SORT_MODES.put(name, this);
 	}
 
-	public enum Predefined {
-		ALPHABET(SortMode.ALPHABET), QUANTITY(SortMode.QUANTITY), RAW_ID(SortMode.RAW_ID), NONE(null);
-		public SortMode sortMode;
+	abstract Integer[] sort(Integer[] sortIds, ItemStack[] stacks);
 
-		Predefined(SortMode sortMode) {
-			this.sortMode = sortMode;
-		}
+	@Override
+	public DropdownMaterial<SortMode> valueOf(String s) {
+		return SORT_MODES.get(s);
+	}
+
+	@Override
+	public Collection<SortMode> values() {
+		return SORT_MODES.values();
+	}
+
+	@Override
+	public String name() {
+		return name;
+	}
+
+	@Override
+	public String getTranslationKey() {
+		return "mousewheelie.sortmode." + name.toLowerCase(Locale.ENGLISH);
 	}
 
 	static {
-		ALPHABET = new SortMode() {
+		NONE = new SortMode("none") {
+			@Override
+			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+				return sortIds;
+			}
+		};
+		ALPHABET = new SortMode("alphabet") {
 			String[] strings;
 			ItemStack[] stacks;
 
 			@Override
-			public void init(Integer[] sortIds, ItemStack[] stacks) {
+			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				this.stacks = stacks;
 				strings = Arrays.stream(sortIds).map(id -> {
 					ItemStack itemStack = stacks[id];
 					if (itemStack.isEmpty()) return "";
 					return I18n.translate(itemStack.getTranslationKey());
 				}).toArray(String[]::new);
-			}
 
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				if (strings[o1].equals("")) {
-					if (strings[o2].equals(""))
-						return 0;
-					return 1;
-				}
-				if (strings[o2].equals("")) return -1;
-				int comp = strings[o1].compareToIgnoreCase(strings[o2]);
-				if (comp == 0) {
-					return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
-				}
-				return comp;
+				Arrays.sort(sortIds, (a, b) -> {
+					if (strings[a].equals("")) {
+						if (strings[b].equals(""))
+							return 0;
+						return 1;
+					}
+					if (strings[b].equals("")) return -1;
+					int comp = strings[a].compareToIgnoreCase(strings[b]);
+					if (comp == 0) {
+						return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+					}
+					return comp;
+				});
+
+				return sortIds;
 			}
 		};
-		QUANTITY = new SortMode() {
-			HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
-			ItemStack[] stacks;
-
+		QUANTITY = new SortMode("quantity") {
 			@Override
-			void init(Integer[] sortIds, ItemStack[] stacks) {
-				this.stacks = stacks;
+			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+				HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
+
 				for (ItemStack stack : stacks) {
 					if (stack.isEmpty()) continue;
 					if (!itemToAmountMap.containsKey(stack.getItem())) {
@@ -72,44 +94,42 @@ public abstract class SortMode implements Comparator<Integer> {
 						itemToAmountMap.put(stack.getItem(), itemToAmountMap.get(stack.getItem()) + stack.getCount());
 					}
 				}
-			}
 
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				ItemStack stack = stacks[o1];
-				ItemStack stack2 = stacks[o2];
-				if (stack.isEmpty()) {
-					return stack2.isEmpty() ? 0 : 1;
-				}
-				if (stack2.isEmpty()) {
-					return -1;
-				}
-				Integer a = itemToAmountMap.get(stack.getItem());
-				Integer a2 = itemToAmountMap.get(stack2.getItem());
-				return Integer.compare(a2, a);
+				Arrays.sort(sortIds, (a, b) -> {
+					ItemStack stack = stacks[a];
+					ItemStack stack2 = stacks[b];
+					if (stack.isEmpty()) {
+						return stack2.isEmpty() ? 0 : 1;
+					}
+					if (stack2.isEmpty()) {
+						return -1;
+					}
+					Integer amountA = itemToAmountMap.get(stack.getItem());
+					Integer amountB = itemToAmountMap.get(stack2.getItem());
+					return Integer.compare(amountA, amountB);
+				});
+
+				return sortIds;
 			}
 		};
-		RAW_ID = new SortMode() {
-			Integer[] rawIds;
-			ItemStack[] stacks;
-
+		RAW_ID = new SortMode("raw_id") {
 			@Override
-			void init(Integer[] sortIds, ItemStack[] stacks) {
-				this.stacks = stacks;
-				rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
-			}
+			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
 
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				int result = Integer.compare(rawIds[o1], rawIds[o2]);
-				if (result == 0) {
-					if (stacks[o2].isDamageable()) {
-						return Integer.compare(stacks[o1].getDamage(), stacks[o2].getDamage());
-					} else {
-						return Integer.compare(stacks[o2].getCount(), stacks[o1].getCount());
+				Arrays.sort(sortIds, (a, b) -> {
+					int result = Integer.compare(rawIds[a], rawIds[b]);
+					if (result == 0) {
+						if (stacks[b].isDamageable()) {
+							return Integer.compare(stacks[a].getDamage(), stacks[b].getDamage());
+						} else {
+							return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+						}
 					}
-				}
-				return result;
+					return result;
+				});
+
+				return sortIds;
 			}
 		};
 	}
