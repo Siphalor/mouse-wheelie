@@ -114,6 +114,7 @@ jar {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
 			// add all the jars that should be included when publishing to maven
 			artifact(remapJar) {
 				builtBy remapJar
@@ -126,7 +127,13 @@ publishing {
 
 	// select the repositories you want to publish to
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
+		maven {
+			name = "Siphalor"
+			url = "https://maven.siphalor.de/upload.php"
+			credentials {
+				username = siphalorMavenUser
+				password = siphalorMavenPassword
+			}
+		}
 	}
 }
