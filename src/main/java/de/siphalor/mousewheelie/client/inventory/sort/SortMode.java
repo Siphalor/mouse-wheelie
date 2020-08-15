@@ -22,7 +22,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		SORT_MODES.put(name, this);
 	}
 
-	abstract Integer[] sort(Integer[] sortIds, ItemStack[] stacks);
+	public abstract Integer[] sort(Integer[] sortIds, ItemStack[] stacks);
 
 	@Override
 	public DropdownMaterial<SortMode> valueOf(String s) {
@@ -47,7 +47,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	static {
 		NONE = new SortMode("none") {
 			@Override
-			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				return sortIds;
 			}
 		};
@@ -83,7 +83,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		};
 		QUANTITY = new SortMode("quantity") {
 			@Override
-			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
 
 				for (ItemStack stack : stacks) {
@@ -114,7 +114,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		};
 		RAW_ID = new SortMode("raw_id") {
 			@Override
-			Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
 
 				Arrays.sort(sortIds, (a, b) -> {
