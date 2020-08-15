@@ -14,7 +14,10 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -96,8 +99,7 @@ public class InventorySorter {
 		final int slotCount = stacks.length;
 		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
 
-		sortMode.init(sortIds, stacks);
-		Arrays.sort(sortIds, sortMode);
+		sortIds = sortMode.sort(sortIds, stacks);
 
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
 		for (int i = 0; i < slotCount; i++) {

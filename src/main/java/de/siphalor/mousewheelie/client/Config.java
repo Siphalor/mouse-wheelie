@@ -55,13 +55,13 @@ public class Config {
 
 	public static class Sort {
 		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
-		public SortMode.Predefined primarySort = SortMode.Predefined.RAW_ID;
+		public SortMode primarySort = SortMode.RAW_ID;
 
 		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing shift.")
-		public SortMode.Predefined shiftSort = SortMode.Predefined.QUANTITY;
+		public SortMode shiftSort = SortMode.QUANTITY;
 
 		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing control.")
-		public SortMode.Predefined controlSort = SortMode.Predefined.ALPHABET;
+		public SortMode controlSort = SortMode.ALPHABET;
 	}
 
 	@AConfigEntry(comment = "Configure refill related stuff here.")
