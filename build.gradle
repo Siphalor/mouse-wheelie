@@ -21,8 +21,8 @@ repositories {
 		url "http://maven.fabricmc.net/"
 	}
 	maven {
-		name "jitpack"
-		url "https://jitpack.io"
+		name "Siphalor's Maven"
+		url "https://maven.siphalor.de/"
 	}
 }
 
@@ -56,16 +56,16 @@ dependencies {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
+	modImplementation("de.siphalor:tweed-1.16:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "modmenu"
 	}
-	include "com.github.siphalor:tweed-api:${project.tweed_version}"
+	include "de.siphalor:tweed-1.16:${project.tweed_version}"
 
-	modImplementation("com.github.siphalor:amecs-api:${project.amecs_version}") {
+	modImplementation("de.siphalor:amecsapi-1.16:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	include "com.github.siphalor:amecs-api:${project.amecs_version}"
+	include "de.siphalor:amecsapi-1.16:${project.amecs_version}"
 
 	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
 		exclude group: "net.fabricmc.fabric-api"
