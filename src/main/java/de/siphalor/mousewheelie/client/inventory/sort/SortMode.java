@@ -17,9 +17,17 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 
 	public static final SortMode NONE, ALPHABET, QUANTITY, RAW_ID;
 
+	public static <T extends SortMode> T register(String name, T sortMode) {
+		SORT_MODES.put(name, sortMode);
+		return sortMode;
+	}
+
+	public static void unregister(String name) {
+		SORT_MODES.remove(name);
+	}
+
 	protected SortMode(String name) {
 		this.name = name;
-		SORT_MODES.put(name, this);
 	}
 
 	public abstract Integer[] sort(Integer[] sortIds, ItemStack[] stacks);
@@ -45,13 +53,13 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	}
 
 	static {
-		NONE = new SortMode("none") {
+		NONE = register("none", new SortMode("none") {
 			@Override
 			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				return sortIds;
 			}
-		};
-		ALPHABET = new SortMode("alphabet") {
+		});
+		ALPHABET = register("alphabet", new SortMode("alphabet") {
 			String[] strings;
 			ItemStack[] stacks;
 
@@ -80,8 +88,8 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 
 				return sortIds;
 			}
-		};
-		QUANTITY = new SortMode("quantity") {
+		});
+		QUANTITY = register("quantity", new SortMode("quantity") {
 			@Override
 			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
@@ -111,8 +119,8 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 
 				return sortIds;
 			}
-		};
-		RAW_ID = new SortMode("raw_id") {
+		});
+		RAW_ID = register("raw_id", new SortMode("raw_id") {
 			@Override
 			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
@@ -131,6 +139,6 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 
 				return sortIds;
 			}
-		};
+		});
 	}
 }
