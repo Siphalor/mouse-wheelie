@@ -2,6 +2,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
+import de.siphalor.mousewheelie.client.inventory.SlotHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
@@ -53,6 +54,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
+				if (SlotHelper.isFakeSlot(hoveredSlot)) {
+					return;
+				}
 				boolean alt = hasAltDown();
 				boolean ctrl = hasControlDown();
 				boolean shift = hasShiftDown();
@@ -89,6 +93,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x, y);
 			if (hoveredSlot != null) {
+				if (SlotHelper.isFakeSlot(hoveredSlot)) {
+					return;
+				}
+
 				boolean alt = hasAltDown();
 				boolean ctrl = hasControlDown();
 				boolean shift = hasShiftDown();
@@ -124,8 +132,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Override
 	public ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		if (MouseWheelie.CONFIG.scrolling.enable) {
-			if (hasAltDown()) return ScrollAction.FAILURE;
 			Slot hoveredSlot = getSlotAt(mouseX, mouseY);
+			if (hoveredSlot != null && SlotHelper.isFakeSlot(hoveredSlot)) {
+				return ScrollAction.PASS;
+			}
+			if (hasAltDown()) return ScrollAction.FAILURE;
 			if (hoveredSlot == null)
 				return ScrollAction.PASS;
 			if (hoveredSlot.getStack().isEmpty())
@@ -155,6 +166,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
+		if (SlotHelper.isFakeSlot(focusedSlot)) {
+			return false;
+		}
 		if (playerInventory.player.abilities.creativeMode && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter(handler, focusedSlot);
