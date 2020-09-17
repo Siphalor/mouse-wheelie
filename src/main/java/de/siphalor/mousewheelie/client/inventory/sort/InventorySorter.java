@@ -1,34 +1,29 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
-	private ScreenHandler container;
+	private HandledScreen<?> containerScreen;
 	private List<Slot> inventorySlots;
 	private ItemStack[] stacks;
 
-	public InventorySorter(ScreenHandler container, Slot originSlot) {
-		this.container = container;
+	public InventorySorter(HandledScreen<?> containerScreen, Slot originSlot) {
+		this.containerScreen = containerScreen;
 
 		collectSlots(originSlot);
 
@@ -36,23 +31,14 @@ public class InventorySorter {
 	}
 
 	private void collectSlots(Slot originSlot) {
-		Inventory inventory = originSlot.inventory;
-		this.inventorySlots = container.slots.stream().filter(slot -> slot.inventory == inventory && slot.canInsert(ItemStack.EMPTY)).collect(Collectors.toList());
-		if (inventory instanceof PlayerInventory) {
-			if (((PlayerInventory) inventory).player.abilities.creativeMode && MinecraftClient.getInstance().currentScreen instanceof CreativeInventoryScreen) {
-				// Mojang's creative inventory/slot/container code is so messed up, I really can't sort this out for the player creative inventory
-				// TODO some day this should get fixed though
-				inventorySlots = Collections.emptyList();
+		ContainerScreenHelper<? extends HandledScreen<?>> screenHelper = new ContainerScreenHelper<>(containerScreen, (slot, data, slotActionType) -> {
+		});
+		int originScope = screenHelper.getScope(originSlot);
+		inventorySlots = new ArrayList<>();
+		for (Slot slot : containerScreen.getScreenHandler().slots) {
+			if (originScope == screenHelper.getScope(slot)) {
+				inventorySlots.add(slot);
 			}
-
-			final int originInvSlot = ((ISlot) originSlot).mouseWheelie_getInvSlot();
-			final boolean originInHotbar = originInvSlot >= 0 && originInvSlot < 9;
-			final int offHandInvSlot = inventory.size() - 1;
-			final boolean originOffHand = originInvSlot == offHandInvSlot;
-			inventorySlots = inventorySlots.stream().filter(slot -> {
-				final int invSlot = ((ISlot) slot).mouseWheelie_getInvSlot();
-				return (invSlot >= 0 && invSlot < 9) == originInHotbar && (invSlot == offHandInvSlot) == originOffHand;
-			}).collect(Collectors.toList());
 		}
 	}
 
@@ -64,7 +50,7 @@ public class InventorySorter {
 			if (stack.isEmpty()) continue;
 			int stackSize = stack.getCount();
 			if (stackSize >= stack.getItem().getMaxCount()) continue;
-			clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
+			clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for (int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks[j];
 				if (targetStack.isEmpty()) continue;
@@ -74,7 +60,7 @@ public class InventorySorter {
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
 					targetStack.setCount(targetStack.getCount() + delta);
-					clickEvents.add(new InteractionManager.ClickEvent(container.syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
+					clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
 					if (stackSize <= 0) break;
 				}
 			}
@@ -86,7 +72,7 @@ public class InventorySorter {
 			InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 			clickEvents.clear();
 			if (stackSize > 0) {
-				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setCount(stackSize);
 			} else {
 				stacks[i] = ItemStack.EMPTY;
@@ -116,11 +102,11 @@ public class InventorySorter {
 				doneSlashEmpty.set(i);
 				continue;
 			}
-			InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
 			doneSlashEmpty.clear(slotCount + sortIds[i]);
 			int id = i;
 			while (!doneSlashEmpty.get(id)) {
-				InteractionManager.pushClickEvent(container.syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
 				doneSlashEmpty.set(id);
 				if (doneSlashEmpty.get(slotCount + id)) {
 					doneSlashEmpty.set(slotCount + id);
