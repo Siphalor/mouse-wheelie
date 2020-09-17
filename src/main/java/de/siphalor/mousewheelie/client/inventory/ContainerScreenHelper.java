@@ -26,11 +26,13 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
+		// Shall send determines whether items from the referenceSlot shall be moved to another scope. Otherwise the referenceSlot will receive items.
 		boolean shallSend;
 		if (Config.directionalScrolling.value) {
 			shallSend = shallChangeInventory(referenceSlot, scrollUp);
 		} else {
 			shallSend = !scrollUp;
+			scrollUp = false;
 		}
 
 		if (shallSend) {
@@ -61,11 +63,13 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 				int stackSize = Integer.MAX_VALUE;
 				for (Slot slot : screen.getContainer().slots) {
 					if (getScope(slot) == referenceScope) continue;
-					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
-						if (slot.getStack().getCount() < stackSize) {
-							stackSize = slot.getStack().getCount();
-							moveSlot = slot;
-							if (stackSize == 1) break;
+					if (getScope(slot) <= 0 == scrollUp) {
+						if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+							if (slot.getStack().getCount() < stackSize) {
+								stackSize = slot.getStack().getCount();
+								moveSlot = slot;
+								if (stackSize == 1) break;
+							}
 						}
 					}
 				}
@@ -84,12 +88,17 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public int getScope(Slot slot) {
+		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.getInvSize()) {
+			return Integer.MAX_VALUE;
+		}
 		if (screen instanceof AbstractInventoryScreen) {
-			if (isHotbarSlot(slot)) {
-				return 0;
-			} else {
-				if (((ISlot) slot).mouseWheelie_getInvSlot() < 36)
+			if (slot.inventory instanceof PlayerInventory) {
+				if (isHotbarSlot(slot)) {
+					return 0;
+				} else {
 					return 1;
+				}
+			} else {
 				return 2;
 			}
 		} else {
