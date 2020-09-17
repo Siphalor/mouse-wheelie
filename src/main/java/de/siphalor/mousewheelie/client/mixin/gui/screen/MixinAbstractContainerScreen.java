@@ -1,6 +1,7 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.client.Config;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
@@ -197,7 +198,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
-		if (playerInventory.player.abilities.creativeMode && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
+		if (playerInventory.player.abilities.creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter(container, focusedSlot);
 		SortMode sortMode;
