@@ -31,6 +31,9 @@ public class InventorySorter {
 		ContainerScreenHelper<? extends ContainerScreen<?>> screenHelper = new ContainerScreenHelper<>(containerScreen, (slot, data, slotActionType) -> {
 		});
 		int originScope = screenHelper.getScope(originSlot);
+		if (originScope == ContainerScreenHelper.INVALID_SCOPE) {
+			return;
+		}
 		inventorySlots = new ArrayList<>();
 		for (Slot slot : containerScreen.getContainer().slots) {
 			if (originScope == screenHelper.getScope(slot)) {

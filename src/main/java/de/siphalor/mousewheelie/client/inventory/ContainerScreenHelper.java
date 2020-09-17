@@ -20,6 +20,8 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	protected final T screen;
 	protected final ClickHandler clickHandler;
 
+	public static int INVALID_SCOPE = Integer.MAX_VALUE;
+
 	public ContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		this.screen = screen;
 		this.clickHandler = clickHandler;
@@ -89,7 +91,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 
 	public int getScope(Slot slot) {
 		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.getInvSize()) {
-			return Integer.MAX_VALUE;
+			return INVALID_SCOPE;
 		}
 		if (screen instanceof AbstractInventoryScreen) {
 			if (slot.inventory instanceof PlayerInventory) {
