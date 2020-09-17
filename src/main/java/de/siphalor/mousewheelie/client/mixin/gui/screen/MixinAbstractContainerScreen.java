@@ -200,7 +200,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			return false;
 		if (playerInventory.player.abilities.creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
-		InventorySorter sorter = new InventorySorter(container, focusedSlot);
+		InventorySorter sorter = new InventorySorter((ContainerScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;
 		if (hasShiftDown()) {
 			sortMode = Config.shiftSort.value.sortMode;
