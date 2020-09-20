@@ -28,13 +28,13 @@ public class InventorySorter {
 	}
 
 	private void collectSlots(Slot originSlot) {
+		inventorySlots = new ArrayList<>();
 		ContainerScreenHelper<? extends ContainerScreen<?>> screenHelper = new ContainerScreenHelper<>(containerScreen, (slot, data, slotActionType) -> {
 		});
 		int originScope = screenHelper.getScope(originSlot);
 		if (originScope == ContainerScreenHelper.INVALID_SCOPE) {
 			return;
 		}
-		inventorySlots = new ArrayList<>();
 		for (Slot slot : containerScreen.getContainer().slots) {
 			if (originScope == screenHelper.getScope(slot)) {
 				inventorySlots.add(slot);
