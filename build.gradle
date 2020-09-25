@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
-	id 'maven-publish'
+    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -11,133 +11,135 @@ version = project.mod_version + "+mc" + project.minecraft_version
 group = project.maven_group
 
 minecraft {
-	refmapName = "${project.mod_id}-refmap.json"
+    refmapName = "${project.mod_id}-refmap.json"
 }
 
 repositories {
-	mavenLocal()
-	maven {
-		name "Fabric"
-		url "http://maven.fabricmc.net/"
-	}
+    mavenLocal()
     maven {
-		name "Masa's Maven"
-		url "https://masa.dy.fi/maven/"
-	}
-	maven {
-		name "Siphalor's Maven"
-		url "https://maven.siphalor.de/"
-	}
-	maven {
-		name "jitpack"
-		url "https://jitpack.io"
-	}
+        name "Fabric"
+        url "http://maven.fabricmc.net/"
+    }
+    maven {
+        name "Masa's Maven"
+        url "https://masa.dy.fi/maven/"
+    }
+    maven {
+        name "Siphalor's Maven"
+        url "https://maven.siphalor.de/"
+    }
+    maven {
+        name "jitpack"
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    //to change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
-	include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
-	modImplementation "net.fabricmc.fabric-api:fabric-key-binding-api-v1:1.0.1+06ca07090c"
-	include "net.fabricmc.fabric-api:fabric-key-binding-api-v1:1.0.1+06ca07090c"
-	modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.10+06c939b30c"
-	include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.10+06c939b30c"
-	modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.4.0+ec432e190c"
-	include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.4.0+ec432e190c"
-	modImplementation "net.fabricmc.fabric-api:fabric-item-api-v1:1.1.0+ec432e190c"
-	include "net.fabricmc.fabric-api:fabric-item-api-v1:1.1.0+ec432e190c"
-	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.1.3+abd915800c"
-	include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.1.3+abd915800c"
-	modImplementation "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.2.2+db9ee7ac0c"
-	include "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.2.2+db9ee7ac0c"
-	modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:0.1.10+d487f0ee0c"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.10+d487f0ee0c"
-	modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:1.2.0+f79427860c"
-	include "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:1.2.0+f79427860c"
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+0121bd900c"
+    modImplementation "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
+    include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
+    modImplementation "net.fabricmc.fabric-api:fabric-key-binding-api-v1:1.0.1+06ca07090c"
+    include "net.fabricmc.fabric-api:fabric-key-binding-api-v1:1.0.1+06ca07090c"
+    modImplementation "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.10+06c939b30c"
+    include "net.fabricmc.fabric-api:fabric-resource-loader-v0:0.1.10+06c939b30c"
+    modImplementation "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.4.0+ec432e190c"
+    include "net.fabricmc.fabric-api:fabric-events-interaction-v0:0.4.0+ec432e190c"
+    modImplementation "net.fabricmc.fabric-api:fabric-item-api-v1:1.1.0+ec432e190c"
+    include "net.fabricmc.fabric-api:fabric-item-api-v1:1.1.0+ec432e190c"
+    modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.1.3+abd915800c"
+    include "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.1.3+abd915800c"
+    modImplementation "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.2.2+db9ee7ac0c"
+    include "net.fabricmc.fabric-api:fabric-tool-attribute-api-v1:1.2.2+db9ee7ac0c"
+    modImplementation "net.fabricmc.fabric-api:fabric-networking-v0:0.1.10+d487f0ee0c"
+    include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.10+d487f0ee0c"
+    modImplementation "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:1.2.0+f79427860c"
+    include "net.fabricmc.fabric-api:fabric-lifecycle-events-v1:1.2.0+f79427860c"
+    modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+0121bd900c"
 
-	modImplementation("io.github.prospector:modmenu:1.10.2+build.32") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
+    modImplementation("io.github.prospector:modmenu:1.10.2+build.32") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
 
-	modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-	}
-	include "com.github.siphalor:tweed-api:${project.tweed_version}"
+    modImplementation("com.github.siphalor:tweed-api:${project.tweed_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+        exclude module: "modmenu"
+    }
+    include "com.github.siphalor:tweed-api:${project.tweed_version}"
 
-	modImplementation("de.siphalor:amecsapi-1.15:${project.amecs_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
-	include "de.siphalor:amecsapi-1.15:${project.amecs_version}"
+    modImplementation("de.siphalor:amecsapi-1.15:${project.amecs_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    include "de.siphalor:amecsapi-1.15:${project.amecs_version}"
 
-	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-	}
-	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+    modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
+        exclude group: "net.fabricmc.fabric-api"
+        exclude module: "modmenu"
+    }
+    include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 }
 
 processResources {
-	inputs.property "version", version
+    inputs.property "version", version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": version
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": version
+    }
 
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-	archiveClassifier.set("sources")
-	from sourceSets.main.allSource
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
 }
 
 jar {
-	from "LICENSE"
+    from "LICENSE"
 }
 
 // configure the maven publication
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 
-	// select the repositories you want to publish to
-	repositories {
-		maven {
-			name = "Siphalor"
-			url = "https://maven.siphalor.de/upload.php"
-			credentials {
-				username = siphalorMavenUser
-				password = siphalorMavenPassword
-			}
-		}
-	}
+    // select the repositories you want to publish to
+    repositories {
+        if (binding.hasVariable("siphalorMavenUser")) {
+            maven {
+                name = "Siphalor"
+                url = "https://maven.siphalor.de/upload.php"
+                credentials {
+                    username = siphalorMavenUser
+                    password = siphalorMavenPassword
+                }
+            }
+        }
+    }
 }
