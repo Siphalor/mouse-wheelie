@@ -131,7 +131,7 @@ publishing {
 
     // select the repositories you want to publish to
     repositories {
-        if (binding.hasVariable("siphalorMavenUser")) {
+        if (project.hasProperty("siphalorMavenUser")) {
             maven {
                 name = "Siphalor"
                 url = "https://maven.siphalor.de/upload.php"
