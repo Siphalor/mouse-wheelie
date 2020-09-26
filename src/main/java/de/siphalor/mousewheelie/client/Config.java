@@ -31,6 +31,9 @@ public class Config {
 			.setComment("Pick correct tool when middle clicking the held block.");
 	public static BooleanEntry enableQuickCraft = generalCategory.register("enable-quick-craft", new BooleanEntry(true))
 			.setComment("Enables right-clicking in recipe books/villager trading to swiftly craft/trade.");
+	public static BooleanEntry hotbarScope = generalCategory.register("hotbar-scope", new BooleanEntry(true))
+			.setComment("This option will treat the hotbar as a separate scope.\n" +
+					"This means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.");
 
 	public static ConfigCategory scrollingCategory = configFile.register("scrolling", new ConfigCategory());
 	public static BooleanEntry enableItemScrolling = scrollingCategory.register("enable", new BooleanEntry(true))
@@ -41,8 +44,6 @@ public class Config {
 	public static BooleanEntry directionalScrolling = scrollingCategory.register("directional-scrolling", new BooleanEntry(true))
 			.setComment("If enabled items will be moved according to whether your scrolling up or down.\n" +
 					"If disabled you will scroll to change the amount of items present (up will increase - down will decrease the amount).");
-	public static BooleanEntry pushHotbarSeparately = scrollingCategory.register("push-hotbar-separately", new BooleanEntry(false))
-			.setComment("If enabled the player inventory and the hotbar will be treated as different sections when pushing the inventory");
 	public static BooleanEntry scrollCreativeMenu = scrollingCategory.register("scroll-creative-menu", new BooleanEntry(false))
 			.setComment("Sets whether scrolling in creative mode by default scrolls the items or the menu.");
 

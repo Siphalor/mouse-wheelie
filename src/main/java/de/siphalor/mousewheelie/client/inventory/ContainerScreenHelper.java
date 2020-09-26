@@ -107,7 +107,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 			}
 		} else {
 			if (slot.inventory instanceof PlayerInventory) {
-				if (Config.pushHotbarSeparately.value && isHotbarSlot(slot))
+				if (Config.hotbarScope.value && isHotbarSlot(slot))
 					return -1;
 				return 0;
 			}
