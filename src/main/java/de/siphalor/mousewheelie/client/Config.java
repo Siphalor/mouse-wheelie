@@ -29,6 +29,9 @@ public class Config {
 
 		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
+
+		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
+		public boolean hotbarScope = true;
 	}
 
 	public Scrolling scrolling = new Scrolling();

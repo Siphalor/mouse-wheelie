@@ -107,7 +107,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			}
 		} else {
 			if (slot.inventory instanceof PlayerInventory) {
-				if (MouseWheelie.CONFIG.scrolling.pushHotbarSeparately && isHotbarSlot(slot))
+				if (MouseWheelie.CONFIG.general.hotbarScope && isHotbarSlot(slot))
 					return -1;
 				return 0;
 			}
