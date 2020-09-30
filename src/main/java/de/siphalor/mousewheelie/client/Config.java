@@ -46,9 +46,6 @@ public class Config {
 		@AConfigEntry(comment = "If enabled items will be moved according to whether your scrolling up or down.\nIf disabled you will scroll to change the amount of items present (up will increase - down will decrease")
 		public boolean directionalScrolling = true;
 
-		@AConfigEntry(comment = "If enabled the player inventory and the hotbar will be treated as different sections when pushing the inventory")
-		public boolean pushHotbarSeparately = false;
-
 		@AConfigEntry(comment = "Sets whether scrolling in creative mode by default scrolls the items or the menu.")
 		public boolean scrollCreativeMenu = false;
 	}
