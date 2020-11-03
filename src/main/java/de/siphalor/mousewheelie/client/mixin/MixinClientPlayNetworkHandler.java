@@ -10,8 +10,8 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ConfirmGuiActionS2CPacket;
+import net.minecraft.network.packet.s2c.play.ContainerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,25 +35,25 @@ public class MixinClientPlayNetworkHandler {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.HELD_ITEM_CHANGE);
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At("RETURN"))
-	public void onGuiSlotUpdateBegin(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+	@Inject(method = "onContainerSlotUpdate", at = @At("RETURN"))
+	public void onGuiSlotUpdateBegin(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		MWClient.lastUpdatedSlot = packet.getSlot();
 		InteractionManager.triggerSend(InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE);
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
-	public void onGuiSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	public void onGuiSlotUpdate(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (!MWClient.performRefill() && MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
 				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
-					ItemStack stack = inventory.getStack(inventory.selectedSlot);
+					ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
 					}
 				} else if (packet.getSlot() == 40) { // OFF_HAND
-					ItemStack stack = inventory.getStack(40);
+					ItemStack stack = inventory.getInvStack(40);
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
 					}
@@ -62,8 +62,8 @@ public class MixinClientPlayNetworkHandler {
 		}
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
-	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+	public void onGuiSlotUpdated(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		MWClient.performRefill();
 	}
 }

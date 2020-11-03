@@ -4,10 +4,10 @@ import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
+import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayDeque;
@@ -18,11 +18,11 @@ import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
-	private final HandledScreen<?> containerScreen;
+	private final ContainerScreen<?> containerScreen;
 	private List<Slot> inventorySlots;
 	private final ItemStack[] stacks;
 
-	public InventorySorter(HandledScreen<?> containerScreen, Slot originSlot) {
+	public InventorySorter(ContainerScreen<?> containerScreen, Slot originSlot) {
 		this.containerScreen = containerScreen;
 
 		collectSlots(originSlot);
@@ -32,13 +32,13 @@ public class InventorySorter {
 
 	private void collectSlots(Slot originSlot) {
 		inventorySlots = new ArrayList<>();
-		ContainerScreenHelper<? extends HandledScreen<?>> screenHelper = new ContainerScreenHelper<>(containerScreen, (slot, data, slotActionType) -> {
+		ContainerScreenHelper<? extends ContainerScreen<?>> screenHelper = new ContainerScreenHelper<>(containerScreen, (slot, data, slotActionType) -> {
 		});
 		int originScope = screenHelper.getScope(originSlot);
 		if (originScope == ContainerScreenHelper.INVALID_SCOPE) {
 			return;
 		}
-		for (Slot slot : containerScreen.getScreenHandler().slots) {
+		for (Slot slot : containerScreen.getContainer().slots) {
 			if (originScope == screenHelper.getScope(slot)) {
 				inventorySlots.add(slot);
 			}
@@ -53,7 +53,7 @@ public class InventorySorter {
 			if (stack.isEmpty()) continue;
 			int stackSize = stack.getCount();
 			if (stackSize >= stack.getItem().getMaxCount()) continue;
-			clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
+			clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP));
 			for (int j = 0; j < i; j++) {
 				ItemStack targetStack = stacks[j];
 				if (targetStack.isEmpty()) continue;
@@ -63,7 +63,7 @@ public class InventorySorter {
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
 					targetStack.setCount(targetStack.getCount() + delta);
-					clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
+					clickEvents.add(new InteractionManager.ClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(j).id, 0, SlotActionType.PICKUP));
 					if (stackSize <= 0) break;
 				}
 			}
@@ -75,7 +75,7 @@ public class InventorySorter {
 			InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 			clickEvents.clear();
 			if (stackSize > 0) {
-				InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(i).id, 0, SlotActionType.PICKUP);
 				stack.setCount(stackSize);
 			} else {
 				stacks[i] = ItemStack.EMPTY;
@@ -105,11 +105,11 @@ public class InventorySorter {
 				doneSlashEmpty.set(i);
 				continue;
 			}
-			InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
 			doneSlashEmpty.clear(slotCount + sortIds[i]);
 			int id = i;
 			while (!doneSlashEmpty.get(id)) {
-				InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
+				InteractionManager.pushClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
 				doneSlashEmpty.set(id);
 				if (doneSlashEmpty.get(slotCount + id)) {
 					doneSlashEmpty.set(slotCount + id);

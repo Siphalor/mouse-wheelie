@@ -33,16 +33,16 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.1.3+12a8474ca7',
-            'fabric-events-interaction-v0': '0.3.3+7066030fa7',
-			'fabric-events-lifecycle-v0': '0.2.0+16acbe5ba7',
-			'fabric-item-api-v1': '1.0.0+16acbe5ba7',
-			'fabric-lifecycle-events-v1': '1.2.0+74cc3b20a7',
-			'fabric-key-binding-api-v1': '1.0.1+730711c6a7',
-            'fabric-networking-v0': '0.1.10+e00ecb5fa7',
-			'fabric-tag-extensions-v0': '1.0.1+35e08e33a7',
-			'fabric-tool-attribute-api-v1': '1.2.0+d21d4635a7',
-			'fabric-resource-loader-v0': '0.2.8+35e08e33a7'
+	        'fabric-api-base': '0.1.2+b7f9825d0c',
+            'fabric-events-interaction-v0': '0.4.0+ec432e190c',
+			'fabric-events-lifecycle-v0': '0.2.0+2f23104b0c',
+			'fabric-item-api-v1': '1.1.0+ec432e190c',
+			'fabric-lifecycle-events-v1': '1.2.0+f79427860c',
+			'fabric-key-binding-api-v1': '1.0.1+06ca07090c',
+            'fabric-networking-v0': '0.1.10+d487f0ee0c',
+			'fabric-tag-extensions-v0': '0.1.3+abd915800c',
+			'fabric-tool-attribute-api-v1': '1.2.2+db9ee7ac0c',
+			'fabric-resource-loader-v0': '0.1.10+06c939b30c'
 	]
 
 	for (entry in fabric_deps.entrySet()) {
@@ -52,20 +52,20 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+438f9636b0"
 
-	modImplementation("io.github.prospector:modmenu:+") {
+	modImplementation("io.github.prospector:modmenu:1.10+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	modImplementation("de.siphalor:tweed-1.16:${project.tweed_version}") {
+	modImplementation("de.siphalor:tweed-1.15:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "modmenu"
 	}
-	include "de.siphalor:tweed-1.16:${project.tweed_version}"
+	include "de.siphalor:tweed-1.15:${project.tweed_version}"
 
-	modImplementation("de.siphalor:amecsapi-1.16:${project.amecs_version}") {
+	modImplementation("de.siphalor:amecsapi-1.15:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	include "de.siphalor:amecsapi-1.16:${project.amecs_version}"
+	include "de.siphalor:amecsapi-1.15:${project.amecs_version}"
 
 	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
 		exclude group: "net.fabricmc.fabric-api"

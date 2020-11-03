@@ -64,11 +64,11 @@ public class MWClient implements ClientModInitializer {
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				} else {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findWeapon();
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				}
 			}
 			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
@@ -76,7 +76,7 @@ public class MWClient implements ClientModInitializer {
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(blockState);
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
+					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 				}
 			}
 			return ItemStack.EMPTY;
@@ -94,11 +94,11 @@ public class MWClient implements ClientModInitializer {
 		Hand hand = refillHand;
 		refillHand = null;
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 		SlotRefiller.refill();
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 
 		return true;

@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client.util.accessors;
 
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.container.Slot;
 
 public interface IContainerScreen {
 	Slot mouseWheelie_getSlotAt(double mouseX, double mouseY);

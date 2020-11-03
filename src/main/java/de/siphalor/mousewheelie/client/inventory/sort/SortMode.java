@@ -120,7 +120,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		RAW_ID = register("raw_id", new SortMode("raw_id") {
 			@Override
 			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
-				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
+				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getId(stack.getItem())).toArray(Integer[]::new);
 
 				Arrays.sort(sortIds, (a, b) -> {
 					int result = Integer.compare(rawIds[a], rawIds[b]);

@@ -9,14 +9,14 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.container.Container;
+import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("WeakerAccess")
-@Mixin(HandledScreen.class)
+@Mixin(ContainerScreen.class)
 public abstract class MixinAbstractContainerScreen extends Screen implements IContainerScreen {
 	protected MixinAbstractContainerScreen(Text textComponent_1) {
 		super(textComponent_1);
@@ -40,7 +40,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@Shadow
 	@Final
-	protected ScreenHandler handler;
+	protected Container container;
 
 	@Shadow
 	@Final
@@ -65,7 +65,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					}
 				} else {
 					@SuppressWarnings("ConstantConditions")
-					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 					if (alt) {
 						if (shift) {
 							containerScreenHelper.dropAllFrom(hoveredSlot);
@@ -97,7 +97,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
 				} else if (ctrl) {
-					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 					if (alt) {
 						if (shift) {
 							containerScreenHelper.dropAllFrom(hoveredSlot);
@@ -136,15 +136,15 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			if (scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
 				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(hoveredSlot.getStack());
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
-					InteractionManager.pushClickEvent(handler.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
-					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(container.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
 					return ScrollAction.SUCCESS;
 				}
 			}
 
 			//noinspection ConstantConditions
-			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
+			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
 			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
 
 			return ScrollAction.SUCCESS;
@@ -158,7 +158,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			return false;
 		if (playerInventory.player.abilities.creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
-		InventorySorter sorter = new InventorySorter((HandledScreen<?>) (Object) this, focusedSlot);
+		InventorySorter sorter = new InventorySorter((ContainerScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;
 		if (hasShiftDown()) {
 			sortMode = MWConfig.sort.shiftSort;

@@ -6,17 +6,17 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
+import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
-public class ContainerScreenHelper<T extends HandledScreen<?>> {
+public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	protected final T screen;
 	protected final ClickHandler clickHandler;
 
@@ -52,7 +52,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
 			int referenceScope = getScope(referenceSlot);
 			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
-				for (Slot slot : screen.getScreenHandler().slots) {
+				for (Slot slot : screen.getContainer().slots) {
 					if (getScope(slot) == referenceScope) continue;
 					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
 						sendStack(slot);
@@ -63,7 +63,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			} else {
 				Slot moveSlot = null;
 				int stackSize = Integer.MAX_VALUE;
-				for (Slot slot : screen.getScreenHandler().slots) {
+				for (Slot slot : screen.getContainer().slots) {
 					if (getScope(slot) == referenceScope) continue;
 					if (getScope(slot) <= 0 == scrollUp) {
 						if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
@@ -90,7 +90,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public int getScope(Slot slot) {
-		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.size()) {
+		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.getInvSize()) {
 			return INVALID_SCOPE;
 		}
 		if (screen instanceof AbstractInventoryScreen) {
@@ -116,7 +116,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void runInScope(int scope, Consumer<Slot> slotConsumer) {
-		for (Slot slot : screen.getScreenHandler().slots) {
+		for (Slot slot : screen.getContainer().slots) {
 			if (getScope(slot) == scope) {
 				slotConsumer.accept(slot);
 			}
