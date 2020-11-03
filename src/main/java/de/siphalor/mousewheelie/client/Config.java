@@ -58,6 +58,8 @@ public class Config {
 
 	public static ConfigCategory refillCategory = configFile.register("refill", new ConfigCategory())
 			.setComment("Configure refill related stuff here.");
+	public static BooleanEntry refillOffHand = refillCategory.register("off-hand", new BooleanEntry(true))
+			.setComment("Refill stacks in the off hand");
 	public static BooleanEntry eatRefill = refillCategory.register("eat", new BooleanEntry(true))
 			.setComment("Refill when eating items");
 	public static BooleanEntry dropRefill = refillCategory.register("drop", new BooleanEntry(true))

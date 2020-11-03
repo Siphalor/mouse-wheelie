@@ -99,11 +99,11 @@ public class MWClient implements ClientModInitializer {
 
 		Hand hand = refillHand;
 		refillHand = null;
-		if (hand.equals(Hand.OFF_HAND)) {
+		if (Config.refillOffHand.value && hand.equals(Hand.OFF_HAND)) {
 			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 		SlotRefiller.refill();
-		if (hand.equals(Hand.OFF_HAND)) {
+		if (Config.refillOffHand.value && hand.equals(Hand.OFF_HAND)) {
 			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 
