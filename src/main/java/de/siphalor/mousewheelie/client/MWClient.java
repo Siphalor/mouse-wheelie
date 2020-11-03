@@ -76,7 +76,7 @@ public class MWClient implements ClientModInitializer {
 					index = toolPicker.findToolFor(blockState);
 				}
 			}
-			return index == -1 || index == player.inventory.selectedSlot ? ItemStack.EMPTY : player.inventory.getStack(index);
+			return index == -1 || index == player.inventory.selectedSlot ? ItemStack.EMPTY : player.inventory.getInvStack(index);
 		});
 	}
 
