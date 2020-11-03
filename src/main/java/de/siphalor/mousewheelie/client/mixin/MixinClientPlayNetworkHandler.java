@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.Config;
+import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
@@ -43,7 +43,7 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (!MWClient.performRefill() && Config.refill.other) {
+		if (!MWClient.performRefill() && MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {

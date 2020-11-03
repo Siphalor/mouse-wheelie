@@ -1,7 +1,7 @@
 package de.siphalor.mousewheelie.client;
 
 import de.siphalor.amecs.api.KeyModifiers;
-import de.siphalor.mousewheelie.Config;
+import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.ToolPicker;
@@ -60,7 +60,7 @@ public class MWClient implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
-			if (Config.general.holdToolPick && (isTool(item) || isWeapon(item))) {
+			if (MWConfig.general.holdToolPick && (isTool(item) || isWeapon(item))) {
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
 					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
@@ -71,7 +71,7 @@ public class MWClient implements ClientModInitializer {
 					return index == -1 ? ItemStack.EMPTY : player.inventory.getStack(index);
 				}
 			}
-			if (Config.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
@@ -93,11 +93,11 @@ public class MWClient implements ClientModInitializer {
 
 		Hand hand = refillHand;
 		refillHand = null;
-		if (Config.refill.offHand && hand.equals(Hand.OFF_HAND)) {
+		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
 			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 		SlotRefiller.refill();
-		if (Config.refill.offHand && hand.equals(Hand.OFF_HAND)) {
+		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
 			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
 		}
 

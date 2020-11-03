@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth", casing = CaseFormat.LOWER_HYPHEN)
-public class Config {
+public class MWConfig {
 	@AConfigEntry(comment = "General settings")
 	public static General general = new General();
 

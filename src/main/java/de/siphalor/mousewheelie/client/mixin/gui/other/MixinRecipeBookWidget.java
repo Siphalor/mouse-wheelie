@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
-import de.siphalor.mousewheelie.Config;
+import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
@@ -76,12 +76,12 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 		if (mouseX >= left && mouseX < left + 147) {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
 			int maxPage = ((IRecipeBookResults) recipesArea).mouseWheelie_getPageCount() - 1;
-			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount * Config.scrolling.scrollFactor)), 0, Math.max(maxPage, 0)));
+			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount * MWConfig.scrolling.scrollFactor)), 0, Math.max(maxPage, 0)));
 			((IRecipeBookResults) recipesArea).mouseWheelie_refreshResultButtons();
 			return ScrollAction.SUCCESS;
 		} else if(mouseX >= left - 30 && mouseX < left) {
 			int index = tabButtons.indexOf(currentTab);
-			int newIndex = MathHelper.clamp(index + (int) (Math.round(scrollAmount * Config.scrolling.scrollFactor)), 0, tabButtons.size() - 1);
+			int newIndex = MathHelper.clamp(index + (int) (Math.round(scrollAmount * MWConfig.scrolling.scrollFactor)), 0, tabButtons.size() - 1);
 			if (newIndex != index) {
 				currentTab.setToggled(false);
 				currentTab = tabButtons.get(newIndex);
@@ -95,7 +95,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;clickRecipe(ILnet/minecraft/recipe/Recipe;Z)V", shift = At.Shift.AFTER))
 	public void mouseClicked(double x, double y, int mouseButton, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (Config.general.enableQuickCraft & mouseButton == 1) {
+		if (MWConfig.general.enableQuickCraft & mouseButton == 1) {
 			int resSlot = craftingScreenHandler.getCraftingResultSlotIndex();
 			Recipe<?> recipe = recipesArea.getLastClickedRecipe();
 			if (canCraftMore(recipe)) {
@@ -108,7 +108,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (Config.general.enableQuickCraft && isOpen() && !client.player.isSpectator()) {
+		if (MWConfig.general.enableQuickCraft && isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
 				searching = false;
 				Recipe<?> oldRecipe = recipesArea.getLastClickedRecipe();
