@@ -68,6 +68,9 @@ public class Config {
 	public Refill refill = new Refill();
 
 	public static class Refill {
+		@AConfigEntry(comment = "Refills stacks in the off hand")
+		public boolean offHand = true;
+
 		@AConfigEntry(comment = "Refill when eating items")
 		public boolean eat = true;
 
