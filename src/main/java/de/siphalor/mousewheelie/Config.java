@@ -1,4 +1,4 @@
-package de.siphalor.mousewheelie.client;
+package de.siphalor.mousewheelie;
 
 import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth", casing = CaseFormat.LOWER_HYPHEN)
 public class Config {
 	@AConfigEntry(comment = "General settings")
-	public General general = new General();
+	public static General general = new General();
 
 	public static class General {
 		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
@@ -34,7 +34,7 @@ public class Config {
 		public boolean hotbarScope = true;
 	}
 
-	public Scrolling scrolling = new Scrolling();
+	public static Scrolling scrolling = new Scrolling();
 
 	public static class Scrolling {
 		@AConfigEntry(comment = "Enables scrolling of stacks")
@@ -51,7 +51,7 @@ public class Config {
 	}
 
 	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
-	public Sort sort = new Sort();
+	public static Sort sort = new Sort();
 
 	public static class Sort {
 		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
@@ -65,7 +65,7 @@ public class Config {
 	}
 
 	@AConfigEntry(comment = "Configure refill related stuff here.")
-	public Refill refill = new Refill();
+	public static Refill refill = new Refill();
 
 	public static class Refill {
 		@AConfigEntry(comment = "Refills stacks in the off hand")

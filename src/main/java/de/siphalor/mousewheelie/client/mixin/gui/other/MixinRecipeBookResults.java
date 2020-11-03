@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
-import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.Config;
 import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -57,7 +57,7 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 
 	@Inject(method = "mouseClicked", at = @At(value = "JUMP", opcode = 154), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void mouseClicked(double x, double y, int mouseButton, int int2, int int3, int int4, int int5, CallbackInfoReturnable<Boolean> callbackInfoReturnable, Iterator<?> iterator, AnimatedResultButton animatedResultButton) {
-		if (MouseWheelie.CONFIG.general.enableQuickCraft && mouseButton == 1 && animatedResultButton.hasResults()) {
+		if (Config.general.enableQuickCraft && mouseButton == 1 && animatedResultButton.hasResults()) {
 			lastClickedRecipe = animatedResultButton.currentRecipe();
 			resultCollection = animatedResultButton.getResultCollection();
 		}

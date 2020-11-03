@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.entity;
 
-import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.Config;
 import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,7 +27,7 @@ public abstract class MixinLivingEntity {
 	@Inject(method = "consumeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	protected void onItemUseFinish(CallbackInfo callbackInfo) {
 		//noinspection ConstantConditions
-		if ((Object) this instanceof PlayerEntity && MouseWheelie.CONFIG.refill.eat) {
+		if ((Object) this instanceof PlayerEntity && Config.refill.eat) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
 			MWClient.scheduleRefill(getActiveHand(), playerInventory, activeItemStack.copy());
 		}

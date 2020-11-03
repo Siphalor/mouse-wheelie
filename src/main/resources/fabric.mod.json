@@ -35,7 +35,7 @@
 		],
 		"tweed:config": [
 			{
-				"value": "de.siphalor.mousewheelie.MouseWheelie::CONFIG"
+				"value": "de.siphalor.mousewheelie.Config"
 			}
 		]
 	},

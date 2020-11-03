@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
-import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.Config;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -83,7 +83,7 @@ public class SlotRefiller {
 	public static class BlockRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.anyBlock && oldStack.getItem() instanceof BlockItem;
+			return Config.refill.rules.anyBlock && oldStack.getItem() instanceof BlockItem;
 		}
 
 		@Override
@@ -95,7 +95,7 @@ public class SlotRefiller {
 	public static class ItemGroupRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.itemgroup && oldStack.getItem().getGroup() != null;
+			return Config.refill.rules.itemgroup && oldStack.getItem().getGroup() != null;
 		}
 
 		@Override
@@ -108,7 +108,7 @@ public class SlotRefiller {
 	public static class ItemHierarchyRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.itemHierarchy && oldStack.getItem().getClass() != Item.class && !(oldStack.getItem() instanceof BlockItem);
+			return Config.refill.rules.itemHierarchy && oldStack.getItem().getClass() != Item.class && !(oldStack.getItem() instanceof BlockItem);
 		}
 
 		@Override
@@ -152,7 +152,7 @@ public class SlotRefiller {
 	public static class BlockHierarchyRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.blockHierarchy && oldStack.getItem() instanceof BlockItem;
+			return Config.refill.rules.blockHierarchy && oldStack.getItem() instanceof BlockItem;
 		}
 
 		@Override
@@ -197,7 +197,7 @@ public class SlotRefiller {
 	public static class FoodRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.food && oldStack.isFood();
+			return Config.refill.rules.food && oldStack.isFood();
 		}
 
 		@Override
@@ -209,7 +209,7 @@ public class SlotRefiller {
 	public static class EqualItemRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.equalItems;
+			return Config.refill.rules.equalItems;
 		}
 
 		@Override
@@ -222,7 +222,7 @@ public class SlotRefiller {
 	public static class EqualStackRule extends Rule {
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MouseWheelie.CONFIG.refill.rules.equalStacks;
+			return Config.refill.rules.equalStacks;
 		}
 
 		@Override

@@ -1,6 +1,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.Config;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
 import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
@@ -46,7 +46,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 		if (overTabs) {
 			if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
-				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * MouseWheelie.CONFIG.scrolling.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
+				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * Config.scrolling.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
 				int newPage = helper.getPageForTabIndex(newIndex);
 				if (newPage < helper.getCurrentPage())
 					helper.previousPage();
@@ -54,13 +54,13 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 					helper.nextPage();
 				setSelectedTab(ItemGroup.GROUPS[newIndex]);
 			} else {
-				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * MouseWheelie.CONFIG.scrolling.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * Config.scrolling.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
 			}
 			return ScrollAction.SUCCESS;
 		}
 
-		if (MouseWheelie.CONFIG.scrolling.enable && selectedTab != ItemGroup.INVENTORY.getIndex()) {
-			if (MouseWheelie.CONFIG.scrolling.scrollCreativeMenu == !hasAltDown())
+		if (Config.scrolling.enable && selectedTab != ItemGroup.INVENTORY.getIndex()) {
+			if (Config.scrolling.scrollCreativeMenu == !hasAltDown())
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
