@@ -5,7 +5,7 @@ import net.fabricmc.fabric.impl.item.group.FabricCreativeGuiComponents;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 
 public final class FabricCreativeGuiHelper {
-	private CreativeGuiExtensions fabricExtensions;
+	private final CreativeGuiExtensions fabricExtensions;
 
 	public FabricCreativeGuiHelper(CreativeInventoryScreen screen) {
 		fabricExtensions = (CreativeGuiExtensions) screen;

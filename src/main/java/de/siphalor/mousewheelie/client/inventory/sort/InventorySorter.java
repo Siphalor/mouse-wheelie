@@ -18,9 +18,9 @@ import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
-	private HandledScreen<?> containerScreen;
+	private final HandledScreen<?> containerScreen;
 	private List<Slot> inventorySlots;
-	private ItemStack[] stacks;
+	private final ItemStack[] stacks;
 
 	public InventorySorter(HandledScreen<?> containerScreen, Slot originSlot) {
 		this.containerScreen = containerScreen;
