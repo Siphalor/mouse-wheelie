@@ -1,8 +1,6 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.tweed.tailor.DropdownMaterial;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,7 +8,6 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 
-@Environment(EnvType.CLIENT)
 public abstract class SortMode implements DropdownMaterial<SortMode> {
 	private static final Map<String, SortMode> SORT_MODES = new HashMap<>();
 	private final String name;
