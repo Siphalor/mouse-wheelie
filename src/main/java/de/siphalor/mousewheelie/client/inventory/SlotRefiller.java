@@ -43,8 +43,9 @@ public class SlotRefiller {
 					if (slot < 9) {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
-					} else
+					} else {
 						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE));
+					}
 					return true;
 				}
 			}
