@@ -60,26 +60,23 @@ public class MWClient implements ClientModInitializer {
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
+			int index = -1;
 			if (MWConfig.general.holdToolPick && (isTool(item) || isWeapon(item))) {
+				ToolPicker toolPicker = new ToolPicker(player.inventory);
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
-					ToolPicker toolPicker = new ToolPicker(player.inventory);
-					int index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
 				} else {
-					ToolPicker toolPicker = new ToolPicker(player.inventory);
-					int index = toolPicker.findWeapon();
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					index = toolPicker.findWeapon();
 				}
 			}
 			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);
-					int index = toolPicker.findToolFor(blockState);
-					return index == -1 ? ItemStack.EMPTY : player.inventory.getInvStack(index);
+					index = toolPicker.findToolFor(blockState);
 				}
 			}
-			return ItemStack.EMPTY;
+			return index == -1 || index == player.inventory.selectedSlot ? ItemStack.EMPTY : player.inventory.getStack(index);
 		});
 	}
 

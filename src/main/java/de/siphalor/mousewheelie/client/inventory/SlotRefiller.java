@@ -40,11 +40,15 @@ public class SlotRefiller {
 			if (rule.matches(stack)) {
 				int slot = rule.findMatchingStack(playerInventory, stack);
 				if (slot != -1) {
+					if (slot == playerInventory.selectedSlot) {
+						return true;
+					}
 					if (slot < 9) {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
-					} else
+					} else {
 						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE));
+					}
 					return true;
 				}
 			}

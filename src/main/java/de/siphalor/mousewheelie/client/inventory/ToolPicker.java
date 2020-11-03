@@ -64,7 +64,7 @@ public class ToolPicker {
 	}
 
 	private boolean pick(int index) {
-		if (index != -1) {
+		if (index != -1 && index != inventory.selectedSlot) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
 			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
 			return true;
