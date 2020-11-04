@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.ActionResult;
 
 public class MouseWheelie implements ModInitializer {
 	public static final String MOD_ID = "mousewheelie";
@@ -21,11 +21,11 @@ public class MouseWheelie implements ModInitializer {
 					if (!equipmentStack.isEmpty()) {
 						player.setStackInHand(hand, equipmentStack);
 						player.equipStack(equipmentSlot, stack);
-						return TypedActionResult.consume(equipmentStack);
+						return ActionResult.SUCCESS;
 					}
 				}
 			}
-			return TypedActionResult.pass(stack);
+			return ActionResult.PASS;
 		});
 	}
 }

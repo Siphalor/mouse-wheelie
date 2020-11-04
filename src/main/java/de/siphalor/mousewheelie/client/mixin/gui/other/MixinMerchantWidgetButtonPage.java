@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWidget {
 	@Shadow
 	@Final
-	int index;
+	int field_19165;
 
 	@Override
 	public boolean mouseClicked(int mouseButton) {
@@ -27,7 +27,7 @@ public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWid
 		MinecraftClient minecraft = MinecraftClient.getInstance();
 		Screen screen = minecraft.currentScreen;
 		if (screen instanceof IMerchantScreen) {
-			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.index + ((IMerchantScreen) screen).getRecipeIdOffset());
+			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.field_19165 + ((IMerchantScreen) screen).getRecipeIdOffset());
 			((IMerchantScreen) screen).mouseWheelie_syncRecipeId();
 			if (screen instanceof ContainerScreen) {
 				if (Screen.hasShiftDown())

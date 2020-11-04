@@ -106,7 +106,7 @@ public class InteractionManager {
 
 		@Override
 		public Waiter send() {
-			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
+			MinecraftClient.getInstance().interactionManager.method_2906(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return waiter;
 		}
 	}

@@ -53,7 +53,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	public abstract boolean isOpen();
 
 	@Shadow
-	private boolean searching;
+	private boolean field_3087;
 
 	@Shadow
 	protected MinecraftClient client;
@@ -110,7 +110,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (MWConfig.general.enableQuickCraft && isOpen() && !client.player.isSpectator()) {
 			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
-				searching = false;
+				field_3087 = false;
 				Recipe<?> oldRecipe = recipesArea.getLastClickedRecipe();
 				if (this.recipesArea.mouseClicked(MWClient.getMouseX(), MWClient.getMouseY(), 0, (this.parentWidth - 147) / 2 - this.leftOffset, (this.parentHeight - 166) / 2, 147, 166)) {
 					Recipe<?> recipe = recipesArea.getLastClickedRecipe();
@@ -133,7 +133,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						}
 					}
 					InteractionManager.push(new InteractionManager.CallbackEvent(() -> {
-						client.interactionManager.clickSlot(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
+						client.interactionManager.method_2906(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
 						refreshResults(false);
 						return new InteractionManager.GuiConfirmWaiter(1);
 					}));

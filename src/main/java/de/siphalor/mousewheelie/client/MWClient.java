@@ -19,7 +19,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+import net.fabricmc.fabric.api.tools.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
@@ -110,11 +110,11 @@ public class MWClient implements ClientModInitializer {
 	}
 
 	public static double getMouseX() {
-		return CLIENT.mouse.getX() * (double) CLIENT.getWindow().getScaledWidth() / (double) CLIENT.getWindow().getWidth();
+		return CLIENT.mouse.getX() * (double) CLIENT.window.getScaledWidth() / (double) CLIENT.window.getWidth();
 	}
 
 	public static double getMouseY() {
-		return CLIENT.mouse.getY() * (double) CLIENT.getWindow().getScaledHeight() / (double) CLIENT.getWindow().getHeight();
+		return CLIENT.mouse.getY() * (double) CLIENT.window.getScaledHeight() / (double) CLIENT.window.getHeight();
 	}
 
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {

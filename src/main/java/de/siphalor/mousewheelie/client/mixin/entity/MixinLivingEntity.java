@@ -24,7 +24,7 @@ public abstract class MixinLivingEntity {
 	@Shadow
 	protected ItemStack activeItemStack;
 
-	@Inject(method = "consumeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	@Inject(method = "method_6040", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	protected void onItemUseFinish(CallbackInfo callbackInfo) {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerEntity && MWConfig.refill.eat) {
