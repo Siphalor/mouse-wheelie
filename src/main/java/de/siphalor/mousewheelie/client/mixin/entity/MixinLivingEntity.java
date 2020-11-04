@@ -24,12 +24,14 @@ public abstract class MixinLivingEntity {
 	@Shadow
 	protected ItemStack activeItemStack;
 
-	@Inject(method = "consumeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	@Inject(method = "consumeItem", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"))
 	protected void onItemUseFinish(CallbackInfo callbackInfo) {
 		//noinspection ConstantConditions
-		if ((Object) this instanceof PlayerEntity && MWConfig.refill.eat) {
+		if ((Object) this instanceof PlayerEntity && MWConfig.refill.eat && activeItemStack.isEmpty()) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
+			activeItemStack.setCount(1);
 			MWClient.scheduleRefill(getActiveHand(), playerInventory, activeItemStack.copy());
+			activeItemStack.setCount(0);
 		}
 	}
 }
