@@ -50,7 +50,7 @@ dependencies {
 		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
 	}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+438f9636b0"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+0121bd900c"
 
 	modImplementation("io.github.prospector:modmenu:1.10+") {
 		exclude group: "net.fabricmc.fabric-api"
