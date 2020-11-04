@@ -156,7 +156,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
-		if (playerInventory.player.abilities.creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
+		if (playerInventory.player.method_31549().creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter((HandledScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;

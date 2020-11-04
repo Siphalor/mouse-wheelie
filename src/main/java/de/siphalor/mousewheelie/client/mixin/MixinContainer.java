@@ -31,7 +31,7 @@ public abstract class MixinContainer {
 	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.other) {
-			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
+			PlayerInventory inventory = MinecraftClient.getInstance().player.method_31548();
 			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
 				ItemStack stack = inventory.getMainHandStack();
 				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {

@@ -19,7 +19,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.client.player.ClientPickBlockGatherCallback;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
@@ -62,7 +61,7 @@ public class MWClient implements ClientModInitializer {
 			Item item = player.getMainHandStack().getItem();
 			int index = -1;
 			if (MWConfig.general.holdToolPick && (isTool(item) || isWeapon(item))) {
-				ToolPicker toolPicker = new ToolPicker(player.inventory);
+				ToolPicker toolPicker = new ToolPicker(player.method_31548());
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
 				} else {
@@ -72,11 +71,11 @@ public class MWClient implements ClientModInitializer {
 			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
-					ToolPicker toolPicker = new ToolPicker(player.inventory);
+					ToolPicker toolPicker = new ToolPicker(player.method_31548());
 					index = toolPicker.findToolFor(blockState);
 				}
 			}
-			return index == -1 || index == player.inventory.selectedSlot ? ItemStack.EMPTY : player.inventory.getStack(index);
+			return index == -1 || index == player.method_31548().selectedSlot ? ItemStack.EMPTY : player.method_31548().getStack(index);
 		});
 	}
 
@@ -102,11 +101,12 @@ public class MWClient implements ClientModInitializer {
 	}
 
 	public static boolean isTool(Item item) {
-		return item instanceof ToolItem || item instanceof ShearsItem || FabricToolTags.AXES.contains(item) || FabricToolTags.HOES.contains(item) || FabricToolTags.PICKAXES.contains(item) || FabricToolTags.SHOVELS.contains(item);
+		// TODO: reimplement Fapi tool tags
+		return item instanceof ToolItem || item instanceof ShearsItem;
 	}
 
 	public static boolean isWeapon(Item item) {
-		return item instanceof RangedWeaponItem || item instanceof TridentItem || item instanceof SwordItem || FabricToolTags.SWORDS.contains(item);
+		return item instanceof RangedWeaponItem || item instanceof TridentItem || item instanceof SwordItem;
 	}
 
 	public static double getMouseX() {
