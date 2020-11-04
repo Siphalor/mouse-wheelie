@@ -27,6 +27,7 @@
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + middle mouse click",
 	"tweed.cloth.mousewheelie.sort.control-sort": "Control + middle mouse click",
 	"tweed.cloth.mousewheelie.refill": "Refill",
+	"tweed.cloth.mousewheelie.refill.off-hand": "Refill the off hand",
 	"tweed.cloth.mousewheelie.refill.eat": "Refill when eating food",
 	"tweed.cloth.mousewheelie.refill.drop": "Refill when dropping items",
 	"tweed.cloth.mousewheelie.refill.use": "Refill when using items",
