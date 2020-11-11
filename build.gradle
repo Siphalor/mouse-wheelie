@@ -33,16 +33,16 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.2.0+9f0fb4b822',
-            'fabric-events-interaction-v0': '0.4.2+3e817a6222',
-			'fabric-events-lifecycle-v0': '0.2.0+16acbe5b22',
-			'fabric-item-api-v1': '1.2.0+f8ac1db222',
-			'fabric-lifecycle-events-v1': '1.3.0+3e817a6222',
-			'fabric-key-binding-api-v1': '1.0.1+730711c622',
-            'fabric-networking-v0': '0.1.10+e00ecb5f22',
-			'fabric-tag-extensions-v0': '1.0.4+3e817a6222',
-			'fabric-tool-attribute-api-v1': '1.2.5+3e817a6222',
-			'fabric-resource-loader-v0': '0.3.2+3e817a6222'
+	        'fabric-api-base': '0.2.0+9f0fb4b83b',
+            'fabric-events-interaction-v0': '0.4.3+df3673f03b',
+			'fabric-events-lifecycle-v0': '0.2.0+16acbe5b3b',
+			'fabric-item-api-v1': '1.2.1+df3673f03b',
+			'fabric-lifecycle-events-v1': '1.3.2+24947c8d3b',
+			'fabric-key-binding-api-v1': '1.0.1+730711c63b',
+            'fabric-networking-v0': '0.1.10+e00ecb5f3b',
+			'fabric-tag-extensions-v0': '1.0.4+3e817a623b',
+			'fabric-tool-attribute-api-v1': '1.2.7+df3673f03b',
+			'fabric-resource-loader-v0': '0.3.3+df3673f03b'
 	]
 
 	for (entry in fabric_deps.entrySet()) {
@@ -50,7 +50,7 @@ dependencies {
 		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
 	}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.1+a4467d2a22"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.1+a4467d2a3b"
 
 	modImplementation("io.github.prospector:modmenu:+") {
 		exclude group: "net.fabricmc.fabric-api"

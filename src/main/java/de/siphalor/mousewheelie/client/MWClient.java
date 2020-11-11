@@ -61,7 +61,7 @@ public class MWClient implements ClientModInitializer {
 			Item item = player.getMainHandStack().getItem();
 			int index = -1;
 			if (MWConfig.general.holdToolPick && (isTool(item) || isWeapon(item))) {
-				ToolPicker toolPicker = new ToolPicker(player.method_31548());
+				ToolPicker toolPicker = new ToolPicker(player.getInventory());
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
 				} else {
@@ -71,11 +71,11 @@ public class MWClient implements ClientModInitializer {
 			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
-					ToolPicker toolPicker = new ToolPicker(player.method_31548());
+					ToolPicker toolPicker = new ToolPicker(player.getInventory());
 					index = toolPicker.findToolFor(blockState);
 				}
 			}
-			return index == -1 || index == player.method_31548().selectedSlot ? ItemStack.EMPTY : player.method_31548().getStack(index);
+			return index == -1 || index == player.getInventory().selectedSlot ? ItemStack.EMPTY : player.getInventory().getStack(index);
 		});
 	}
 

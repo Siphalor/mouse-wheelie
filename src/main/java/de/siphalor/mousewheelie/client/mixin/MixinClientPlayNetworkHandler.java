@@ -45,7 +45,7 @@ public class MixinClientPlayNetworkHandler {
 	public void onGuiSlotUpdate(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (!MWClient.performRefill() && MWConfig.refill.other) {
 			//noinspection ConstantConditions
-			PlayerInventory inventory = client.player.method_31548();
+			PlayerInventory inventory = client.player.getInventory();
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
 				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
 					ItemStack stack = inventory.getStack(inventory.selectedSlot);

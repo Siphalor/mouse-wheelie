@@ -134,7 +134,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 			//noinspection ConstantConditions
 			if (scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
-				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(hoveredSlot.getStack());
+				EquipmentSlot equipmentSlot = MobEntity.method_32326(hoveredSlot.getStack());
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
 					InteractionManager.pushClickEvent(handler.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
@@ -156,7 +156,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
-		if (playerInventory.player.method_31549().creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
+		if (playerInventory.player.getAbilities().creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter((HandledScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;

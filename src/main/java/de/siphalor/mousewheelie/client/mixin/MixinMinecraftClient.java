@@ -35,9 +35,9 @@ public class MixinMinecraftClient {
 	@Inject(method = "doItemUse", at = @At("RETURN"))
 	public void onItemUsed(CallbackInfo callbackInfo) {
 		if (mouseWheelie_mainHandStack != null && player.getMainHandStack().isEmpty()) {
-			MWClient.scheduleRefill(Hand.MAIN_HAND, player.method_31548(), mouseWheelie_mainHandStack);
+			MWClient.scheduleRefill(Hand.MAIN_HAND, player.getInventory(), mouseWheelie_mainHandStack);
 		} else if (mouseWheelie_offHandStack != null && player.getOffHandStack().isEmpty()) {
-			MWClient.scheduleRefill(Hand.OFF_HAND, player.method_31548(), mouseWheelie_offHandStack);
+			MWClient.scheduleRefill(Hand.OFF_HAND, player.getInventory(), mouseWheelie_offHandStack);
 		}
 		MWClient.performRefill();
 		mouseWheelie_mainHandStack = null;
