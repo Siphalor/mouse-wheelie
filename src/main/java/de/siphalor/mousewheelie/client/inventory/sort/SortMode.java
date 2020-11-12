@@ -66,7 +66,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 				strings = Arrays.stream(sortIds).map(id -> {
 					ItemStack itemStack = stacks[id];
 					if (itemStack.isEmpty()) return "";
-					return I18n.translate(itemStack.getTranslationKey());
+					return I18n.translate(itemStack.getName().getString());
 				}).toArray(String[]::new);
 
 				Arrays.sort(sortIds, (a, b) -> {
