@@ -105,7 +105,7 @@ public class MWConfig {
 	}
 
 	@AConfigFixer
-	public <T> void fixConfig(DataObject<T> dataObject, String property, DataObject<T> rootObject) {
+	public <T> void fixConfig(DataObject<T> dataObject, DataObject<T> rootObject) {
 		if (dataObject.has("general") && dataObject.get("general").isObject()) {
 			DataObject<T> general = dataObject.get("general").asObject();
 
