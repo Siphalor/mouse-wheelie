@@ -52,7 +52,7 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+438f9636b0"
 
-	modImplementation("io.github.prospector:modmenu:+") {
+	modImplementation("io.github.prospector:modmenu:(,1.15)") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
