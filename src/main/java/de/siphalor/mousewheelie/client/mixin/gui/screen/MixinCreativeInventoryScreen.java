@@ -37,28 +37,30 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 
 	@Override
 	public ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
-		boolean yOverTopTabs = (this.y - 32 <= mouseY && mouseY <= this.y);
-		boolean yOverBottomTabs = (this.y + this.backgroundHeight <= mouseY && mouseY <= this.y + this.backgroundHeight + 32);
-		boolean overTabs = (this.x <= mouseX && mouseX <= this.x + this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
+		if (MWConfig.scrolling.scrollCreativeMenuTabs) {
+			boolean yOverTopTabs = (this.y - 32 <= mouseY && mouseY <= this.y);
+			boolean yOverBottomTabs = (this.y + this.backgroundHeight <= mouseY && mouseY <= this.y + this.backgroundHeight + 32);
+			boolean overTabs = (this.x <= mouseX && mouseX <= this.x + this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
 
-		if (overTabs) {
-			if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
-				FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
-				int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * MWConfig.scrolling.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
-				int newPage = helper.getPageForTabIndex(newIndex);
-				if (newPage < helper.getCurrentPage())
-					helper.previousPage();
-				if (newPage > helper.getCurrentPage())
-					helper.nextPage();
-				setSelectedTab(ItemGroup.GROUPS[newIndex]);
-			} else {
-				setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * MWConfig.scrolling.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+			if (overTabs) {
+				if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
+					FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
+					int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount * MWConfig.scrolling.scrollFactor), 0, ItemGroup.GROUPS.length - 1);
+					int newPage = helper.getPageForTabIndex(newIndex);
+					if (newPage < helper.getCurrentPage())
+						helper.previousPage();
+					if (newPage > helper.getCurrentPage())
+						helper.nextPage();
+					setSelectedTab(ItemGroup.GROUPS[newIndex]);
+				} else {
+					setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount * MWConfig.scrolling.scrollFactor)), 0, ItemGroup.GROUPS.length - 1)]);
+				}
+				return ScrollAction.SUCCESS;
 			}
-			return ScrollAction.SUCCESS;
 		}
 
 		if (MWConfig.scrolling.enable && selectedTab != ItemGroup.INVENTORY.getIndex()) {
-			if (MWConfig.scrolling.scrollCreativeMenu == !hasAltDown())
+			if (MWConfig.scrolling.scrollCreativeMenuItems == hasAltDown())
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
