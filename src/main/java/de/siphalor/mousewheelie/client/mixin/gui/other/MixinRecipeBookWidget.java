@@ -125,7 +125,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						}
 						int cnt = recipeFinder.countRecipeCrafts(recipe, recipe.getOutput().getMaxCount(), null);
 						for (int i = 1; i < cnt; i++) {
-							InteractionManager.pushClickEvent(craftingScreenHandler.syncId, resSlot, 0, SlotActionType.THROW);
+							InteractionManager.pushClickEvent(craftingScreenHandler.syncId, resSlot, 1, SlotActionType.THROW);
 						}
 					} else {
 						if (oldRecipe != recipe || craftingScreenHandler.slots.get(resSlot).getStack().isEmpty()) {
