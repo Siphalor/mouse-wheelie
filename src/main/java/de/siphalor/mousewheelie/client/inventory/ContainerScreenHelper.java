@@ -165,20 +165,6 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		});
 	}
 
-	public void dropAllOfAKind(Slot referenceSlot) {
-		ItemStack referenceStack = referenceSlot.getStack().copy();
-		runInScope(getScope(referenceSlot), slot -> {
-			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
-				clickHandler.handleClick(slot, 1, SlotActionType.THROW);
-		});
-	}
-
-	public void dropAllFrom(Slot referenceSlot) {
-		runInScope(getScope(referenceSlot), slot -> {
-			clickHandler.handleClick(slot, 1, SlotActionType.THROW);
-		});
-	}
-
 	public interface ClickHandler {
 		void handleClick(Slot slot, int data, SlotActionType slotActionType);
 	}
