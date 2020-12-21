@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
+	id 'org.cadixdev.licenser' version '0.5.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -77,6 +78,12 @@ dependencies {
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")
+
+license {
+	header = project.file('LICENSE_HEADER')
+
+	include '**/*.java'
+}
 
 processResources {
     inputs.property "version", version

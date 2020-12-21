@@ -1,3 +1,20 @@
+/*
+ * Copyright 2020 Siphalor
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.MWConfig;
@@ -49,36 +66,18 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Shadow
 	protected Slot focusedSlot;
 
+	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
-				boolean alt = hasAltDown();
-				boolean ctrl = hasControlDown();
-				boolean shift = hasShiftDown();
-				if (!ctrl) {
-					if (alt) {
-						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
-					} else if (shift) {
-						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.QUICK_MOVE);
-					}
-				} else {
-					@SuppressWarnings("ConstantConditions")
-					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
-					if (alt) {
-						if (shift) {
-							containerScreenHelper.dropAllFrom(hoveredSlot);
-						} else {
-							containerScreenHelper.dropAllOfAKind(hoveredSlot);
-						}
-					} else {
-						if (shift) {
-							containerScreenHelper.sendAllFrom(hoveredSlot);
-						} else {
-							containerScreenHelper.sendAllOfAKind(hoveredSlot);
-						}
-					}
+				if (hasAltDown()) {
+					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+				} else if (hasShiftDown()) {
+					new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendStack(hoveredSlot);
+				} else if (hasControlDown()) {
+					new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
@@ -88,28 +87,19 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			Slot hoveredSlot = getSlotAt(x, y);
-			if (hoveredSlot != null) {
-				boolean alt = hasAltDown();
-				boolean ctrl = hasControlDown();
-				boolean shift = hasShiftDown();
-				if (alt && !ctrl) {
+			if (hasAltDown()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if (hoveredSlot != null) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 					callbackInfoReturnable.setReturnValue(true);
-				} else if (ctrl) {
-					ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
-					if (alt) {
-						if (shift) {
-							containerScreenHelper.dropAllFrom(hoveredSlot);
-						} else {
-							containerScreenHelper.dropAllOfAKind(hoveredSlot);
-						}
+				}
+			} else if (hasControlDown()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if (hoveredSlot != null) {
+					if (hasShiftDown()) {
+						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
 					} else {
-						if (shift) {
-							containerScreenHelper.sendAllFrom(hoveredSlot);
-						} else {
-							containerScreenHelper.sendAllOfAKind(hoveredSlot);
-						}
+						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
@@ -152,6 +142,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		return ScrollAction.PASS;
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
