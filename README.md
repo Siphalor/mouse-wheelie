@@ -9,4 +9,4 @@ Adds several mouse wheel related actions in gui menus like item scrolling and sc
 
 ## License
 
-This mod is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This mod is available under the Apache 2.0 License. Terms and conditions apply.

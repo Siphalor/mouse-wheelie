@@ -1,3 +1,20 @@
+/*
+ * Copyright 2020 Siphalor
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package de.siphalor.mousewheelie;
 
 import com.google.common.base.CaseFormat;
@@ -46,8 +63,11 @@ public class MWConfig {
 		@AConfigEntry(comment = "If enabled items will be moved according to whether your scrolling up or down.\nIf disabled you will scroll to change the amount of items present (up will increase - down will decrease")
 		public boolean directionalScrolling = true;
 
-		@AConfigEntry(comment = "Sets whether scrolling in creative mode by default scrolls the items or the menu.")
-		public boolean scrollCreativeMenu = false;
+		@AConfigEntry(comment = "Sets whether to by default scroll items\nout of the creative menu.")
+		public boolean scrollCreativeMenuItems = true;
+
+		@AConfigEntry(comment = "Sets whether creative mode tabs can\nbe switched by scrolling over them.")
+		public boolean scrollCreativeMenuTabs = true;
 	}
 
 	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
@@ -113,21 +133,30 @@ public class MWConfig {
 
 			if (dataObject.has("enable-item-scrolling")) {
 				values.add(new Pair<>("enable", dataObject.get("enable-item-scrolling")));
+				dataObject.remove("enable-item-scrolling");
 			}
 			if (dataObject.has("scroll-factor")) {
 				values.add(new Pair<>("scroll-factor", dataObject.get("scroll-factor")));
+				dataObject.remove("scroll-factor");
 			}
 			if (dataObject.has("directional-scrolling")) {
 				values.add(new Pair<>("directional-scrolling", dataObject.get("directional-scrolling")));
+				dataObject.remove("directional-scrolling");
+			}
+
+			DataObject<T> scrolling;
+			if (dataObject.has("scrolling") && dataObject.get("scrolling").isObject()) {
+				scrolling = dataObject.get("scrolling").asObject();
+
+				if (scrolling.has("scroll-creative-menu") && scrolling.get("scroll-creative-menu").isBoolean()) {
+					scrolling.set("scroll-creative-menu-items", !scrolling.get("scroll-creative-menu").asBoolean());
+					scrolling.remove("scroll-creative-menu");
+				}
+			} else {
+				scrolling = dataObject.addObject("scrolling");
 			}
 
 			if (!values.isEmpty()) {
-				DataObject<T> scrolling;
-				if (dataObject.has("scrolling") && dataObject.get("scrolling").isObject()) {
-					scrolling = dataObject.get("scrolling").asObject();
-				} else {
-					scrolling = dataObject.addObject("scrolling");
-				}
 				values.forEach(pair -> scrolling.set(pair.getLeft(), pair.getRight()));
 			}
 		}
