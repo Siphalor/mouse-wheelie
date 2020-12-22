@@ -186,7 +186,10 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			}
 			relations {
 				embeddedLibrary "fabric-api"
-				optionalDependency "roughly-enough-items"
+				embeddedLibrary "amecs"
+				embeddedLibrary "cloth-config"
+				embeddedLibrary "tweed-api"
+				optionalDependency "modmenu"
 			}
 			mainArtifact(remapJar) {
 				displayName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
