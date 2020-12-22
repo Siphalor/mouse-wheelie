@@ -1,6 +1,8 @@
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
+	id 'com.modrinth.minotaur' version '1.1.0'
 	id 'org.cadixdev.licenser' version '0.5.0'
 }
 
@@ -145,4 +147,72 @@ publishing {
             }
         }
     }
+}
+
+// Mod sites
+
+def getChangelog() {
+	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
+	def versionCommit = null
+	for (commit in commits) {
+		if (commit.contains('Version')) {
+			versionCommit = commit.split(' ')[0]
+			break
+		}
+	}
+	if (versionCommit == null) {
+		return """## Version ${project.mod_version}
+
+No changelog found!"""
+	}
+	return ('git log -1 --format=format:"## %s%n%n%b%nRelease by %an" ' + versionCommit).execute().text.trim()
+}
+
+task uploadToModSites {
+	dependsOn build
+	group = "upload"
+}
+
+if (project.hasProperty("siphalorCurseForgeApi")) {
+	curseforge {
+		apiKey project.siphalorCurseForgeApi
+		project {
+			id = "317514"
+			releaseType = project.mod_release
+			changelogType = "markdown"
+			changelog = getChangelog()
+			for (version in ((String) project.mod_mc_versions).split(";")) {
+				addGameVersion(version)
+			}
+			relations {
+				embeddedLibrary "fabric-api"
+				optionalDependency "roughly-enough-items"
+			}
+			mainArtifact(remapJar) {
+				displayName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
+			}
+		}
+	}
+	uploadToModSites.finalizedBy(tasks.curseforge)
+}
+
+import com.modrinth.minotaur.TaskModrinthUpload
+if (project.hasProperty("siphalorModrinthApi")) {
+	task modrinth (type: TaskModrinthUpload) {
+		group = "upload"
+		dependsOn(build)
+
+		token = project.siphalorModrinthApi
+		projectId = "u5Ic2U1u"
+		versionNumber = version
+		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
+		changelog = getChangelog()
+		uploadFile = remapJar
+		releaseType = project.mod_release
+		for (version in ((String) project.mod_mc_versions).split(";")) {
+			addGameVersion(version)
+		}
+		addLoader("fabric")
+	}
+	uploadToModSites.finalizedBy(tasks.modrinth)
 }
