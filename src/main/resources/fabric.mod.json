@@ -9,8 +9,11 @@
 	"authors": [
 		"Siphalor"
 	],
+	"contributors": [
+		"Fourmisain"
+	],
 	"contact": {
-		"email": "xyx0125@gmail.com",
+		"email": "modding@siphalor.de",
 		"issues": "https://github.com/Siphalor/mouse-wheelie/issues",
 		"sources": "https://github.com/Siphalor/mouse-wheelie"
 	},
