@@ -105,6 +105,9 @@ public class MWClient implements ClientModInitializer {
 	public static boolean performRefill() {
 		if (refillHand == null) return false;
 
+		if (!InteractionManager.isReady())
+			return false;
+
 		Hand hand = refillHand;
 		refillHand = null;
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
