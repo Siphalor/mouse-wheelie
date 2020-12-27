@@ -111,11 +111,11 @@ public class MWClient implements ClientModInitializer {
 		Hand hand = refillHand;
 		refillHand = null;
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45));
 		}
 		SlotRefiller.refill();
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36));
+			InteractionManager.push(new InteractionManager.PacketEvent(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45));
 		}
 
 		return true;
