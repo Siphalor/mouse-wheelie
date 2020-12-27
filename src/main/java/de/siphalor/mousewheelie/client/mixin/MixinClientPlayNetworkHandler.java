@@ -69,8 +69,19 @@ public class MixinClientPlayNetworkHandler {
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
 					}
-				} else if (packet.getSlot() == 40) { // OFF_HAND
-					ItemStack stack = inventory.getStack(40);
+				}
+			}
+		}
+	}
+
+	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	public void onGuiSlotUpdateOther(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+		//noinspection ConstantConditions
+		if (MWConfig.refill.other && client.player.currentScreenHandler == client.player.playerScreenHandler && packet.getSlot() == 45) {
+			PlayerInventory inventory = client.player.inventory;
+			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
+				if (packet.getSlot() == 45) {
+					ItemStack stack = inventory.offHand.get(0);
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
 					}
@@ -79,7 +90,12 @@ public class MixinClientPlayNetworkHandler {
 		}
 	}
 
-	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+	@Inject(method = "onScreenHandlerSlotUpdate", require = 2,
+			at = {
+				@At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER),
+				@At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER),
+			}
+	)
 	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		MWClient.performRefill();
 	}
