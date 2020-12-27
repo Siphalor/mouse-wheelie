@@ -57,8 +57,8 @@ public class MWConfig {
 		@AConfigEntry(comment = "Enables scrolling of stacks")
 		public boolean enable = true;
 
-		@AConfigEntry(comment = "Set the scroll factor for item scrolling.\nTo invert the scrolling use negative numbers")
-		public float scrollFactor = 1F;
+		@AConfigEntry(comment = "Invert the scroll direction when scrolling items")
+		public boolean invert = false;
 
 		@AConfigEntry(comment = "If enabled items will be moved according to whether your scrolling up or down.\nIf disabled you will scroll to change the amount of items present (up will increase - down will decrease")
 		public boolean directionalScrolling = true;
@@ -151,6 +151,10 @@ public class MWConfig {
 				if (scrolling.has("scroll-creative-menu") && scrolling.get("scroll-creative-menu").isBoolean()) {
 					scrolling.set("scroll-creative-menu-items", !scrolling.get("scroll-creative-menu").asBoolean());
 					scrolling.remove("scroll-creative-menu");
+				}
+				if (scrolling.has("scroll-factor") && scrolling.get("scroll-factor").isNumber()) {
+					scrolling.set("invert", scrolling.get("scroll-factor").asFloat() < 0);
+					scrolling.remove("scroll-factor");
 				}
 			} else {
 				scrolling = dataObject.addObject("scrolling");
