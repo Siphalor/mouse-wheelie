@@ -59,8 +59,8 @@ public class MixinClientPlayNetworkHandler {
 	}
 
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
-	public void onGuiSlotUpdate(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (!MWClient.performRefill() && MWConfig.refill.other) {
+	public void onGuiSlotUpdateHotbar(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+		if (MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
@@ -69,8 +69,19 @@ public class MixinClientPlayNetworkHandler {
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
 					}
-				} else if (packet.getSlot() == 40) { // OFF_HAND
-					ItemStack stack = inventory.getInvStack(40);
+				}
+			}
+		}
+	}
+
+	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
+	public void onGuiSlotUpdateOther(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
+		//noinspection ConstantConditions
+		if (MWConfig.refill.other && client.player.container == client.player.playerContainer && packet.getSlot() == 45) {
+			PlayerInventory inventory = client.player.inventory;
+			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
+				if (packet.getSlot() == 45) {
+					ItemStack stack = inventory.offHand.get(0);
 					if (!stack.isEmpty()) {
 						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
 					}
@@ -79,7 +90,12 @@ public class MixinClientPlayNetworkHandler {
 		}
 	}
 
-	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER))
+	@Inject(method = "onContainerSlotUpdate", require = 2,
+			at = {
+				@At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER),
+				@At(value = "INVOKE", target = "Lnet/minecraft/container/Container;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER),
+			}
+	)
 	public void onGuiSlotUpdated(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		MWClient.performRefill();
 	}

@@ -66,6 +66,10 @@ public class InteractionManager {
 		waiter = null;
 	}
 
+	public static boolean isReady() {
+		return waiter == null && interactionEventQueue.isEmpty();
+	}
+
 	@FunctionalInterface
 	public interface Waiter {
 		boolean trigger(TriggerType triggerType);
