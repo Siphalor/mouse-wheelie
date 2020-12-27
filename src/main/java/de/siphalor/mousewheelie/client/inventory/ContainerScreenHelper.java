@@ -107,7 +107,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public int getScope(Slot slot) {
-		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.size()) {
+		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.size() || !slot.canInsert(ItemStack.EMPTY)) {
 			return INVALID_SCOPE;
 		}
 		if (screen instanceof AbstractInventoryScreen) {
