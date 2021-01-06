@@ -120,7 +120,7 @@ public class MWConfig {
 		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
 		public boolean holdTool = true;
 
-		@AConfigEntry(comment = "Pick correct tool when middle clicking the held block.")
+		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding the same block as faced.")
 		public boolean holdBlock = false;
 	}
 
