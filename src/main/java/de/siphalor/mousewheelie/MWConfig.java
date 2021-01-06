@@ -33,12 +33,6 @@ public class MWConfig {
 	public static General general = new General();
 
 	public static class General {
-		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
-		public boolean holdToolPick = true;
-
-		@AConfigEntry(comment = "Pick correct tool when middle clicking the held block.")
-		public boolean holdBlockToolPick = false;
-
 		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
 
@@ -119,6 +113,17 @@ public class MWConfig {
 		}
 	}
 
+	@AConfigEntry(comment = "Configure picking the correct tool for the currently faced block.")
+	public static ToolPicking toolPicking = new ToolPicking();
+
+	public static class ToolPicking {
+		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
+		public boolean holdTool = true;
+
+		@AConfigEntry(comment = "Pick correct tool when middle clicking the held block.")
+		public boolean holdBlock = false;
+	}
+
 	@AConfigFixer
 	public <T> void fixConfig(DataObject<T> dataObject, DataObject<T> rootObject) {
 		if (dataObject.has("general") && dataObject.get("general").isObject()) {
@@ -141,9 +146,8 @@ public class MWConfig {
 				}
 			}
 
-			if (!values.isEmpty()) {
-				values.forEach(pair -> scrolling.set(pair.getLeft(), pair.getRight()));
-			}
+			moveConfigEntry(dataObject, general, "hold-tool-pick", "tool-picking", "hold-tool");
+			moveConfigEntry(dataObject, general, "hold-block-tool-pick", "tool-picking", "hold-block");
 		}
 	}
 
