@@ -25,11 +25,6 @@ import de.siphalor.tweed.config.annotated.AConfigEntry;
 import de.siphalor.tweed.config.annotated.AConfigFixer;
 import de.siphalor.tweed.config.annotated.ATweedConfig;
 import de.siphalor.tweed.data.DataObject;
-import de.siphalor.tweed.data.DataValue;
-import net.minecraft.util.Pair;
-
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth", casing = CaseFormat.LOWER_HYPHEN)
@@ -129,24 +124,12 @@ public class MWConfig {
 		if (dataObject.has("general") && dataObject.get("general").isObject()) {
 			DataObject<T> general = dataObject.get("general").asObject();
 
-			Queue<Pair<String, DataValue<T>>> values = new ConcurrentLinkedQueue<>();
+			moveConfigEntry(dataObject, general, "enable-item-scrolling", "scrolling");
+			moveConfigEntry(dataObject, general, "scroll-factor", "scrolling");
+			moveConfigEntry(dataObject, general, "directional-scrolling", "scrolling");
 
-			if (dataObject.has("enable-item-scrolling")) {
-				values.add(new Pair<>("enable", dataObject.get("enable-item-scrolling")));
-				dataObject.remove("enable-item-scrolling");
-			}
-			if (dataObject.has("scroll-factor")) {
-				values.add(new Pair<>("scroll-factor", dataObject.get("scroll-factor")));
-				dataObject.remove("scroll-factor");
-			}
-			if (dataObject.has("directional-scrolling")) {
-				values.add(new Pair<>("directional-scrolling", dataObject.get("directional-scrolling")));
-				dataObject.remove("directional-scrolling");
-			}
-
-			DataObject<T> scrolling;
 			if (dataObject.has("scrolling") && dataObject.get("scrolling").isObject()) {
-				scrolling = dataObject.get("scrolling").asObject();
+				DataObject<T> scrolling = dataObject.get("scrolling").asObject();
 
 				if (scrolling.has("scroll-creative-menu") && scrolling.get("scroll-creative-menu").isBoolean()) {
 					scrolling.set("scroll-creative-menu-items", !scrolling.get("scroll-creative-menu").asBoolean());
@@ -156,13 +139,28 @@ public class MWConfig {
 					scrolling.set("invert", scrolling.get("scroll-factor").asFloat() < 0);
 					scrolling.remove("scroll-factor");
 				}
-			} else {
-				scrolling = dataObject.addObject("scrolling");
 			}
 
 			if (!values.isEmpty()) {
 				values.forEach(pair -> scrolling.set(pair.getLeft(), pair.getRight()));
 			}
+		}
+	}
+
+	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat) {
+		moveConfigEntry(root, origin, name, destCat, name);
+	}
+
+	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat, String newName) {
+		if (origin.has(name)) {
+			DataObject<T> dest;
+			if (root.has(destCat) && root.get(destCat).isObject()) {
+				dest = root.get(destCat).asObject();
+			} else {
+				dest = root.addObject(destCat);
+			}
+			dest.set(newName, origin.get(name));
+			origin.remove(name);
 		}
 	}
 }
