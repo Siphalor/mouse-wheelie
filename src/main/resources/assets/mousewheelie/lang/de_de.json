@@ -13,10 +13,6 @@
 	"mousewheelie.sortmode.none": "Nicht sortieren",
 	"tweed.cloth.mousewheelie": "Mouse Wheelie Einstellungen",
 	"tweed.cloth.mousewheelie.general": "Allgemein",
-	"tweed.cloth.mousewheelie.general.hold-tool-pick": "Optimales Werkzeug bei Werkzeug wählen",
-	"tweed.cloth.mousewheelie.general.hold-tool-pick.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDer Spieler muss dabei bereits ein Werkzeug in der Hand halten.",
-	"tweed.cloth.mousewheelie.general.hold-block-tool-pick": "Optimales Werkzeug bei Block wählen",
-	"tweed.cloth.mousewheelie.general.hold-block-tool-pick.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDie Interaktion erfolgt wenn der Spieler den anvisierten Block als Gegenstand in der Hand hält.",
 	"tweed.cloth.mousewheelie.general.hotbar-scope": "Hotbar als eigener Bereich",
 	"tweed.cloth.mousewheelie.general.hotbar-scope.description": "Die Hotbar, zum Beispiel beim Sortieren, als eigenen Bereich behandeln",
 	"tweed.cloth.mousewheelie.general.enable-quick-craft": "Schnelles Herstellen",
@@ -65,5 +61,9 @@
 	"tweed.cloth.mousewheelie.refill.rules.equal-items": "Mit gleicher Gegenstandsart auffüllen",
 	"tweed.cloth.mousewheelie.refill.rules.equal-items.description": "Mit gleichen Gegenständen auffüllen.\nNBT-Daten wie die Beschädigung von Gegenständen wird nicht beachtet-",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Mit identischen Gegenständen auffüllen",
-	"tweed.cloth.mousewheelie.refill.rules.equal-stacks.description": "Verzauberungen, Beschädigung, Name und ähnliches wird beachtet."
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks.description": "Verzauberungen, Beschädigung, Name und ähnliches wird beachtet.",
+	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "Optimales Werkzeug bei Werkzeug wählen",
+	"tweed.cloth.mousewheelie.tool-picking.hold-tool.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDer Spieler muss dabei bereits ein Werkzeug in der Htool-pickingand halten.",
+	"tweed.cloth.mousewheelie.tool-picking.hold-block": "Optimales Werkzeug bei Block wählen",
+	"tweed.cloth.mousewheelie.tool-picking.hold-block.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDie Interaktion erfolgt wenn der Spieler den anvisierten Block als Gegenstand in der Hand hält."
 }
