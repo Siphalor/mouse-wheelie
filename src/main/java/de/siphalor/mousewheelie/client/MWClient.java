@@ -78,7 +78,7 @@ public class MWClient implements ClientModInitializer {
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
 			int index = -1;
-			if (MWConfig.general.holdToolPick && (isTool(item) || isWeapon(item))) {
+			if (MWConfig.toolPicking.holdTool && (isTool(item) || isWeapon(item))) {
 				ToolPicker toolPicker = new ToolPicker(player.inventory);
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 					index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
@@ -86,7 +86,7 @@ public class MWClient implements ClientModInitializer {
 					index = toolPicker.findWeapon();
 				}
 			}
-			if (MWConfig.general.holdBlockToolPick && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
+			if (MWConfig.toolPicking.holdBlock && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
 				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.inventory);

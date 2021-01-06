@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.inventory;
 
+import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -39,12 +40,12 @@ public class ToolPicker {
 	public int findToolFor(BlockState blockState) {
 		float bestBreakSpeed = 1.0F;
 		int bestSpeedSlot = -1;
-		for (int i = 1; i <= inventory.getInvSize(); i++) {
-			int index = (i + lastToolPickSlot) % inventory.getInvSize();
+		int invSize = (MWConfig.toolPicking.pickFromInventory ? inventory.main.size() : 9);
+		for (int i = 1; i <= invSize; i++) {
+			int index = (i + lastToolPickSlot) % invSize;
 			if (index == inventory.selectedSlot) continue;
-			ItemStack stack = inventory.getInvStack(index);
+			ItemStack stack = inventory.main.get(index);
 			if (stack.isEffectiveOn(blockState)) {
-				lastToolPickSlot = index;
 				return index;
 			} else {
 				float breakSpeed = stack.getMiningSpeed(blockState);
@@ -55,7 +56,7 @@ public class ToolPicker {
 			}
 		}
 		if (bestBreakSpeed == -1) {
-			ItemStack stack = inventory.getInvStack(inventory.selectedSlot);
+			ItemStack stack = inventory.main.get(inventory.selectedSlot);
 			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeed(blockState) > 1.0F)
 				return inventory.selectedSlot;
 		}
@@ -67,10 +68,11 @@ public class ToolPicker {
 	}
 
 	public int findWeapon() {
-		for (int i = 1; i <= inventory.getInvSize(); i++) {
-			int index = (i + lastToolPickSlot) % inventory.getInvSize();
+		int invSize = (MWConfig.toolPicking.pickFromInventory ? inventory.main.size() : 9);
+		for (int i = 1; i <= invSize; i++) {
+			int index = (i + lastToolPickSlot) % invSize;
 			if (index == inventory.selectedSlot) continue;
-			if (MWClient.isWeapon(inventory.getInvStack(index).getItem()))
+			if (MWClient.isWeapon(inventory.main.get(index).getItem()))
 				return index;
 		}
 		return -1;
@@ -81,6 +83,7 @@ public class ToolPicker {
 	}
 
 	private boolean pick(int index) {
+		lastToolPickSlot = index;
 		if (index != -1 && index != inventory.selectedSlot) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
 			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
