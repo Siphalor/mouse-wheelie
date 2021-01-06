@@ -39,6 +39,8 @@
 	"tweed.cloth.mousewheelie.refill.rules.food": "Refill foods",
 	"tweed.cloth.mousewheelie.refill.rules.equal-items": "Refill with same item (no nbt)",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Refill with same stack (nbt)",
+	"tweed.cloth.mousewheelie.tool-picking": "Tool Picking",
 	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "Middle-click to tool while holding a tool",
-	"tweed.cloth.mousewheelie.tool-picking.hold-block": "Middle-click to tool while holding the same block as faced"
+	"tweed.cloth.mousewheelie.tool-picking.hold-block": "Middle-click to tool while holding the same block as faced",
+	"tweed.cloth.mousewheelie.tool-picking.pick-from-inventory": "Pick from inventory"
 }

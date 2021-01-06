@@ -62,8 +62,11 @@
 	"tweed.cloth.mousewheelie.refill.rules.equal-items.description": "Mit gleichen Gegenständen auffüllen.\nNBT-Daten wie die Beschädigung von Gegenständen wird nicht beachtet-",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "Mit identischen Gegenständen auffüllen",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks.description": "Verzauberungen, Beschädigung, Name und ähnliches wird beachtet.",
+	"tweed.cloth.mousewheelie.tool-picking": "Werkzeug finden",
 	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "Optimales Werkzeug bei Werkzeug wählen",
 	"tweed.cloth.mousewheelie.tool-picking.hold-tool.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDer Spieler muss dabei bereits ein Werkzeug in der Htool-pickingand halten.",
 	"tweed.cloth.mousewheelie.tool-picking.hold-block": "Optimales Werkzeug bei Block wählen",
-	"tweed.cloth.mousewheelie.tool-picking.hold-block.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDie Interaktion erfolgt wenn der Spieler den anvisierten Block als Gegenstand in der Hand hält."
+	"tweed.cloth.mousewheelie.tool-picking.hold-block.description": "Beim Drücken der mittleren Maustaste das optimale Werkzeug für den anvisierten Block wählen.\nDie Interaktion erfolgt wenn der Spieler den anvisierten Block als Gegenstand in der Hand hält.",
+	"tweed.cloth.mousewheelie.tool-picking.pick-from-inventory": "Aus dem Inventar wählen",
+	"tweed.cloth.mousewheelie.tool-picking.pick-from-inventory.description": "Bei der Suche nach passenden Werkzeugen das gesamte Inventar verwenden,\nstatt nur der Hotbar."
 }
