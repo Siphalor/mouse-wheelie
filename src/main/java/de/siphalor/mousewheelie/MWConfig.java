@@ -122,6 +122,9 @@ public class MWConfig {
 
 		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding the same block as faced.")
 		public boolean holdBlock = false;
+
+		@AConfigEntry(comment = "Allows picking tools from the inventory.\nIf disabled picking will only happen from the hotbar.")
+		public boolean pickFromInventory = true;
 	}
 
 	@AConfigFixer
