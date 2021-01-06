@@ -176,11 +176,12 @@ task uploadToModSites {
 if (project.hasProperty("siphalorCurseForgeApi")) {
 	curseforge {
 		apiKey project.siphalorCurseForgeApi
+		def changes = getChangelog()
 		project {
 			id = "317514"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = getChangelog()
+			changelog = changes
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}

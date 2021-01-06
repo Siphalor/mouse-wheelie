@@ -6,7 +6,6 @@
 	"key.mousewheelie.pick_tool": "自动选择正确的工具",
 	"tweed.cloth.mousewheelie": "Mouse Wheelie配置",
 	"tweed.cloth.mousewheelie.general": "通常",
-	"tweed.cloth.mousewheelie.general.hold-tool-pick": "点击鼠标中键时自动拿起正确的工具",
 	"tweed.cloth.mousewheelie.sort": "排序",
 	"tweed.cloth.mousewheelie.sort.primary-sort": "点击鼠标中键",
 	"tweed.cloth.mousewheelie.sort.shift-sort": "Shift + 点击鼠标中键",
@@ -23,6 +22,6 @@
 	"tweed.cloth.mousewheelie.refill.rules.item-hierarchy": "使用具有类似功能的物品重新填充",
 	"tweed.cloth.mousewheelie.refill.rules.block-hierarchy": "使用具有类似功能的块重新填充",
 	"tweed.cloth.mousewheelie.refill.rules.food": "重新填充食物",
-	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "使用相同的物品重新填充"
-
+	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "使用相同的物品重新填充",
+	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "点击鼠标中键时自动拿起正确的工具"
 }
