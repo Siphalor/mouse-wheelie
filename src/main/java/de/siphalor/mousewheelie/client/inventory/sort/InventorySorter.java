@@ -102,6 +102,7 @@ public class InventorySorter {
 
 	public void sort(SortMode sortMode) {
 		combineStacks();
+		ItemStack currentStack;
 		final int slotCount = stacks.length;
 		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
 
@@ -109,31 +110,44 @@ public class InventorySorter {
 
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
 		for (int i = 0; i < slotCount; i++) {
-			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
-		}
-		for (int i = 0; i < slotCount; i++) {
-			if (doneSlashEmpty.get(i) || doneSlashEmpty.get(sortIds[i])) {
-				continue;
-			}
-			if (doneSlashEmpty.get(slotCount + i)) {
-				doneSlashEmpty.set(slotCount + sortIds[i]);
-			}
 			if (i == sortIds[i]) {
 				doneSlashEmpty.set(i);
 				continue;
 			}
+			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
+		}
+		for (int i = 0; i < slotCount; i++) {
+			if (doneSlashEmpty.get(i)) {
+				continue;
+			}
+			if (doneSlashEmpty.get(slotCount + sortIds[i])) {
+				doneSlashEmpty.set(sortIds[i]);
+				continue;
+			}
 			InteractionManager.pushClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
-			doneSlashEmpty.clear(slotCount + sortIds[i]);
+			doneSlashEmpty.set(slotCount + sortIds[i]);
+			currentStack = stacks[sortIds[i]];
 			int id = i;
-			while (!doneSlashEmpty.get(id)) {
+			do {
+				if (
+						stacks[id].getItem() == currentStack.getItem()
+								&& stacks[id].getCount() == currentStack.getCount()
+								&& !doneSlashEmpty.get(slotCount + id)
+								&& ItemStack.areTagsEqual(stacks[id], currentStack)
+				) {
+					doneSlashEmpty.set(id);
+					id = ArrayUtils.indexOf(sortIds, id);
+					continue;
+				}
+
 				InteractionManager.pushClickEvent(containerScreen.getContainer().syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
+				currentStack = stacks[id];
 				doneSlashEmpty.set(id);
 				if (doneSlashEmpty.get(slotCount + id)) {
-					doneSlashEmpty.set(slotCount + id);
 					break;
 				}
 				id = ArrayUtils.indexOf(sortIds, id);
-			}
+			} while (!doneSlashEmpty.get(id));
 		}
 	}
 }
