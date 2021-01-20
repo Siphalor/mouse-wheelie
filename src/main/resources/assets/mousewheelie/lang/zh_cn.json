@@ -6,7 +6,7 @@
 	"key.mousewheelie.scroll_down": "下滑鼠标滚轮",
 	"key.mousewheelie.pick_tool": "适配正确的工具",
 	"mousewheelie.gui.config-screen-unavailable": "配置界面当前不可用",
-	"mousewheelie.gui.config-screen-unavailable.note": "请安装 &lMod Menu 模组或使用外部手段修改配置",
+	"mousewheelie.gui.config-screen-unavailable.note": "请安装 Mod Menu 模组或使用外部手段修改配置",
 	"mousewheelie.sortmode.alphabet": "首字母",
 	"mousewheelie.sortmode.quantity": "数量",
 	"mousewheelie.sortmode.raw_id": "ID",
@@ -18,7 +18,7 @@
 	"tweed.cloth.mousewheelie.scrolling": "鼠标滚轮",
 	"tweed.cloth.mousewheelie.scrolling.enable": "启用滚轮功能",
 	"tweed.cloth.mousewheelie.scrolling.invert": "反向",
-	"tweed.cloth.mousewheelie.scrolling.directional-scrolling": "检测滚动方向",
+	"tweed.cloth.mousewheelie.scrolling.directional-scrolling": "Directional Scrolling",
 	"tweed.cloth.mousewheelie.scrolling.scroll-creative-menu-items": "启用创造模式物品栏滚轮功能",
 	"tweed.cloth.mousewheelie.scrolling.scroll-creative-menu-tabs": "启用创造模式物品栏选项卡滚轮功能",
 	"tweed.cloth.mousewheelie.sort": "整理",
@@ -40,7 +40,7 @@
 	"tweed.cloth.mousewheelie.refill.rules.equal-items": "允许以相同物品（不匹配数据标签）替代",
 	"tweed.cloth.mousewheelie.refill.rules.equal-stacks": "允许以相同物品（匹配数据标签）替代",
 	"tweed.cloth.mousewheelie.tool-picking": "适配工具",
-	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "当手持工具时触发适配正确工具",
-	"tweed.cloth.mousewheelie.tool-picking.hold-block": "当手持相同方块时触发即适配正确工具",
+	"tweed.cloth.mousewheelie.tool-picking.hold-tool": "手持工具时触发适配",
+	"tweed.cloth.mousewheelie.tool-picking.hold-block": "手持相同方块时触发适配",
 	"tweed.cloth.mousewheelie.tool-picking.pick-from-inventory": "从物品栏中抽取工具"
 }
