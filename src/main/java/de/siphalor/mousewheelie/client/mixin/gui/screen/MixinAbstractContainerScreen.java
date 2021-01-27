@@ -35,9 +35,11 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
+import net.minecraft.util.Lazy;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -66,7 +68,12 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Shadow
 	protected Slot focusedSlot;
 
-	@SuppressWarnings("ConstantConditions")
+	@SuppressWarnings({"ConstantConditions", "unchecked"})
+	@Unique
+	private final Lazy<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = new Lazy<>(
+			() -> new ContainerScreenHelper<>((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType))
+	);
+
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
@@ -75,15 +82,14 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				if (hasAltDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 				} else if (hasShiftDown()) {
-					new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendStack(hoveredSlot);
+					screenHelper.get().sendStack(hoveredSlot);
 				} else if (hasControlDown()) {
-					new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+					screenHelper.get().sendAllOfAKind(hoveredSlot);
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
@@ -92,9 +98,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				if (hoveredSlot != null) {
 					if (hasControlDown()) {
 						if (hasShiftDown()) {
-							new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).dropAllFrom(hoveredSlot);
+							screenHelper.get().dropAllFrom(hoveredSlot);
 						} else {
-							new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).dropAllOfAKind(hoveredSlot);
+							screenHelper.get().dropAllOfAKind(hoveredSlot);
 						}
 					} else {
 						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
@@ -105,9 +111,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasShiftDown()) {
-						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllFrom(hoveredSlot);
+						screenHelper.get().sendAllFrom(hoveredSlot);
 					} else {
-						new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType)).sendAllOfAKind(hoveredSlot);
+						screenHelper.get().sendAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
@@ -141,10 +147,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				}
 			}
 
-			//noinspection ConstantConditions
-			ContainerScreenHelper<?> containerScreenHelper = new ContainerScreenHelper<>((HandledScreen<?>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType));
-			containerScreenHelper.scroll(hoveredSlot, scrollAmount < 0);
-
+			screenHelper.get().scroll(hoveredSlot, scrollAmount < 0);
 			return ScrollAction.SUCCESS;
 		}
 		return ScrollAction.PASS;
