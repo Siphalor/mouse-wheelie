@@ -77,6 +77,9 @@ dependencies {
 	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 
 	modImplementation "me.shedaniel.cloth:basic-math:0.5.0"
+
+	// Smooth startup
+	modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.16.4-1.4+"
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")

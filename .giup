@@ -1,0 +1,24 @@
+{
+	"merge-paths": [
+		"1.16",
+		"1.16->1.15->1.14",
+		"1.16->1.17"
+	],
+	"commands": [
+		{
+			"title": "Cleanup build files",
+			"run": "rm -rf build .gradle",
+			"nt": "rmdir /S /Q build & rmdir /S /Q .gradle",
+			"ignore-errors": true
+		},
+		{
+			"title": "Publish & Upload",
+			"run": "./gradlew publish uploadToModSites",
+			"nt": "gradlew publish uploadToModSites"
+		},
+		{
+			"title": "Push Changes",
+			"run": "git push"
+		}
+	]
+}
