@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Siphalor
+ * Copyright 2021 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,15 +154,32 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
 		runInScope(getScope(referenceSlot), slot -> {
-			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack))
-				clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+				sendStack(slot);
+			}
 		});
 	}
 
 	public void sendAllFrom(Slot referenceSlot) {
+		runInScope(getScope(referenceSlot), this::sendStack);
+	}
+
+	public void dropStack(Slot slot) {
+		clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+	}
+
+	public void dropAllOfAKind(Slot referenceSlot) {
+		ItemStack referenceStack = referenceSlot.getStack().copy();
 		runInScope(getScope(referenceSlot), slot -> {
-			clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+				dropStack(slot);
+			}
 		});
+	}
+
+	public void dropAllFrom(Slot referenceSlot) {
+		ItemStack referenceStack = referenceSlot.getStack().copy();
+		runInScope(getScope(referenceSlot), this::dropStack);
 	}
 
 	public interface ClickHandler {
