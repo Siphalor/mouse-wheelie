@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'fabric-loom' version '0.6-SNAPSHOT'
     id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.1.0'
@@ -19,6 +19,7 @@ minecraft {
 
 repositories {
 	mavenLocal()
+	jcenter()
 	maven {
 		name "Fabric"
 		url "http://maven.fabricmc.net/"
@@ -26,6 +27,12 @@ repositories {
 	maven {
 		name "Siphalor's Maven"
 		url "https://maven.siphalor.de/"
+	}
+	maven {
+		url "https://maven.shedaniel.me"
+	}
+	maven {
+		url "https://www.cursemaven.com"
 	}
 }
 
@@ -70,16 +77,16 @@ dependencies {
 	}
 	include "de.siphalor:amecsapi-1.15:${project.amecs_version}"
 
-	modImplementation("me.shedaniel.cloth:config-2:${project.clothconfig_version}") {
+	modImplementation("curse.maven:cloth-config-319057:${project.clothconfig_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "modmenu"
 	}
-	include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+	include "curse.maven:cloth-config-319057:${project.clothconfig_version}"
 
-	modImplementation "me.shedaniel.cloth:basic-math:0.5.0"
+	modImplementation "me.shedaniel.cloth:basic-math:0.5.1"
 
 	// Smooth startup
-	modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.16.4-1.4+"
+	modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.15.2-1+"
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")
