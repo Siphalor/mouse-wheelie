@@ -35,7 +35,8 @@ public class MouseWheelie implements ModInitializer {
 				EquipmentSlot equipmentSlot = MobEntity.method_32326(stack);
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 					ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
-					if (!equipmentStack.isEmpty()) {
+					int index = 5 + (3 - equipmentSlot.getEntitySlotId());
+					if (!equipmentStack.isEmpty() && player.playerScreenHandler.getSlot(index).canTakeItems(player)) {
 						player.setStackInHand(hand, equipmentStack);
 						player.equipStack(equipmentSlot, stack);
 						return TypedActionResult.consume(equipmentStack);
