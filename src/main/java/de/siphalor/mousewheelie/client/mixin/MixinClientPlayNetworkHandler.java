@@ -26,7 +26,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ConfirmGuiActionS2CPacket;
+import net.minecraft.network.packet.s2c.play.ConfirmScreenActionS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.util.Hand;
@@ -42,8 +42,8 @@ public class MixinClientPlayNetworkHandler {
 	@Shadow
 	private MinecraftClient client;
 
-	@Inject(method = "onGuiActionConfirm", at = @At("RETURN"))
-	public void onGuiActionConfirmed(ConfirmGuiActionS2CPacket packet, CallbackInfo callbackInfo) {
+	@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
+	public void onGuiActionConfirmed(ConfirmScreenActionS2CPacket packet, CallbackInfo callbackInfo) {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 	}
 
