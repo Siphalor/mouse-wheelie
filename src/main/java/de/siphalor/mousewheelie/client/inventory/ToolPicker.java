@@ -21,8 +21,8 @@ import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
@@ -45,7 +45,7 @@ public class ToolPicker {
 			int index = (i + lastToolPickSlot) % invSize;
 			if (index == inventory.selectedSlot) continue;
 			ItemStack stack = inventory.main.get(index);
-			if (stack.isEffectiveOn(blockState)) {
+			if (stack.isSuitableFor(blockState)) {
 				return index;
 			} else {
 				float breakSpeed = stack.getMiningSpeedMultiplier(blockState);
@@ -57,7 +57,7 @@ public class ToolPicker {
 		}
 		if (bestBreakSpeed == -1) {
 			ItemStack stack = inventory.main.get(inventory.selectedSlot);
-			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeedMultiplier(blockState) > 1.0F)
+			if (stack.isSuitableFor(blockState) || stack.getMiningSpeedMultiplier(blockState) > 1.0F)
 				return inventory.selectedSlot;
 		}
 		return bestSpeedSlot;
@@ -86,7 +86,7 @@ public class ToolPicker {
 		lastToolPickSlot = index;
 		if (index != -1 && index != inventory.selectedSlot) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
-			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
+			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return true;
 		}
 		return false;

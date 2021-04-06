@@ -25,12 +25,13 @@ import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -60,10 +61,6 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Shadow
 	@Final
 	protected ScreenHandler handler;
-
-	@Shadow
-	@Final
-	protected PlayerInventory playerInventory;
 
 	@Shadow
 	protected Slot focusedSlot;
@@ -138,7 +135,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 			//noinspection ConstantConditions
 			if (scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
-				EquipmentSlot equipmentSlot = MobEntity.method_32326(hoveredSlot.getStack());
+				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(hoveredSlot.getStack());
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
 					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
 					InteractionManager.pushClickEvent(handler.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
@@ -158,7 +155,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
-		if (playerInventory.player.getAbilities().creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		if (player.getAbilities().creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == handler.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter((HandledScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;
