@@ -41,10 +41,10 @@ public class MixinClientPlayNetworkHandler {
 	@Shadow
 	private MinecraftClient client;
 
-	@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
+	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmScreenActionS2CPacket packet, CallbackInfo callbackInfo) {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
-	}
+	}*/
 
 	@Inject(method = "onHeldItemChange", at = @At("HEAD"))
 	public void onHeldItemChangeBegin(UpdateSelectedSlotS2CPacket packet, CallbackInfo callbackInfo) {

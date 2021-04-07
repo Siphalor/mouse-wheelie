@@ -55,9 +55,9 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 	@Override
 	public ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
 		if (MWConfig.scrolling.scrollCreativeMenuTabs) {
-			boolean yOverTopTabs = (this.y - 32 <= mouseY && mouseY <= this.y);
-			boolean yOverBottomTabs = (this.y + this.backgroundHeight <= mouseY && mouseY <= this.y + this.backgroundHeight + 32);
-			boolean overTabs = (this.x <= mouseX && mouseX <= this.x + this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
+			boolean yOverTopTabs = (-32 <= mouseY && mouseY <= 0);
+			boolean yOverBottomTabs = (this.backgroundHeight <= mouseY && mouseY <= this.backgroundHeight + 32);
+			boolean overTabs = (0 <= mouseX && mouseX <= this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
 
 			if (overTabs) {
 				if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {

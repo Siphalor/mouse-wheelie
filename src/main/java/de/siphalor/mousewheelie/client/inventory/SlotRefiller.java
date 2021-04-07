@@ -249,7 +249,7 @@ public class SlotRefiller {
 
 		@Override
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-			return playerInventory.method_7371(oldStack);
+			return playerInventory.indexOf(oldStack);
 		}
 	}
 }
