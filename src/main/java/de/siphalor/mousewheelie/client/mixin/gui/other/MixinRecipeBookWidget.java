@@ -152,7 +152,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 					InteractionManager.push(new InteractionManager.CallbackEvent(() -> {
 						client.interactionManager.clickSlot(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
 						refreshResults(false);
-						return new InteractionManager.GuiConfirmWaiter(1);
+						return InteractionManager.TICK_WAITER;
 					}));
 					callbackInfoReturnable.setReturnValue(true);
 				}
