@@ -17,13 +17,13 @@
 
 package de.siphalor.mousewheelie.client.keybinding;
 
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.amecs.api.PriorityKeyBinding;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.tweed.config.TweedRegistry;
 import de.siphalor.tweed.tailor.ClothTailor;
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.util.InputUtil;

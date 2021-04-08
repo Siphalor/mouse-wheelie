@@ -29,9 +29,6 @@ repositories {
 		url "https://maven.siphalor.de/"
 	}
 	maven {
-		url "https://maven.shedaniel.me"
-	}
-	maven {
 		url "https://www.cursemaven.com"
 	}
 }
@@ -43,16 +40,17 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.1.2+28f8190f42',
-            'fabric-events-interaction-v0': '0.4.0+a35b4edd42',
-			'fabric-events-lifecycle-v0': '0.2.0+12fccc5b42',
-			'fabric-item-api-v1': '1.1.0+a35b4edd42',
-			'fabric-lifecycle-events-v1': '1.2.0+12fccc5b42',
-			'fabric-key-binding-api-v1': '1.0.1+253decf242',
-            'fabric-networking-v0': '0.1.10+e7757afe42',
-			'fabric-tag-extensions-v0': '0.1.3+d423005742',
-			'fabric-mining-levels-v0': '0.1.1+28f8190f42',
-			'fabric-resource-loader-v0': '0.1.4+28f8190f42'
+	        'fabric-api-base': '0.1.2+de26dc4942',
+            'fabric-events-interaction-v0': '0.4.1+4ea4772942',
+			'fabric-events-lifecycle-v0': '0.2.1+4ea4772942',
+			'fabric-item-api-v1': '1.1.1+4ea4772942',
+			'fabric-lifecycle-events-v1': '1.2.1+4ea4772942',
+			'fabric-key-binding-api-v1': '1.0.2+4ea4772942',
+            'fabric-networking-v0': '0.2.1+4ea4772942',
+			'fabric-networking-api-v1': '1.0.1+4ea4772942',
+			'fabric-tag-extensions-v0': '0.1.4+4ea4772942',
+			'fabric-mining-levels-v0': '0.1.3+4ea4772942',
+			'fabric-resource-loader-v0': '0.1.5+4ea4772942'
 	]
 
 	for (entry in fabric_deps.entrySet()) {
@@ -60,20 +58,16 @@ dependencies {
 		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
 	}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+7ce6c57742"
-
-	modImplementation("io.github.prospector:modmenu:1.7+") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.1+4ea4772942"
 
 	modImplementation("de.siphalor:tweed-1.14:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
 	}
 	include "de.siphalor:tweed-1.14:${project.tweed_version}"
 
 	modImplementation("de.siphalor:amecsapi-1.14:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
+		exclude module: "nmuk-1.14"
 	}
 	include "de.siphalor:amecsapi-1.14:${project.amecs_version}"
 
@@ -86,7 +80,7 @@ dependencies {
 	modImplementation "me.shedaniel.cloth:basic-math:0.5.1"
 
 	// Smooth startup
-	modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.14.4-1+"
+	//modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.14.4-1+"
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")
