@@ -17,13 +17,16 @@
 
 package de.siphalor.mousewheelie.client.keybinding;
 
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.amecs.api.PriorityKeyBinding;
+import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.tweed.config.TweedRegistry;
+import de.siphalor.tweed.tailor.ClothTailor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.NoticeScreen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements PriorityKeyBinding {
@@ -34,9 +37,17 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
 	@Override
 	public boolean onPressedPriority() {
 		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		minecraftClient.openScreen(new NoticeScreen(() -> minecraftClient.openScreen(null), new TranslatableText("mousewheelie.gui.config-screen-unavailable"), new TranslatableText("mousewheelie.gui.config-screen-unavailable.note")));
-		//if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof HandledScreen)
-		//minecraftClient.openScreen(ClientCore.tweedClothBridge.buildScreen());
-		return true;
+		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof HandledScreen) {
+			TweedRegistry.TAILORS.getOrEmpty(new Identifier("tweed", "cloth")).ifPresent(tailor -> {
+				if (tailor instanceof ClothTailor) {
+					ConfigScreenFactory<?> screenFactory = ((ClothTailor) tailor).getScreenFactories().get(MouseWheelie.MOD_ID);
+					if (screenFactory != null) {
+						minecraftClient.openScreen(screenFactory.create(minecraftClient.currentScreen));
+					}
+				}
+			});
+			return true;
+		}
+		return false;
 	}
 }
