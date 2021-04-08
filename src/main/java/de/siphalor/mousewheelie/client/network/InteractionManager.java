@@ -25,13 +25,17 @@ import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class InteractionManager {
 	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
+	private static ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 
 	public static final Waiter DUMMY_WAITER = (TriggerType triggerType) -> true;
+	public static final Waiter TICK_WAITER = (TriggerType triggerType) -> triggerType == TriggerType.TICK;
 
 	private static Waiter waiter = null;
 
@@ -57,6 +61,15 @@ public class InteractionManager {
 		}
 	}
 
+	public static void setTickRate(long milliSeconds) {
+		scheduledExecutor.remove(InteractionManager::tick);
+		scheduledExecutor.scheduleAtFixedRate(InteractionManager::tick, milliSeconds, milliSeconds, TimeUnit.MILLISECONDS);
+	}
+
+	public static void tick() {
+		triggerSend(TriggerType.TICK);
+	}
+
 	public static void setWaiter(Waiter waiter) {
 		InteractionManager.waiter = waiter;
 	}
@@ -75,6 +88,7 @@ public class InteractionManager {
 		boolean trigger(TriggerType triggerType);
 	}
 
+	@Deprecated
 	public static class GuiConfirmWaiter implements Waiter {
 		int triggers;
 
@@ -88,8 +102,21 @@ public class InteractionManager {
 		}
 	}
 
+	public static class SlotUpdateWaiter implements Waiter {
+		int triggers;
+
+		public SlotUpdateWaiter(int triggers) {
+			this.triggers = triggers;
+		}
+
+		@Override
+		public boolean trigger(TriggerType triggerType) {
+			return triggerType == TriggerType.CONTAINER_SLOT_UPDATE && --triggers == 0;
+		}
+	}
+
 	public enum TriggerType {
-		INITIAL, CONTAINER_SLOT_UPDATE, GUI_CONFIRM, HELD_ITEM_CHANGE
+		INITIAL, CONTAINER_SLOT_UPDATE, GUI_CONFIRM, HELD_ITEM_CHANGE, TICK
 	}
 
 	@FunctionalInterface
@@ -114,7 +141,7 @@ public class InteractionManager {
 		}
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction, int awaitedTriggers) {
-			this(containerSyncId, slotId, buttonId, slotAction, new GuiConfirmWaiter(awaitedTriggers));
+			this(containerSyncId, slotId, buttonId, slotAction, TICK_WAITER);
 		}
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction, Waiter waiter) {
@@ -154,7 +181,7 @@ public class InteractionManager {
 		}
 
 		public PacketEvent(Packet<?> packet, int triggers) {
-			this(packet, new GuiConfirmWaiter(triggers));
+			this(packet, new SlotUpdateWaiter(triggers));
 		}
 
 		public PacketEvent(Packet<?> packet, Waiter waiter) {

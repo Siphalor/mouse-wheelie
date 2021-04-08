@@ -19,11 +19,11 @@ package de.siphalor.mousewheelie;
 
 import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed.config.ConfigEnvironment;
 import de.siphalor.tweed.config.ConfigScope;
-import de.siphalor.tweed.config.annotated.AConfigEntry;
-import de.siphalor.tweed.config.annotated.AConfigFixer;
-import de.siphalor.tweed.config.annotated.ATweedConfig;
+import de.siphalor.tweed.config.annotated.*;
+import de.siphalor.tweed.config.constraints.RangeConstraint;
 import de.siphalor.tweed.data.DataObject;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -33,11 +33,22 @@ public class MWConfig {
 	public static General general = new General();
 
 	public static class General {
+		@AConfigEntry(
+				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..1000")
+		)
+		public int interactionRate = 10;
+
 		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
 
 		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
 		public boolean hotbarScope = true;
+
+		@AConfigListener()
+		public void onReload() {
+			InteractionManager.setTickRate(interactionRate);
+		}
 	}
 
 	public static Scrolling scrolling = new Scrolling();
