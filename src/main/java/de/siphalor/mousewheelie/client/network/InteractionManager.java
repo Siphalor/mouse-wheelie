@@ -25,14 +25,17 @@ import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class InteractionManager {
-	public static Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
-	private static ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
+	public static final Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
+	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
+	private static ScheduledFuture<?> tickFuture;
+
 
 	public static final Waiter DUMMY_WAITER = (TriggerType triggerType) -> true;
 	public static final Waiter TICK_WAITER = (TriggerType triggerType) -> triggerType == TriggerType.TICK;
@@ -62,8 +65,10 @@ public class InteractionManager {
 	}
 
 	public static void setTickRate(long milliSeconds) {
-		scheduledExecutor.remove(InteractionManager::tick);
-		scheduledExecutor.scheduleAtFixedRate(InteractionManager::tick, milliSeconds, milliSeconds, TimeUnit.MILLISECONDS);
+		if (tickFuture != null) {
+			tickFuture.cancel(true);
+		}
+		tickFuture = scheduledExecutor.scheduleAtFixedRate(InteractionManager::tick, milliSeconds, milliSeconds, TimeUnit.MILLISECONDS);
 	}
 
 	public static void tick() {
