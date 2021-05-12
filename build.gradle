@@ -21,7 +21,7 @@ repositories {
 	mavenLocal()
 	maven {
 		name "Fabric"
-		url "http://maven.fabricmc.net/"
+		url "https://maven.fabricmc.net/"
 	}
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/releases" }
@@ -99,14 +99,13 @@ license {
 processResources {
     inputs.property "version", version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
+	afterEvaluate {
+		from(sourceSets.main.resources.srcDirs) {
+			include "fabric.mod.json"
+			expand "version": version
+			duplicatesStrategy DuplicatesStrategy.INCLUDE
+		}
+	}
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
