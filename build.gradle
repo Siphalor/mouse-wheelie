@@ -21,7 +21,7 @@ repositories {
 	mavenLocal()
 	maven {
 		name "Fabric"
-		url "http://maven.fabricmc.net/"
+		url "https://maven.fabricmc.net/"
 	}
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/releases" }
@@ -97,14 +97,13 @@ license {
 processResources {
     inputs.property "version", version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
+	afterEvaluate {
+		from(sourceSets.main.resources.srcDirs) {
+			include "fabric.mod.json"
+			expand "version": version
+			duplicatesStrategy DuplicatesStrategy.INCLUDE
+		}
+	}
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -158,7 +157,7 @@ publishing {
 
 // Mod sites
 
-def getChangelog() {
+String getProjectChangelog() {
 	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
 	def versionCommit = null
 	for (commit in commits) {
@@ -172,7 +171,7 @@ def getChangelog() {
 
 No changelog found!"""
 	}
-	return ('git log -1 --format=format:"## %s%n%n%b%nRelease by %an" ' + versionCommit).execute().text.trim()
+	return "git log -1 --format=format:\"##%x20%s%n%n%b%nRelease%x20by%x20%an\" $versionCommit".execute().text.trim()
 }
 
 task uploadToModSites {
@@ -183,12 +182,11 @@ task uploadToModSites {
 if (project.hasProperty("siphalorCurseForgeApi")) {
 	curseforge {
 		apiKey project.siphalorCurseForgeApi
-		def changes = getChangelog()
 		project {
 			id = "317514"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = changes
+			changelog = getProjectChangelog()
 			//for (version in ((String) project.mod_mc_versions).split(";")) {
 			//	addGameVersion(version)
 			//}
@@ -218,7 +216,7 @@ if (project.hasProperty("siphalorModrinthApi")) {
 		projectId = "u5Ic2U1u"
 		versionNumber = version
 		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
-		changelog = getChangelog()
+		changelog = getProjectChangelog()
 		uploadFile = remapJar
 		releaseType = project.mod_release
 		for (version in ((String) project.mod_mc_versions).split(";")) {
