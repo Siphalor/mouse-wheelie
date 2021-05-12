@@ -159,7 +159,7 @@ publishing {
 
 // Mod sites
 
-def getProjectChangelog() {
+String getProjectChangelog() {
 	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
 	def versionCommit = null
 	for (commit in commits) {
@@ -173,7 +173,7 @@ def getProjectChangelog() {
 
 No changelog found!"""
 	}
-	return ('git log -1 --format=format:"## %s%n%n%b%nRelease by %an" ' + versionCommit).execute().text.trim()
+	return "git log -1 --format=format:\"##%x20%s%n%n%b%nRelease%x20by%x20%an\" $versionCommit".execute().text.trim()
 }
 
 task uploadToModSites {
