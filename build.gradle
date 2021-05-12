@@ -160,7 +160,7 @@ publishing {
 
 // Mod sites
 
-def getChangelog() {
+def getProjectChangelog() {
 	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
 	def versionCommit = null
 	for (commit in commits) {
@@ -185,12 +185,11 @@ task uploadToModSites {
 if (project.hasProperty("siphalorCurseForgeApi")) {
 	curseforge {
 		apiKey project.siphalorCurseForgeApi
-		def changes = getChangelog()
 		project {
 			id = "317514"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = changes
+			changelog = getProjectChangelog()
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
@@ -219,7 +218,7 @@ if (project.hasProperty("siphalorModrinthApi")) {
 		projectId = "u5Ic2U1u"
 		versionNumber = version
 		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
-		changelog = getChangelog()
+		changelog = getProjectChangelog()
 		uploadFile = remapJar
 		releaseType = project.mod_release
 		for (version in ((String) project.mod_mc_versions).split(";")) {
