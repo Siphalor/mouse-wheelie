@@ -23,6 +23,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -39,9 +40,17 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public static int INVALID_SCOPE = Integer.MAX_VALUE;
 
-	public ContainerScreenHelper(T screen, ClickHandler clickHandler) {
+	protected ContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		this.screen = screen;
 		this.clickHandler = clickHandler;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends HandledScreen<?>> ContainerScreenHelper<T> of(T screen, ClickHandler clickHandler) {
+		if (screen instanceof CreativeInventoryScreen) {
+			return (ContainerScreenHelper<T>) new CreativeContainerScreenHelper<>((CreativeInventoryScreen) screen, clickHandler);
+		}
+		return new ContainerScreenHelper<>(screen, clickHandler);
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
