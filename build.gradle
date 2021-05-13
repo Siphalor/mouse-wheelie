@@ -1,13 +1,13 @@
 plugins {
-    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.1.0'
 	id 'org.cadixdev.licenser' version '0.5.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "+mc" + project.minecraft_version
@@ -39,15 +39,15 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.2.2+23b3c92e45',
-            'fabric-events-interaction-v0': '0.4.8+d748de6c45',
-			'fabric-item-api-v1': '1.2.4+23b3c92e45',
-			'fabric-lifecycle-events-v1': '1.4.4+23b3c92e45',
-			'fabric-key-binding-api-v1': '1.0.4+524a2e8545',
-            'fabric-networking-api-v1': '1.0.6+23b3c92e45',
-			'fabric-tag-extensions-v0': '1.1.3+41a6855245',
-			'fabric-tool-attribute-api-v1': '1.2.9+36b77c3e45',
-			'fabric-resource-loader-v0': '0.4.5+23b3c92e45'
+	        'fabric-api-base': '0.3.0+a02b4463d3',
+            'fabric-events-interaction-v0': '0.4.8+a02b4463d3',
+			'fabric-item-api-v1': '1.2.4+a02b4463d3',
+			'fabric-lifecycle-events-v1': '1.4.4+a02b4463d3',
+			'fabric-key-binding-api-v1': '1.0.4+a02b4463d3',
+            'fabric-networking-api-v1': '1.0.9+a02b4463d3',
+			'fabric-tag-extensions-v0': '1.1.4+a02b4463d3',
+			'fabric-tool-attribute-api-v1': '1.2.10+a02b4463d3',
+			'fabric-resource-loader-v0': '0.4.6+a02b4463d3'
 	]
 
 	for (entry in fabric_deps.entrySet()) {
@@ -55,9 +55,9 @@ dependencies {
 		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
 	}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.6+23b3c92e45"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.8+a02b4463d3"
 
-	modImplementation("com.terraformersmc:modmenu:2.0.0-beta.2")
+	modImplementation("com.terraformersmc:modmenu:2.0.0-beta.4")
 
 	modImplementation("de.siphalor:tweed-1.17:${project.tweed_version}") {
 		exclude group: "net.fabricmc.fabric-api"

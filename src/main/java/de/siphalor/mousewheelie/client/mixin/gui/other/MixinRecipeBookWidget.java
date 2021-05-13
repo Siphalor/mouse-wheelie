@@ -33,7 +33,7 @@ import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.network.packet.c2s.play.CraftRequestC2SPacket;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.MathHelper;
@@ -51,7 +51,8 @@ import java.util.List;
 @Mixin(RecipeBookWidget.class)
 public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
-	@Shadow @Final protected RecipeBookResults recipesArea;
+	@Shadow @Final
+	private RecipeBookResults recipesArea;
 
 	@Shadow private int parentWidth;
 
@@ -77,7 +78,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Shadow
 	@Final
-	protected RecipeFinder recipeFinder;
+	private RecipeMatcher recipeFinder;
 
 	@Shadow
 	protected AbstractRecipeScreenHandler<?> craftingScreenHandler;
@@ -140,7 +141,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						if (oldRecipe != recipe || craftingScreenHandler.slots.get(resSlot).getStack().isEmpty() || canCraftMore(recipe)) {
 							InteractionManager.push(new InteractionManager.PacketEvent(new CraftRequestC2SPacket(craftingScreenHandler.syncId, recipe, true), (triggerType) -> MWClient.lastUpdatedSlot >= craftingScreenHandler.getCraftingSlotCount()));
 						}
-						int cnt = recipeFinder.countRecipeCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+						int cnt = recipeFinder.countCrafts(recipe, recipe.getOutput().getMaxCount(), null);
 						for (int i = 1; i < cnt; i++) {
 							InteractionManager.pushClickEvent(craftingScreenHandler.syncId, resSlot, 1, SlotActionType.THROW);
 						}
@@ -162,7 +163,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Unique
 	private boolean canCraftMore(Recipe<?> recipe) {
-		return getBiggestCraftingStackSize() < recipeFinder.countRecipeCrafts(recipe, recipe.getOutput().getMaxCount(), null);
+		return getBiggestCraftingStackSize() < recipeFinder.countCrafts(recipe, recipe.getOutput().getMaxCount(), null);
 	}
 
 	@Unique
