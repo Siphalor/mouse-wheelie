@@ -56,11 +56,13 @@ public class InteractionManager {
 	public static void triggerSend(TriggerType triggerType) {
 		if (waiter == null || waiter.trigger(triggerType)) {
 			do {
-				if (interactionEventQueue.isEmpty()) {
+				InteractionEvent event = interactionEventQueue.poll();
+				if (event == null) {
 					waiter = null;
 					break;
 				}
-			} while ((waiter = interactionEventQueue.remove().send()).trigger(TriggerType.INITIAL));
+				waiter = event.send();
+			} while (waiter.trigger(TriggerType.INITIAL));
 		}
 	}
 
