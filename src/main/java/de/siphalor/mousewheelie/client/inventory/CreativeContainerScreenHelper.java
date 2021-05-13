@@ -24,6 +24,7 @@ import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
@@ -62,7 +63,15 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 
 	@Override
 	public int getScope(Slot slot) {
-		return slot.inventory instanceof PlayerInventory ? 1 : 0;
+		if (screen.method_2469() == ItemGroup.INVENTORY.getIndex()) {
+			return super.getScope(slot);
+		}
+		if (slot.inventory instanceof PlayerInventory) {
+			if (isHotbarSlot(slot)) {
+				return 0;
+			}
+		}
+		return INVALID_SCOPE;
 	}
 
 	@Override
