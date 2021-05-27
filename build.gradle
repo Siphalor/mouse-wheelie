@@ -2,7 +2,7 @@ plugins {
     id 'fabric-loom' version '0.7-SNAPSHOT'
     id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.modrinth.minotaur' version '1.1.0'
+	id 'com.modrinth.minotaur' version '1.2.1'
 	id 'org.cadixdev.licenser' version '0.5.0'
 }
 
@@ -214,7 +214,7 @@ if (project.hasProperty("siphalorModrinthApi")) {
 		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
 		changelog = getProjectChangelog()
 		uploadFile = remapJar
-		releaseType = project.mod_release
+		versionType = project.mod_release
 		for (version in ((String) project.mod_mc_versions).split(";")) {
 			addGameVersion(version)
 		}
