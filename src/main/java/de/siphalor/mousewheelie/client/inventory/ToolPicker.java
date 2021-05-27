@@ -21,8 +21,8 @@ import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
@@ -86,7 +86,7 @@ public class ToolPicker {
 		lastToolPickSlot = index;
 		if (index != -1 && index != inventory.selectedSlot) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
-			ClientSidePacketRegistry.INSTANCE.sendToServer(packet);
+			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return true;
 		}
 		return false;
