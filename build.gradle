@@ -45,7 +45,7 @@ dependencies {
 			'fabric-item-api-v1': '1.0.0+16acbe5ba7',
 			'fabric-lifecycle-events-v1': '1.2.0+74cc3b20a7',
 			'fabric-key-binding-api-v1': '1.0.1+730711c6a7',
-            'fabric-networking-v0': '0.1.10+e00ecb5fa7',
+            'fabric-networking-api-v1': '1.0.3+e3c9d0627d',
 			'fabric-tag-extensions-v0': '1.0.1+35e08e33a7',
 			'fabric-tool-attribute-api-v1': '1.2.0+d21d4635a7',
 			'fabric-resource-loader-v0': '0.2.8+35e08e33a7'
