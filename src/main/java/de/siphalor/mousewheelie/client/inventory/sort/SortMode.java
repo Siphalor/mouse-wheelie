@@ -128,7 +128,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					}
 					Integer amountA = itemToAmountMap.get(stack.getItem());
 					Integer amountB = itemToAmountMap.get(stack2.getItem());
-					return Integer.compare(amountA, amountB);
+					return Integer.compare(amountB, amountA);
 				});
 
 				return sortIds;
