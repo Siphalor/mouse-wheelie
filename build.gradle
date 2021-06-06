@@ -4,6 +4,7 @@ plugins {
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.2.1'
 	id 'org.cadixdev.licenser' version '0.5.0'
+	id 'com.github.breadmoirai.github-release' version '2.2.12'
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -225,4 +226,17 @@ if (project.hasProperty("siphalorModrinthApi")) {
 		addLoader("fabric")
 	}
 	uploadToModSites.finalizedBy(tasks.modrinth)
+}
+
+if (project.hasProperty("siphalorGitHubToken")) {
+	githubRelease {
+		token siphalorGitHubToken
+		targetCommitish.set(minecraft_major_version)
+		releaseName.set("Version $mod_version for $mod_mc_version_specifier")
+		body.set(getProjectChangelog())
+		releaseAssets remapJar.getArchiveFile()
+		prerelease.set(mod_release != "release")
+		overwrite.set(true)
+	}
+	uploadToModSites.finalizedBy(tasks.githubRelease)
 }
