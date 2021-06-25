@@ -40,15 +40,15 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.3.0+a02b4463a0',
-            'fabric-events-interaction-v0': '0.4.8+a02b4463a0',
-			'fabric-item-api-v1': '1.2.4+a02b4463a0',
-			'fabric-lifecycle-events-v1': '1.4.4+a02b4463a0',
-			'fabric-key-binding-api-v1': '1.0.4+a02b4463a0',
-            'fabric-networking-api-v1': '1.0.11+b7ab6121a0',
-			'fabric-tag-extensions-v0': '1.1.4+a02b4463a0',
-			'fabric-tool-attribute-api-v1': '1.2.12+b7ab6121a0',
-			'fabric-resource-loader-v0': '0.4.7+b7ab6121a0'
+	        'fabric-api-base': '0.3.0+a02b44633d',
+            'fabric-events-interaction-v0': '0.4.9+a722d8c03d',
+			'fabric-item-api-v1': '1.2.4+a02b44633d',
+			'fabric-lifecycle-events-v1': '1.4.4+a02b44633d',
+			'fabric-key-binding-api-v1': '1.0.4+a02b44633d',
+            'fabric-networking-api-v1': '1.0.11+b7ab61213d',
+			'fabric-tag-extensions-v0': '1.1.4+a02b44633d',
+			'fabric-tool-attribute-api-v1': '1.2.12+b7ab61213d',
+			'fabric-resource-loader-v0': '0.4.7+b7ab61213d'
 	]
 
 	for (entry in fabric_deps.entrySet()) {
@@ -56,7 +56,7 @@ dependencies {
 		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
 	}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.10+b7ab6121a0"
+	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.10+b7ab61213d"
 
 	modImplementation("com.terraformersmc:modmenu:2.0.0-beta.7")
 

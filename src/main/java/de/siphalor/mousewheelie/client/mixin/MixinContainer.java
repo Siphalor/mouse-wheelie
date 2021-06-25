@@ -45,7 +45,7 @@ public abstract class MixinContainer {
 	public abstract Slot getSlot(int index);
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
+	public void onSlotUpdate(int i, List<ItemStack> itemStacks, ItemStack cursorStack, CallbackInfo callbackInfo, int index) {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.other) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
@@ -64,7 +64,7 @@ public abstract class MixinContainer {
 	}
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void onSlotUpdated(List<ItemStack> stacks, CallbackInfo callbackInfo, int index) {
+	public void onSlotUpdated(int i, List<ItemStack> stacks, ItemStack cursorStack, CallbackInfo callbackInfo, int index) {
 		MWClient.performRefill();
 	}
 
