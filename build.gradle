@@ -58,28 +58,21 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.10+b7ab61213d"
 
-	modImplementation("com.terraformersmc:modmenu:2.0.0-beta.7")
+	modImplementation("com.terraformersmc:modmenu:2.0.2")
 
-	modImplementation("de.siphalor:tweed-1.17:${project.tweed_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-		exclude module: "config-2"
-	}
-	include "de.siphalor:tweed-1.17:${project.tweed_version}"
+	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.9"))
 
 	modImplementation("de.siphalor:amecsapi-1.17:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "nmuk-1.17"
 	}
 	include "de.siphalor:amecsapi-1.17:${project.amecs_version}"
-
-	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-	}
-	include "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}"
-
-	modImplementation "me.shedaniel.cloth:basic-math:0.5.0"
 
 	// Smooth startup
 	//modRuntime("com.github.UltimateBoomer:mc-smoothboot:1.16.5-1.6.0") {
@@ -196,7 +189,6 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
-				embeddedLibrary "cloth-config"
 				embeddedLibrary "tweed-api"
 				optionalDependency "modmenu"
 			}
