@@ -190,7 +190,6 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
-				embeddedLibrary "cloth-config"
 				embeddedLibrary "tweed-api"
 				optionalDependency "modmenu"
 			}
