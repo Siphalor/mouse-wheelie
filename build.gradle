@@ -61,27 +61,19 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.1+4ea4772942"
 
-	modImplementation("de.siphalor:tweed-1.14:${project.tweed_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
-	include "de.siphalor:tweed-1.14:${project.tweed_version}"
+	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.9"))
 
 	modImplementation("de.siphalor:amecsapi-1.14:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "nmuk-1.14"
 	}
 	include "de.siphalor:amecsapi-1.14:${project.amecs_version}"
-
-	modImplementation("curse.maven:cloth-config-319057:${project.clothconfig_version}") {
-		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-	}
-	include "curse.maven:cloth-config-319057:${project.clothconfig_version}"
-
-	modImplementation "me.shedaniel.cloth:basic-math:0.5.1"
-
-	// Smooth startup
-	//modRuntime "io.github.ultimateboomer:smoothboot-fabric:1.14.4-1+"
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")
@@ -185,13 +177,13 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = getProjectChangelog()
+			addGameVersion("Fabric")
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
-				embeddedLibrary "cloth-config"
 				embeddedLibrary "tweed-api"
 				optionalDependency "modmenu"
 			}

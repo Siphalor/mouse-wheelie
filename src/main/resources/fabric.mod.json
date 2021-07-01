@@ -36,7 +36,7 @@
 				"value": "de.siphalor.mousewheelie.MouseWheelie"
 			}
 		],
-		"tweed:config": [
+		"tweed4:config": [
 			{
 				"value": "de.siphalor.mousewheelie.MWConfig"
 			}
@@ -50,8 +50,7 @@
 	},
 	"depends": {
 		"fabricloader": ">=0.4.0",
-		"minecraft": "^1.14",
-		"tweed": ">=3.0.0-beta.11"
+		"minecraft": "^1.14"
 	},
 	"custom": {
 		"modmenu:clientsideOnly": true
