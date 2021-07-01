@@ -20,18 +20,20 @@ package de.siphalor.mousewheelie;
 import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
-import de.siphalor.tweed.config.ConfigEnvironment;
-import de.siphalor.tweed.config.ConfigScope;
-import de.siphalor.tweed.config.annotated.*;
-import de.siphalor.tweed.config.constraints.RangeConstraint;
-import de.siphalor.tweed.data.DataObject;
+import de.siphalor.tweed4.annotated.*;
+import de.siphalor.tweed4.config.ConfigEnvironment;
+import de.siphalor.tweed4.config.ConfigScope;
+import de.siphalor.tweed4.config.constraints.RangeConstraint;
+import de.siphalor.tweed4.data.DataObject;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth", casing = CaseFormat.LOWER_HYPHEN)
+@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed4:coat", casing = CaseFormat.LOWER_HYPHEN)
+@AConfigBackground("textures/block/green_concrete_powder.png")
 public class MWConfig {
 	@AConfigEntry(comment = "General settings")
 	public static General general = new General();
 
+	@AConfigBackground("textures/block/acacia_log.png")
 	public static class General {
 		@AConfigEntry(
 				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
@@ -53,6 +55,7 @@ public class MWConfig {
 
 	public static Scrolling scrolling = new Scrolling();
 
+	@AConfigBackground("textures/block/dark_prismarine.png")
 	public static class Scrolling {
 		@AConfigEntry(comment = "Enables scrolling of stacks")
 		public boolean enable = true;
@@ -73,6 +76,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
 	public static Sort sort = new Sort();
 
+	@AConfigBackground("textures/block/barrel_top.png")
 	public static class Sort {
 		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
 		public SortMode primarySort = SortMode.RAW_ID;
@@ -87,6 +91,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Configure refill related stuff here.")
 	public static Refill refill = new Refill();
 
+	@AConfigBackground("textures/block/horn_coral_block.png")
 	public static class Refill {
 		@AConfigEntry(comment = "Refills stacks in the off hand")
 		public boolean offHand = true;
@@ -106,6 +111,7 @@ public class MWConfig {
 		@AConfigEntry(comment = "Enable/Disable specific rules for how to refill items")
 		public Rules rules = new Rules();
 
+		@AConfigBackground("textures/block/yellow_terracotta.png")
 		public static class Rules {
 			@AConfigEntry(comment = "Tries to find any block items")
 			public boolean anyBlock = false;
@@ -127,6 +133,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Configure picking the correct tool for the currently faced block.")
 	public static ToolPicking toolPicking = new ToolPicking();
 
+	@AConfigBackground("textures/block/coarse_dirt.png")
 	public static class ToolPicking {
 		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
 		public boolean holdTool = true;

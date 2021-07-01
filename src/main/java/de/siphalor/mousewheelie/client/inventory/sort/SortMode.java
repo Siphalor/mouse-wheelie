@@ -17,7 +17,7 @@
 
 package de.siphalor.mousewheelie.client.inventory.sort;
 
-import de.siphalor.tweed.tailor.DropdownMaterial;
+import de.siphalor.tweed4.tailor.DropdownMaterial;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
