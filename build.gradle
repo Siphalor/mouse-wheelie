@@ -63,13 +63,13 @@ dependencies {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.1.0+"))
 	include(modApi("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.0.0+"))
 	include(modApi("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.0.0+"))
-	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.0.0+"))
+	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.0.1+"))
 	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.0+"))
 	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.0+"))
-	include(modApi("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.9"))
+	include(modApi("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.10"))
 
 	modImplementation("de.siphalor:amecsapi-1.16:${project.amecs_version}") {
 		exclude group: "net.fabricmc.fabric-api"
