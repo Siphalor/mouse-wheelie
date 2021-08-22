@@ -24,7 +24,9 @@ import de.siphalor.tweed4.annotated.*;
 import de.siphalor.tweed4.config.ConfigEnvironment;
 import de.siphalor.tweed4.config.ConfigScope;
 import de.siphalor.tweed4.config.constraints.RangeConstraint;
+import de.siphalor.tweed4.data.DataList;
 import de.siphalor.tweed4.data.DataObject;
+import de.siphalor.tweed4.data.DataValue;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed4:coat", casing = CaseFormat.LOWER_HYPHEN)
@@ -146,16 +148,17 @@ public class MWConfig {
 	}
 
 	@AConfigFixer
-	public <T> void fixConfig(DataObject<T> dataObject, DataObject<T> rootObject) {
+	public <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void fixConfig(O dataObject, O rootObject) {
 		if (dataObject.has("general") && dataObject.get("general").isObject()) {
-			DataObject<T> general = dataObject.get("general").asObject();
+			O general = dataObject.get("general").asObject();
 
 			moveConfigEntry(dataObject, general, "enable-item-scrolling", "scrolling");
 			moveConfigEntry(dataObject, general, "scroll-factor", "scrolling");
 			moveConfigEntry(dataObject, general, "directional-scrolling", "scrolling");
 
 			if (dataObject.has("scrolling") && dataObject.get("scrolling").isObject()) {
-				DataObject<T> scrolling = dataObject.get("scrolling").asObject();
+				O scrolling = dataObject.get("scrolling").asObject();
 
 				if (scrolling.has("scroll-creative-menu") && scrolling.get("scroll-creative-menu").isBoolean()) {
 					scrolling.set("scroll-creative-menu-items", !scrolling.get("scroll-creative-menu").asBoolean());
@@ -172,13 +175,16 @@ public class MWConfig {
 		}
 	}
 
-	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat) {
+	@SuppressWarnings("SameParameterValue")
+	private <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void moveConfigEntry(O root, O origin, String name, String destCat) {
 		moveConfigEntry(root, origin, name, destCat, name);
 	}
 
-	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat, String newName) {
+	private <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void moveConfigEntry(O root, O origin, String name, String destCat, String newName) {
 		if (origin.has(name)) {
-			DataObject<T> dest;
+			O dest;
 			if (root.has(destCat) && root.get(destCat).isObject()) {
 				dest = root.get(destCat).asObject();
 			} else {
