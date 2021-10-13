@@ -19,8 +19,15 @@ package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.tweed.tailor.DropdownMaterial;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.*;
@@ -38,6 +45,55 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 
 	public static void unregister(String name) {
 		SORT_MODES.remove(name);
+	}
+
+	public static ListTag getEnchantments(ItemStack a) {
+		if(a.getItem() == Items.ENCHANTED_BOOK) {
+			return EnchantedBookItem.getEnchantmentTag(a);
+		}
+		return a.getEnchantments();
+	}
+
+	public static int compareEnchantmentsAlphabetically(ListTag first, ListTag second)  {
+		if(first.size() == 0) {
+			return second.size() == 0 ? 0 : -1;
+		}
+		if(first.size() > second.size()) return 1;
+		if(first.size() < second.size()) return -1;
+
+		List<Text> a = new ArrayList<>(), b = new ArrayList<>();
+		ItemStack.appendEnchantments(a, first);
+		ItemStack.appendEnchantments(b, second);
+
+		for(int i = 0; i < a.size(); i++) {
+			int comp = a.get(i).getString().compareToIgnoreCase(b.get(i).getString());
+			if(comp == 0) continue;
+			return comp;
+		}
+		return 0;
+	}
+
+	public static int compareEnchantmentsById(ListTag first, ListTag second) {
+		if(first.size() == 0) {
+			return second.size() == 0 ? 0 : -1;
+		}
+		if(first.size() > second.size()) return 1;
+		if(first.size() < second.size()) return -1;
+
+		for(int i = 0; i < first.size(); i++) {
+			CompoundTag x = first.getCompound(i);
+			CompoundTag y = second.getCompound(i);
+			Optional<Enchantment> firstEnch = Registry.ENCHANTMENT.getOrEmpty(Identifier.tryParse(x.getString("id")));
+			Optional<Enchantment> secondEnch = Registry.ENCHANTMENT.getOrEmpty(Identifier.tryParse(y.getString("id")));
+			if(!firstEnch.isPresent()) {
+				return !secondEnch.isPresent() ? 0 : -1;
+			}
+			if(!secondEnch.isPresent()) return 1;
+			int comp = Integer.compare(Registry.ENCHANTMENT.getRawId(firstEnch.get()), Registry.ENCHANTMENT.getRawId(secondEnch.get()));
+			if(comp == 0) continue;
+			return comp;
+		}
+		return 0;
 	}
 
 	protected SortMode(String name) {
@@ -89,13 +145,17 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 				Arrays.sort(sortIds, (a, b) -> {
 					if (strings[a].equals("")) {
 						if (strings[b].equals(""))
-							return 0;
+							return compareEnchantmentsAlphabetically(getEnchantments(stacks[a]), getEnchantments(stacks[b]));
 						return 1;
 					}
 					if (strings[b].equals("")) return -1;
 					int comp = strings[a].compareToIgnoreCase(strings[b]);
 					if (comp == 0) {
-						return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+						comp = Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+						if(comp == 0) {
+							return compareEnchantmentsAlphabetically(getEnchantments(stacks[a]), getEnchantments(stacks[b]));
+						}
+						return comp;
 					}
 					return comp;
 				});
@@ -128,7 +188,11 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					}
 					Integer amountA = itemToAmountMap.get(stack.getItem());
 					Integer amountB = itemToAmountMap.get(stack2.getItem());
-					return Integer.compare(amountB, amountA);
+					int comp = Integer.compare(amountB, amountA);
+					if(comp == 0) {
+						return compareEnchantmentsAlphabetically(getEnchantments(stacks[a]), getEnchantments(stacks[b]));
+					}
+					return comp;
 				});
 
 				return sortIds;
@@ -143,10 +207,12 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					int result = Integer.compare(rawIds[a], rawIds[b]);
 					if (result == 0) {
 						if (stacks[b].isDamageable()) {
-							return Integer.compare(stacks[a].getDamage(), stacks[b].getDamage());
+							result = Integer.compare(stacks[a].getDamage(), stacks[b].getDamage());
 						} else {
-							return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+							result = Integer.compare(stacks[b].getCount(), stacks[a].getCount());
 						}
+						if(result == 0) return compareEnchantmentsById(getEnchantments(stacks[a]), getEnchantments(stacks[b]));
+						return result;
 					}
 					return result;
 				});
