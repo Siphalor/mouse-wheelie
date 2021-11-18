@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.2.1'
@@ -13,10 +13,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "+mc" + project.minecraft_version
 group = project.maven_group
-
-minecraft {
-    refmapName = "${project.mod_id}-refmap.json"
-}
 
 repositories {
 	mavenLocal()
@@ -84,9 +80,7 @@ dependencies {
 	modImplementation "me.shedaniel.cloth:basic-math:0.5.0"
 
 	// Smooth startup
-	modRuntime("com.github.UltimateBoomer:mc-smoothboot:1.16.5-1.6.0") {
-		exclude module: "modmenu"
-	}
+	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")
@@ -133,13 +127,8 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+
+			from components.java
         }
     }
 
