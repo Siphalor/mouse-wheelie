@@ -20,18 +20,22 @@ package de.siphalor.mousewheelie;
 import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
-import de.siphalor.tweed.config.ConfigEnvironment;
-import de.siphalor.tweed.config.ConfigScope;
-import de.siphalor.tweed.config.annotated.*;
-import de.siphalor.tweed.config.constraints.RangeConstraint;
-import de.siphalor.tweed.data.DataObject;
+import de.siphalor.tweed4.annotated.*;
+import de.siphalor.tweed4.config.ConfigEnvironment;
+import de.siphalor.tweed4.config.ConfigScope;
+import de.siphalor.tweed4.config.constraints.RangeConstraint;
+import de.siphalor.tweed4.data.DataList;
+import de.siphalor.tweed4.data.DataObject;
+import de.siphalor.tweed4.data.DataValue;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed:cloth", casing = CaseFormat.LOWER_HYPHEN)
+@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed4:coat", casing = CaseFormat.LOWER_HYPHEN)
+@AConfigBackground("textures/block/green_concrete_powder.png")
 public class MWConfig {
 	@AConfigEntry(comment = "General settings")
 	public static General general = new General();
 
+	@AConfigBackground("textures/block/acacia_log.png")
 	public static class General {
 		@AConfigEntry(
 				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
@@ -53,6 +57,7 @@ public class MWConfig {
 
 	public static Scrolling scrolling = new Scrolling();
 
+	@AConfigBackground("textures/block/dark_prismarine.png")
 	public static class Scrolling {
 		@AConfigEntry(comment = "Enables scrolling of stacks")
 		public boolean enable = true;
@@ -73,6 +78,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
 	public static Sort sort = new Sort();
 
+	@AConfigBackground("textures/block/barrel_top.png")
 	public static class Sort {
 		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
 		public SortMode primarySort = SortMode.RAW_ID;
@@ -87,6 +93,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Configure refill related stuff here.")
 	public static Refill refill = new Refill();
 
+	@AConfigBackground("textures/block/horn_coral_block.png")
 	public static class Refill {
 		@AConfigEntry(comment = "Refills stacks in the off hand")
 		public boolean offHand = true;
@@ -106,6 +113,7 @@ public class MWConfig {
 		@AConfigEntry(comment = "Enable/Disable specific rules for how to refill items")
 		public Rules rules = new Rules();
 
+		@AConfigBackground("textures/block/yellow_terracotta.png")
 		public static class Rules {
 			@AConfigEntry(comment = "Tries to find any block items")
 			public boolean anyBlock = false;
@@ -127,6 +135,7 @@ public class MWConfig {
 	@AConfigEntry(comment = "Configure picking the correct tool for the currently faced block.")
 	public static ToolPicking toolPicking = new ToolPicking();
 
+	@AConfigBackground("textures/block/coarse_dirt.png")
 	public static class ToolPicking {
 		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
 		public boolean holdTool = true;
@@ -139,16 +148,17 @@ public class MWConfig {
 	}
 
 	@AConfigFixer
-	public <T> void fixConfig(DataObject<T> dataObject, DataObject<T> rootObject) {
+	public <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void fixConfig(O dataObject, O rootObject) {
 		if (dataObject.has("general") && dataObject.get("general").isObject()) {
-			DataObject<T> general = dataObject.get("general").asObject();
+			O general = dataObject.get("general").asObject();
 
 			moveConfigEntry(dataObject, general, "enable-item-scrolling", "scrolling");
 			moveConfigEntry(dataObject, general, "scroll-factor", "scrolling");
 			moveConfigEntry(dataObject, general, "directional-scrolling", "scrolling");
 
 			if (dataObject.has("scrolling") && dataObject.get("scrolling").isObject()) {
-				DataObject<T> scrolling = dataObject.get("scrolling").asObject();
+				O scrolling = dataObject.get("scrolling").asObject();
 
 				if (scrolling.has("scroll-creative-menu") && scrolling.get("scroll-creative-menu").isBoolean()) {
 					scrolling.set("scroll-creative-menu-items", !scrolling.get("scroll-creative-menu").asBoolean());
@@ -165,13 +175,16 @@ public class MWConfig {
 		}
 	}
 
-	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat) {
+	@SuppressWarnings("SameParameterValue")
+	private <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void moveConfigEntry(O root, O origin, String name, String destCat) {
 		moveConfigEntry(root, origin, name, destCat, name);
 	}
 
-	private <T> void moveConfigEntry(DataObject<T> root, DataObject<T> origin, String name, String destCat, String newName) {
+	private <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void moveConfigEntry(O root, O origin, String name, String destCat, String newName) {
 		if (origin.has(name)) {
-			DataObject<T> dest;
+			O dest;
 			if (root.has(destCat) && root.get(destCat).isObject()) {
 				dest = root.get(destCat).asObject();
 			} else {
