@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.util.Hand;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,6 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetworkHandler {
 	@Shadow
+	@Final
 	private MinecraftClient client;
 
 	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
@@ -46,7 +48,7 @@ public class MixinClientPlayNetworkHandler {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 	}*/
 
-	@Inject(method = "onHeldItemChange", at = @At("HEAD"))
+	@Inject(method = "onUpdateSelectedSlot", at = @At("HEAD"))
 	public void onHeldItemChangeBegin(UpdateSelectedSlotS2CPacket packet, CallbackInfo callbackInfo) {
 		InteractionManager.triggerSend(InteractionManager.TriggerType.HELD_ITEM_CHANGE);
 	}
