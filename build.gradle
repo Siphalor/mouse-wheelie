@@ -49,8 +49,7 @@ dependencies {
 	]
 
 	for (entry in fabric_deps.entrySet()) {
-		modImplementation "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
-		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
+		modImplementation(include("net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()))
 	}
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.2.0+438f9636b0"
@@ -67,10 +66,9 @@ dependencies {
 	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.1+"))
 	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version"))
 
-	modImplementation("de.siphalor:amecsapi-1.16:${project.amecs_version}") {
+	modImplementation(include("de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}")) {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	include "de.siphalor:amecsapi-1.16:${project.amecs_version}"
 
 	// Smooth startup
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
