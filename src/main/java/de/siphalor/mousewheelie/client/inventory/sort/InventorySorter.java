@@ -75,7 +75,7 @@ public class InventorySorter {
 				ItemStack targetStack = stacks[j];
 				if (targetStack.isEmpty()) continue;
 				if (targetStack.getCount() >= targetStack.getItem().getMaxCount()) continue;
-				if (stack.getItem() == targetStack.getItem() && ItemStack.areTagsEqual(stack, targetStack)) {
+				if (stack.getItem() == targetStack.getItem() && ItemStack.areNbtEqual(stack, targetStack)) {
 					int delta = targetStack.getItem().getMaxCount() - targetStack.getCount();
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
@@ -133,7 +133,7 @@ public class InventorySorter {
 						stacks[id].getItem() == currentStack.getItem()
 								&& stacks[id].getCount() == currentStack.getCount()
 								&& !doneSlashEmpty.get(slotCount + id)
-								&& ItemStack.areTagsEqual(stacks[id], currentStack)
+								&& ItemStack.areNbtEqual(stacks[id], currentStack)
 				) {
 					doneSlashEmpty.set(id);
 					id = ArrayUtils.indexOf(sortIds, id);

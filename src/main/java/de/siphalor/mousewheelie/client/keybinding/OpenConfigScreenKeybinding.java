@@ -42,7 +42,7 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
 				if (tailor instanceof CoatTailor) {
 					ScreenTailorScreenFactory<?> screenFactory = ((CoatTailor) tailor).getScreenFactories().get(MouseWheelie.MOD_ID);
 					if (screenFactory != null) {
-						minecraftClient.openScreen(screenFactory.create(minecraftClient.currentScreen));
+						minecraftClient.setScreen(screenFactory.create(minecraftClient.currentScreen));
 					}
 				}
 			});
