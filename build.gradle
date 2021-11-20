@@ -48,8 +48,7 @@ dependencies {
 	]
 
 	for (entry in fabric_deps.entrySet()) {
-		modImplementation "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
-		include "net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()
+		modImplementation(include("net.fabricmc.fabric-api:" + entry.getKey() + ":" + entry.getValue()))
 	}
 
 	modImplementation "net.fabricmc.fabric-api:fabric-item-groups-v0:0.3.1+65d505fc9c"
@@ -62,15 +61,11 @@ dependencies {
 	include(modApi("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.0+"))
 	include(modApi("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.2+"))
 	include(modApi("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.2+"))
-	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version")) {
-		exclude group: "net.fabricmc.fabric-api"
-	}
+	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version"))
 
-	modImplementation("de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}") {
+	modImplementation(include("de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}")) {
 		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "nmuk-$minecraft_major_version"
 	}
-	include "de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}"
 
 	// Smooth startup
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
