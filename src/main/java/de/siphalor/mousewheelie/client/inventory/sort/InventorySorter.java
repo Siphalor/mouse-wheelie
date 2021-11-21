@@ -31,7 +31,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
@@ -104,9 +103,12 @@ public class InventorySorter {
 		combineStacks();
 		ItemStack currentStack;
 		final int slotCount = stacks.length;
-		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
+		int[] sortIds = new int[slotCount];
+		for (int i = 0; i < sortIds.length; i++) {
+			sortIds[i] = i;
+		}
 
-		sortIds = sortMode.sort(sortIds, stacks);
+		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, inventorySlots));
 
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
 		for (int i = 0; i < slotCount; i++) {
