@@ -18,9 +18,11 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.tweed4.tailor.DropdownMaterial;
-import net.minecraft.client.resource.language.I18n;
+import it.unimi.dsi.fastutil.ints.IntArrays;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
 import java.util.*;
@@ -44,7 +46,37 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		this.name = name;
 	}
 
-	public abstract Integer[] sort(Integer[] sortIds, ItemStack[] stacks);
+	/**
+	 * Sorts the given slot ids using the given stacks in the slots. Sorting may be done in place.
+	 * @param sortIds An array of the current slot indices
+	 * @param stacks The stacks in the respective slots
+	 * @param context Additional context for the sorting
+	 * @return The sorted array of slot indices
+	 */
+	public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
+		Integer[] boxedSortIds = new Integer[sortIds.length];
+		for (int i = 0; i < sortIds.length; i++) {
+			boxedSortIds[i] = sortIds[i];
+		}
+		boxedSortIds = sort(boxedSortIds, stacks);
+		for (int i = 0; i < sortIds.length; i++) {
+			sortIds[i] = boxedSortIds[i];
+		}
+		return sortIds;
+	}
+
+	/**
+	 * Sorts the given slot ids using the given stacks in the slots. Sorting may be done in place.
+	 * @param sortIds An array of the current slot indices
+	 * @param stacks The stacks in the respective slots
+	 * @return The sorted array of slot indices
+	 * @deprecated Please use the primitive variant {@link SortMode#sort(int[], ItemStack[], SortContext)} instead.
+	 * @see SortMode#sort(int[], ItemStack[], SortContext)
+	 */
+	@Deprecated
+	public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+		return sortIds;
+	}
 
 	@Override
 	public DropdownMaterial<SortMode> valueOf(String s) {
@@ -66,27 +98,71 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		return "mousewheelie.sortmode." + name.toLowerCase(Locale.ENGLISH);
 	}
 
-	static {
-		NONE = register("none", new SortMode("none") {
-			@Override
-			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
-				return sortIds;
+	protected static int compareEqualItems(ItemStack a, ItemStack b) {
+		// compare counts
+		int cmp = Integer.compare(b.getCount(), a.getCount());
+		if (cmp != 0) {
+			return cmp;
+		}
+		return compareEqualItems2(a, b);
+	}
+
+	private static int compareEqualItems2(ItemStack a, ItemStack b) {
+		// compare names
+		if (a.hasCustomName()) {
+			if (!b.hasCustomName()) {
+				return -1;
 			}
-		});
+			return compareEqualItems3(a, b);
+		}
+		if (b.hasCustomName()) {
+			return 1;
+		}
+		return compareEqualItems3(a, b);
+	}
+
+	private static int compareEqualItems3(ItemStack a, ItemStack b) {
+		// compare tooltips
+		Iterator<Text> tooltipsA = a.getTooltip(null, TooltipContext.Default.NORMAL).iterator();
+		Iterator<Text> tooltipsB = b.getTooltip(null, TooltipContext.Default.NORMAL).iterator();
+
+		while (tooltipsA.hasNext()) {
+			if (!tooltipsB.hasNext()) {
+				return 1;
+			}
+
+			int cmp = tooltipsA.next().getString().compareToIgnoreCase(tooltipsB.next().getString());
+			if (cmp != 0) {
+				return cmp;
+			}
+		}
+		if (tooltipsB.hasNext()) {
+			return -1;
+		}
+		return compareEqualItems4(a, b);
+	}
+
+	private static int compareEqualItems4(ItemStack a, ItemStack b) {
+		// compare damage
+		return Integer.compare(a.getDamage(), b.getDamage());
+	}
+
+	static {
+		NONE = register("none", new SortMode("none") {});
 		ALPHABET = register("alphabet", new SortMode("alphabet") {
 			String[] strings;
 			ItemStack[] stacks;
 
 			@Override
-			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
 				this.stacks = stacks;
-				strings = Arrays.stream(sortIds).map(id -> {
-					ItemStack itemStack = stacks[id];
-					if (itemStack.isEmpty()) return "";
-					return I18n.translate(itemStack.getName().getString());
-				}).toArray(String[]::new);
+				strings = new String[sortIds.length];
+				for (int i = 0; i < sortIds.length; i++) {
+					ItemStack stack = stacks[i];
+					strings[i] = stack.isEmpty() ? "" : stack.getName().getString();
+				}
 
-				Arrays.sort(sortIds, (a, b) -> {
+				IntArrays.quickSort(sortIds, (a, b) -> {
 					if (strings[a].equals("")) {
 						if (strings[b].equals(""))
 							return 0;
@@ -95,7 +171,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					if (strings[b].equals("")) return -1;
 					int comp = strings[a].compareToIgnoreCase(strings[b]);
 					if (comp == 0) {
-						return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
+						return compareEqualItems(stacks[a], stacks[b]);
 					}
 					return comp;
 				});
@@ -105,7 +181,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		});
 		QUANTITY = register("quantity", new SortMode("quantity") {
 			@Override
-			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
 				HashMap<Item, Integer> itemToAmountMap = new HashMap<>();
 
 				for (ItemStack stack : stacks) {
@@ -117,7 +193,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					}
 				}
 
-				Arrays.sort(sortIds, (a, b) -> {
+				IntArrays.quickSort(sortIds, (a, b) -> {
 					ItemStack stack = stacks[a];
 					ItemStack stack2 = stacks[b];
 					if (stack.isEmpty()) {
@@ -128,7 +204,11 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					}
 					Integer amountA = itemToAmountMap.get(stack.getItem());
 					Integer amountB = itemToAmountMap.get(stack2.getItem());
-					return Integer.compare(amountB, amountA);
+					int cmp = Integer.compare(amountB, amountA);
+					if (cmp != 0) {
+						return cmp;
+					}
+					return compareEqualItems(stack, stack2);
 				});
 
 				return sortIds;
@@ -136,19 +216,15 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		});
 		RAW_ID = register("raw_id", new SortMode("raw_id") {
 			@Override
-			public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
+			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
 				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
 
-				Arrays.sort(sortIds, (a, b) -> {
-					int result = Integer.compare(rawIds[a], rawIds[b]);
-					if (result == 0) {
-						if (stacks[b].isDamageable()) {
-							return Integer.compare(stacks[a].getDamage(), stacks[b].getDamage());
-						} else {
-							return Integer.compare(stacks[b].getCount(), stacks[a].getCount());
-						}
+				IntArrays.quickSort(sortIds, (a, b) -> {
+					int cmp = Integer.compare(rawIds[a], rawIds[b]);
+					if (cmp != 0) {
+						return cmp;
 					}
-					return result;
+					return compareEqualItems(stacks[a], stacks[b]);
 				});
 
 				return sortIds;
