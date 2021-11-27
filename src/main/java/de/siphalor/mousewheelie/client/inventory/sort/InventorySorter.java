@@ -31,7 +31,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
 public class InventorySorter {
@@ -104,50 +103,82 @@ public class InventorySorter {
 		combineStacks();
 		ItemStack currentStack;
 		final int slotCount = stacks.length;
-		Integer[] sortIds = IntStream.range(0, slotCount).boxed().toArray(Integer[]::new);
-
-		sortIds = sortMode.sort(sortIds, stacks);
-
-		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
-		for (int i = 0; i < slotCount; i++) {
-			if (i == sortIds[i]) {
-				doneSlashEmpty.set(i);
-				continue;
-			}
-			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i);
+		int[] sortIds = new int[slotCount];
+		for (int i = 0; i < sortIds.length; i++) {
+			sortIds[i] = i;
 		}
+
+		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, inventorySlots));
+		// sortIds now maps the slot index (the target id) to which slot's contents should be moved there (the origin id)
+
+		// This is a combined bitset to save whether eac slot is done or empty.
+		// It consists of all bits for the done states in the first half and the empty states in the second half.
+		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
+		for (int i = 0; i < slotCount; i++) { // Iterate all slots to set up the state bit set
+			if (i == sortIds[i]) { // If the target slot is equal to the origin,
+				doneSlashEmpty.set(i); // then we're done with that slot already.
+				continue;
+			}
+			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i); // mark if it's empty
+		}
+		// Iterate all slots, with i as the target slot index
+		// sortIds[i] is therefore the origin slot
 		for (int i = 0; i < slotCount; i++) {
-			if (doneSlashEmpty.get(i)) {
-				continue;
+			if (doneSlashEmpty.get(i)) { // See if we're already done,
+				continue; // and skip.
 			}
-			if (doneSlashEmpty.get(slotCount + sortIds[i])) {
-				doneSlashEmpty.set(sortIds[i]);
-				continue;
+			if (doneSlashEmpty.get(slotCount + sortIds[i])) { // If the origin is empty,
+				doneSlashEmpty.set(sortIds[i]); // we can mark it as done
+				continue; // and skip.
 			}
-			InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
-			doneSlashEmpty.set(slotCount + sortIds[i]);
-			currentStack = stacks[sortIds[i]];
-			int id = i;
-			do {
+
+			int syncId = containerScreen.getScreenHandler().syncId;
+			// This is where the action happens.
+			// Pick up the stack at the origin slot.
+			InteractionManager.pushClickEvent(syncId, inventorySlots.get(sortIds[i]).id, 0, SlotActionType.PICKUP);
+			doneSlashEmpty.set(slotCount + sortIds[i]); // Mark the origin slot as empty (because we picked the stack up, duh)
+			currentStack = stacks[sortIds[i]]; // Save the stack we're currently working with
+			int workingSlotId = inventorySlots.get(sortIds[i]).id;
+			int id = i; // id will reflect the target slot in the following loop
+			do { // This loop follows chained stack moves (e.g. 1->2->5->1).
 				if (
 						stacks[id].getItem() == currentStack.getItem()
-								&& stacks[id].getCount() == currentStack.getCount()
+								//&& stacks[id].getCount() == currentStack.getCount()
 								&& !doneSlashEmpty.get(slotCount + id)
 								&& ItemStack.areNbtEqual(stacks[id], currentStack)
 				) {
-					doneSlashEmpty.set(id);
-					id = ArrayUtils.indexOf(sortIds, id);
-					continue;
+					// If the current stack and the target stack are completely equal, then we can skip this step in the chain
+					if (stacks[id].getCount() == currentStack.getCount()) {
+						doneSlashEmpty.set(id); // mark the current target as done
+						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						continue;
+					}
+					if (currentStack.getCount() < stacks[id].getCount()) { // Clicking with a low stack on a full stack does nothing
+						// The workaround is: click working slot, click target slot, click working slot, click target slot, click working slot
+						int targetSlotId = inventorySlots.get(id).id;
+						InteractionManager.pushClickEvent(syncId, workingSlotId, 0, SlotActionType.PICKUP);
+						InteractionManager.pushClickEvent(syncId, targetSlotId, 0, SlotActionType.PICKUP);
+						InteractionManager.pushClickEvent(syncId, workingSlotId, 0, SlotActionType.PICKUP);
+						InteractionManager.pushClickEvent(syncId, targetSlotId, 0, SlotActionType.PICKUP);
+						InteractionManager.pushClickEvent(syncId, workingSlotId, 0, SlotActionType.PICKUP);
+
+						currentStack = stacks[id];
+						doneSlashEmpty.set(id); // mark the current target as done
+						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						continue;
+					}
 				}
 
-				InteractionManager.pushClickEvent(containerScreen.getScreenHandler().syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
+				// swap the current stack with the target stack
+				InteractionManager.pushClickEvent(syncId, inventorySlots.get(id).id, 0, SlotActionType.PICKUP);
 				currentStack = stacks[id];
-				doneSlashEmpty.set(id);
+				doneSlashEmpty.set(id); // mark the current target as done
+				// If the target that we just swapped with was empty before, then this breaks the chain.
 				if (doneSlashEmpty.get(slotCount + id)) {
 					break;
 				}
-				id = ArrayUtils.indexOf(sortIds, id);
-			} while (!doneSlashEmpty.get(id));
+				id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+			} while (!doneSlashEmpty.get(id)); // If we find a target that is marked as done already, then we can break the chain.
 		}
 	}
 }
