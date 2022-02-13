@@ -127,7 +127,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(int int1, int int2, int int3, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (MWConfig.general.enableQuickCraft && isOpen() && !client.player.isSpectator()) {
-			if (MinecraftClient.getInstance().options.keyDrop.matchesKey(int1, int2)) {
+			if (MinecraftClient.getInstance().options.dropKey.matchesKey(int1, int2)) {
 				searching = false;
 				Recipe<?> oldRecipe = recipesArea.getLastClickedRecipe();
 				if (this.recipesArea.mouseClicked(MWClient.getMouseX(), MWClient.getMouseY(), 0, (this.parentWidth - 147) / 2 - this.leftOffset, (this.parentHeight - 166) / 2, 147, 166)) {
