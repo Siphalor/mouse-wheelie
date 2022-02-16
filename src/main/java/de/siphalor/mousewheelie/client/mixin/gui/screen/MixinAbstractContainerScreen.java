@@ -79,7 +79,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
-				if (hasAltDown()) {
+				if (MWConfig.general.enableAltDropping && hasAltDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 				} else if (hasShiftDown()) {
 					screenHelper.get().sendStack(hoveredSlot);
@@ -93,7 +93,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			if (hasAltDown()) {
+			if (MWConfig.general.enableAltDropping && hasAltDown()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasControlDown()) {
