@@ -29,7 +29,7 @@ import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 
 @Environment(EnvType.CLIENT)
 public class ToolPicker {
-	PlayerInventory inventory;
+	final PlayerInventory inventory;
 
 	static int lastToolPickSlot = -1;
 
@@ -55,7 +55,7 @@ public class ToolPicker {
 				}
 			}
 		}
-		if (bestBreakSpeed == -1) {
+		if (bestSpeedSlot == -1) {
 			ItemStack stack = inventory.main.get(inventory.selectedSlot);
 			if (stack.isEffectiveOn(blockState) || stack.getMiningSpeedMultiplier(blockState) > 1.0F)
 				return inventory.selectedSlot;
