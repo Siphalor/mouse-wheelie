@@ -144,10 +144,6 @@ public class InteractionManager {
 		private final SlotActionType slotAction;
 
 		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
-			this(containerSyncId, slotId, buttonId, slotAction, 1);
-		}
-
-		public ClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction, int awaitedTriggers) {
 			this(containerSyncId, slotId, buttonId, slotAction, TICK_WAITER);
 		}
 

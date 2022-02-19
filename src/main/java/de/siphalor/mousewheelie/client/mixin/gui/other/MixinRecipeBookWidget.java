@@ -51,7 +51,8 @@ import java.util.List;
 @Mixin(RecipeBookWidget.class)
 public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
-	@Shadow @Final protected RecipeBookResults recipesArea;
+	@Shadow @Final
+	private RecipeBookResults recipesArea;
 
 	@Shadow private int parentWidth;
 
@@ -77,7 +78,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Shadow
 	@Final
-	protected RecipeFinder recipeFinder;
+	private RecipeFinder recipeFinder;
 
 	@Shadow
 	protected CraftingContainer<?> craftingContainer;
