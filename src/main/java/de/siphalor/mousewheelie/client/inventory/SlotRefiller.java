@@ -32,9 +32,10 @@ import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.DefaultedList;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -135,39 +136,7 @@ public class SlotRefiller {
 
 		@Override
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-			int currentRank = 0;
-			ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
-			Class<?> clazz = oldStack.getItem().getClass();
-			while (clazz != Item.class) {
-				classes.add(clazz);
-				clazz = clazz.getSuperclass();
-			}
-			int classesSize = classes.size();
-			if (classesSize == 0)
-				return -1;
-
-			int index = -1;
-
-			DefaultedList<ItemStack> mainInv = playerInventory.main;
-			outer:
-			for (int i = 0; i < mainInv.size(); i++) {
-				clazz = mainInv.get(i).getItem().getClass();
-				while (clazz != Item.class) {
-					int classRank = classesSize;
-					for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
-						if (classRank <= 0) break;
-						if (classRank <= currentRank) continue outer;
-						if (clazz.equals(iterator.next())) {
-							if (classRank >= classesSize) return i;
-							currentRank = classRank;
-							index = i;
-							continue outer;
-						}
-					}
-					clazz = clazz.getSuperclass();
-				}
-			}
-			return index;
+			return findBestThroughClassHierarchy(oldStack, playerInventory.main, Item::getClass, Item.class);
 		}
 	}
 
@@ -179,41 +148,52 @@ public class SlotRefiller {
 
 		@Override
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-			int currentRank = 0;
-			ConcurrentLinkedQueue<Class<?>> classes = new ConcurrentLinkedQueue<>();
-			Class<?> clazz = ((BlockItem) oldStack.getItem()).getBlock().getClass();
-			while (clazz != Block.class) {
-				classes.add(clazz);
+			return findBestThroughClassHierarchy(oldStack, playerInventory.main, item -> {
+				if (item instanceof BlockItem) {
+					return ((BlockItem) item).getBlock().getClass();
+				} else {
+					return null;
+				}
+			}, Block.class);
+		}
+	}
+
+	private static int findBestThroughClassHierarchy(ItemStack baseStack, DefaultedList<ItemStack> inventory, Function<Item, Class<?>> getClass, Class<?> baseClass) {
+		int currentRank = 0;
+		Collection<Class<?>> classes = new ArrayList<>(10);
+		Class<?> clazz = getClass.apply(baseStack.getItem());
+		while (clazz != baseClass) {
+			classes.add(clazz);
+			clazz = clazz.getSuperclass();
+		}
+		int classesSize = classes.size();
+		if (classesSize == 0)
+			return -1;
+
+		int index = -1;
+
+		outer:
+		for (int i = 0; i < inventory.size(); i++) {
+			clazz = getClass.apply(inventory.get(i).getItem());
+			if (clazz == null) {
+				continue;
+			}
+			while (clazz != baseClass) {
+				int classRank = classesSize;
+				for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
+					if (classRank <= 0) break;
+					if (classRank <= currentRank) continue outer;
+					if (clazz.equals(iterator.next())) {
+						if (classRank >= classesSize) return i;
+						currentRank = classRank;
+						index = i;
+						continue outer;
+					}
+				}
 				clazz = clazz.getSuperclass();
 			}
-			int classesSize = classes.size();
-			if (classesSize == 0)
-				return -1;
-
-			int index = -1;
-			DefaultedList<ItemStack> mainInv = playerInventory.main;
-
-			outer:
-			for (int i = 0; i < mainInv.size(); i++) {
-				if (!(mainInv.get(i).getItem() instanceof BlockItem)) continue;
-				clazz = ((BlockItem) mainInv.get(i).getItem()).getBlock().getClass();
-				while (clazz != Block.class) {
-					int classRank = classesSize;
-					for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
-						if (classRank <= 0) break;
-						if (classRank <= currentRank) continue outer;
-						if (clazz.equals(iterator.next())) {
-							if (classRank >= classesSize) return i;
-							currentRank = classRank;
-							index = i;
-							continue outer;
-						}
-					}
-					clazz = clazz.getSuperclass();
-				}
-			}
-			return index;
 		}
+		return index;
 	}
 
 	public static class FoodRule extends Rule {

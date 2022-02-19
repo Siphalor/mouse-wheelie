@@ -18,7 +18,6 @@
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
@@ -36,6 +35,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Lazy;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -79,7 +79,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
-				if (hasAltDown()) {
+				if (MWConfig.general.enableAltDropping && hasAltDown()) {
 					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 				} else if (hasShiftDown()) {
 					screenHelper.get().sendStack(hoveredSlot);
@@ -93,7 +93,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			if (hasAltDown()) {
+			if (MWConfig.general.enableAltDropping && hasAltDown()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (hasControlDown()) {
@@ -158,7 +158,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public boolean mouseWheelie_triggerSort() {
 		if (focusedSlot == null)
 			return false;
-		if (playerInventory.player.abilities.creativeMode && MWClient.SORT_KEY_BINDING.isDefault() && (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
+		if (playerInventory.player.abilities.creativeMode
+				&& GLFW.glfwGetMouseButton(minecraft.window.getHandle(), GLFW.GLFW_MOUSE_BUTTON_MIDDLE) != 0
+				&& (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
 		InventorySorter sorter = new InventorySorter((ContainerScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;

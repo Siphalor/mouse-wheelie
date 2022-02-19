@@ -38,7 +38,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	protected final T screen;
 	protected final ClickHandler clickHandler;
 
-	public static int INVALID_SCOPE = Integer.MAX_VALUE;
+	public static final int INVALID_SCOPE = Integer.MAX_VALUE;
 
 	protected ContainerScreenHelper(T screen, ClickHandler clickHandler) {
 		this.screen = screen;
@@ -187,7 +187,6 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void dropAllFrom(Slot referenceSlot) {
-		ItemStack referenceStack = referenceSlot.getStack().copy();
 		runInScope(getScope(referenceSlot), this::dropStack);
 	}
 
