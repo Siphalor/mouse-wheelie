@@ -168,10 +168,9 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			changelogType = "markdown"
 			changelog = getProjectChangelog()
 			addGameVersion("Fabric")
-			//for (version in ((String) project.mod_mc_versions).split(";")) {
-			//	addGameVersion(version)
-			//}
-			addGameVersion("1.18-Snapshot")
+			for (version in ((String) project.mod_mc_versions).split(";")) {
+				addGameVersion(version)
+			}
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
