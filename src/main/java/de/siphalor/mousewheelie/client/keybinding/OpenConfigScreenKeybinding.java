@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.tweed4.config.TweedRegistry;
 import de.siphalor.tweed4.tailor.coat.CoatTailor;
 import de.siphalor.tweed4.tailor.screen.ScreenTailorScreenFactory;
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.util.InputUtil;
