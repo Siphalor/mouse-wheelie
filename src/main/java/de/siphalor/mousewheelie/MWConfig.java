@@ -39,7 +39,7 @@ public class MWConfig {
 	public static class General {
 		@AConfigEntry(
 				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
-				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..1000")
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..")
 		)
 		public int interactionRate = 10;
 
