@@ -123,7 +123,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			if (slot.inventory instanceof PlayerInventory) {
 				if (isHotbarSlot(slot)) {
 					return 0;
-				} else if (((ISlot) slot).mouseWheelie_getInvSlot() == 40) {
+				} else if (((ISlot) slot).mouseWheelie_getInvSlot() >= 40) {
 					return -1;
 				} else {
 					return 1;
