@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Lazy;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +45,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 @Mixin(HandledScreen.class)
@@ -68,20 +72,54 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Unique
 	private final Lazy<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = new Lazy<>(
-			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType))
+			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
+				onMouseClick(null, slot.id, data, slotActionType);
+				return InteractionManager.TICK_WAITER;
+			}))
 	);
 
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
-	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+	public void onMouseDragged(double x, double y, int button, double deltaX, double deltaY, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			Slot hoveredSlot = getSlotAt(x2, y2);
+			Slot hoveredSlot = getSlotAt(x, y);
 			if (hoveredSlot != null) {
 				if (MWConfig.general.enableAltDropping && hasAltDown()) {
-					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+					screenHelper.get().dropStackLocked(hoveredSlot);
 				} else if (hasShiftDown()) {
-					screenHelper.get().sendStack(hoveredSlot);
+					screenHelper.get().sendStackLocked(hoveredSlot);
 				} else if (hasControlDown()) {
 					screenHelper.get().sendAllOfAKind(hoveredSlot);
+				}
+			}
+
+			if (MWConfig.general.betterFastDragging) {
+				double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+				if (dist > 16.0) {
+					List<Slot> slots = new ArrayList<>();
+					for (int i = 0; i < MathHelper.floor(dist / 16.0); i++) {
+						double curX = x + deltaX - deltaX / dist * 16.0 * i;
+						double curY = y + deltaY - deltaY / dist * 16.0 * i;
+						Slot curSlot = getSlotAt(curX, curY);
+						if (curSlot != null) {
+							slots.add(curSlot);
+						}
+					}
+
+					if (!slots.isEmpty()) {
+						if (MWConfig.general.enableAltDropping && hasAltDown()) {
+							for (Slot slot : slots) {
+								screenHelper.get().dropStackLocked(slot);
+							}
+						} else if (hasShiftDown()) {
+							for (Slot slot : slots) {
+								screenHelper.get().sendStackLocked(slot);
+							}
+						} else if (hasControlDown()) {
+							for (Slot slot : slots) {
+								screenHelper.get().sendAllOfAKind(slot);
+							}
+						}
+					}
 				}
 			}
 		}

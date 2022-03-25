@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +48,7 @@ public class InventorySorter {
 
 	private void collectSlots(Slot originSlot) {
 		inventorySlots = new ArrayList<>();
-		ContainerScreenHelper<? extends HandledScreen<?>> screenHelper = ContainerScreenHelper.of(containerScreen, (slot, data, slotActionType) -> {
-		});
+		ContainerScreenHelper<? extends HandledScreen<?>> screenHelper = ContainerScreenHelper.of(containerScreen, (slot, data, slotActionType) -> null);
 		int originScope = screenHelper.getScope(originSlot);
 		if (originScope == ContainerScreenHelper.INVALID_SCOPE) {
 			return;
