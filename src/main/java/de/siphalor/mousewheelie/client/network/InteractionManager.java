@@ -23,8 +23,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
 
+import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class InteractionManager {
-	public static final Queue<InteractionEvent> interactionEventQueue = new ConcurrentLinkedQueue<>();
+	public static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
 	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 	private static ScheduledFuture<?> tickFuture;
 
@@ -43,14 +43,16 @@ public class InteractionManager {
 	private static Waiter waiter = null;
 
 	public static void push(InteractionEvent interactionEvent) {
+		if (interactionEvent == null) {
+			return;
+		}
 		interactionEventQueue.add(interactionEvent);
 		if (waiter == null)
 			triggerSend(TriggerType.INITIAL);
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
-		ClickEvent clickEvent = new ClickEvent(containerSyncId, slotId, buttonId, slotAction);
-		push(clickEvent);
+		push(new ClickEvent(containerSyncId, slotId, buttonId, slotAction));
 	}
 
 	public static void triggerSend(TriggerType triggerType) {

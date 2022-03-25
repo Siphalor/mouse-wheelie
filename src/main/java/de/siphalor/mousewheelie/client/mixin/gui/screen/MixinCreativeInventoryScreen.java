@@ -20,6 +20,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
 import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
@@ -81,7 +82,12 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
-				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType)).scroll(hoverSlot, scrollAmount < 0);
+				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) ->
+						new InteractionManager.CallbackEvent(() -> {
+							onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType);
+							return InteractionManager.TICK_WAITER;
+						})
+				).scroll(hoverSlot, scrollAmount < 0);
 				return ScrollAction.SUCCESS;
 			}
 		}
