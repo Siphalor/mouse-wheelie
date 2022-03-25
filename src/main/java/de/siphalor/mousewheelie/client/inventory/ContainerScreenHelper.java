@@ -216,7 +216,6 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		if (lockedSlots.contains(slot.id)) {
 			return;
 		}
-		System.out.println(slot.id);
 
 		lockedSlots.add(slot.id);
 		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE), slot));
