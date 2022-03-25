@@ -20,8 +20,7 @@
 		"gui.screen.MixinCraftingTableScreen",
 		"gui.screen.MixinCreativeInventoryScreen",
 		"gui.screen.MixinInventoryScreen",
-		"gui.screen.MixinMerchantScreen",
-		"gui.screen.MixinStonecutterScreen"
+		"gui.screen.MixinMerchantScreen"
 	],
 	"injectors": {
 		"defaultRequire": 1

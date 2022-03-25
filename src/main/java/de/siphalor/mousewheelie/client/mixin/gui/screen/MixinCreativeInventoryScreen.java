@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
 import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
@@ -55,9 +56,11 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 	@Override
 	public ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
 		if (MWConfig.scrolling.scrollCreativeMenuTabs) {
-			boolean yOverTopTabs = (-32 <= mouseY && mouseY <= 0);
-			boolean yOverBottomTabs = (this.backgroundHeight <= mouseY && mouseY <= this.backgroundHeight + 32);
-			boolean overTabs = (0 <= mouseX && mouseX <= this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
+			double relMouseY = mouseY - this.y;
+			double relMouseX = mouseX - this.x;
+			boolean yOverTopTabs = (-32 <= relMouseY && relMouseY <= 0);
+			boolean yOverBottomTabs = (this.backgroundHeight <= relMouseY && relMouseY <= this.backgroundHeight + 32);
+			boolean overTabs = (0 <= relMouseX && relMouseX <= this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
 
 			if (overTabs) {
 				if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
@@ -81,7 +84,12 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
-				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType)).scroll(hoverSlot, scrollAmount < 0);
+				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) ->
+						new InteractionManager.CallbackEvent(() -> {
+							onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType);
+							return InteractionManager.TICK_WAITER;
+						})
+				).scroll(hoverSlot, scrollAmount < 0);
 				return ScrollAction.SUCCESS;
 			}
 		}
