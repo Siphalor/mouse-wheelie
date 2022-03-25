@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package de.siphalor.mousewheelie.client.inventory;
 
+import de.siphalor.mousewheelie.client.network.ClickEventFactory;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -28,8 +30,8 @@ import net.minecraft.screen.slot.SlotActionType;
 
 @Environment(EnvType.CLIENT)
 public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> extends ContainerScreenHelper<T> {
-	public CreativeContainerScreenHelper(T screen, ClickHandler clickHandler) {
-		super(screen, clickHandler);
+	public CreativeContainerScreenHelper(T screen, ClickEventFactory clickEventFactory) {
+		super(screen, clickEventFactory);
 	}
 
 	@Override
@@ -42,8 +44,8 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 				if (getScope(testSlot) != scope) {
 					ItemStack itemStack = testSlot.getStack();
 					if (ItemStack.canCombine(slot.getStack(), itemStack) && itemStack.getCount() < itemStack.getMaxCount()) {
-						clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
-						clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
+						InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
+						InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 						return;
 					}
 				}
@@ -51,8 +53,8 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 			for (Slot testSlot : screen.getScreenHandler().slots) {
 				if (getScope(testSlot) != scope) {
 					if (!testSlot.hasStack()) {
-						clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
-						clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
+						InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
+						InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 						return;
 					}
 				}
@@ -79,19 +81,19 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 			super.sendStack(slot);
 		} else {
 			int count = slot.getStack().getMaxCount();
-			clickHandler.handleClick(slot, 0, SlotActionType.CLONE);
+			InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.CLONE));
 			for (Slot testSlot : screen.getScreenHandler().slots) {
 				ItemStack itemStack = testSlot.getStack();
 				if (itemStack.isEmpty()) {
-					clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
+					InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 					return;
 				} else if (ItemStack.canCombine(itemStack, slot.getStack()) && itemStack.getCount() < itemStack.getMaxCount()) {
 					count -= itemStack.getCount();
-					clickHandler.handleClick(testSlot, 0, SlotActionType.PICKUP);
+					InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 					if (count <= 0) return;
 				}
 			}
-			clickHandler.handleClick(getDelSlot(slot.getStack()), 0, SlotActionType.PICKUP);
+			InteractionManager.push(clickEventFactory.create(getDelSlot(slot.getStack()), 0, SlotActionType.PICKUP));
 		}
 	}
 

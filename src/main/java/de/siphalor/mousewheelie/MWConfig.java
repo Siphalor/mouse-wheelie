@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class MWConfig {
 	public static class General {
 		@AConfigEntry(
 				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
-				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..1000")
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..")
 		)
 		public int interactionRate = 10;
 
@@ -54,6 +54,9 @@ public class MWConfig {
 
 		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
 		public boolean hotbarScope = true;
+
+		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
+		public boolean betterFastDragging = false;
 
 		@AConfigListener()
 		public void onReload() {

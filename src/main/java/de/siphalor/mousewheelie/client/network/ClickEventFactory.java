@@ -15,22 +15,11 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.mixin;
+package de.siphalor.mousewheelie.client.network;
 
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.minecraft.screen.slot.Slot;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.minecraft.screen.slot.SlotActionType;
 
-@Mixin(Slot.class)
-public class MixinSlot implements ISlot {
-	@Shadow
-	@Final
-	private int index;
-
-	@Override
-	public int mouseWheelie_getInvSlot() {
-		return index;
-	}
+public interface ClickEventFactory {
+	InteractionManager.InteractionEvent create(Slot slot, int action, SlotActionType slotActionType);
 }
