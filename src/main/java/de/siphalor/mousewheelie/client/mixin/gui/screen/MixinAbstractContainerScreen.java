@@ -83,9 +83,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			Slot hoveredSlot = getSlotAt(x2, y2);
 			if (hoveredSlot != null) {
 				if (MWConfig.general.enableAltDropping && hasAltDown()) {
-					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+					screenHelper.get().dropStackLocked(hoveredSlot);
 				} else if (hasShiftDown()) {
-					screenHelper.get().sendStack(hoveredSlot);
+					screenHelper.get().sendStackLocked(hoveredSlot);
 				} else if (hasControlDown()) {
 					screenHelper.get().sendAllOfAKind(hoveredSlot);
 				}

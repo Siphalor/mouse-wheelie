@@ -21,6 +21,8 @@ import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -39,6 +41,7 @@ import java.util.function.Consumer;
 public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	protected final T screen;
 	protected final ClickEventFactory clickEventFactory;
+	protected final IntSet lockedSlots = new IntRBTreeSet();
 
 	public static final int INVALID_SCOPE = Integer.MAX_VALUE;
 
@@ -56,7 +59,34 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public InteractionManager.InteractionEvent createClickEvent(Slot slot, int action, SlotActionType actionType) {
+		if (lockedSlots.contains(slot.id)) {
+			return null;
+		}
 		return clickEventFactory.create(slot, action, actionType);
+	}
+
+	public boolean isSlotLocked(Slot slot) {
+		return lockedSlots.contains(slot.id);
+	}
+
+	public void lockSlot(Slot slot) {
+		lockedSlots.add(slot.id);
+	}
+
+	public void unlockSlot(Slot slot) {
+		lockedSlots.remove(slot.id);
+	}
+
+	private InteractionManager.InteractionEvent unlockAfter(InteractionManager.InteractionEvent event, Slot slot) {
+		if (event == null) {
+			return null;
+		}
+
+		return new InteractionManager.CallbackEvent(() -> {
+			InteractionManager.Waiter waiter = event.send();
+			unlockSlot(slot);
+			return waiter;
+		});
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
@@ -156,14 +186,40 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void sendSingleItem(Slot slot) {
+		if (lockedSlots.contains(slot.id)) {
+			return;
+		}
+
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 	}
 
-	public void sendStack(Slot slot) {
+	public void sendSingleItemLocked(Slot slot) {
+		if (lockedSlots.contains(slot.id)) {
+			return;
+		}
+
+		lockedSlots.add(slot.id);
+		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
+		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
+		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 0, SlotActionType.PICKUP), slot));
+	}
+
+	public void sendStack(Slot slot) {
+		InteractionManager.push(createClickEvent(slot, 0, SlotActionType.QUICK_MOVE));
+	}
+
+	public void sendStackLocked(Slot slot) {
+		if (lockedSlots.contains(slot.id)) {
+			return;
+		}
+		System.out.println(slot.id);
+
+		lockedSlots.add(slot.id);
+		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE), slot));
 	}
 
 	public void sendAllOfAKind(Slot referenceSlot) {
@@ -180,7 +236,20 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void dropStack(Slot slot) {
-		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.THROW));
+		if (lockedSlots.contains(slot.id)) {
+			return;
+		}
+
+		InteractionManager.push(createClickEvent(slot, 1, SlotActionType.THROW));
+	}
+
+	public void dropStackLocked(Slot slot) {
+		if (lockedSlots.contains(slot.id)) {
+			return;
+		}
+
+		lockedSlots.add(slot.id);
+		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 1, SlotActionType.THROW), slot));
 	}
 
 	public void dropAllOfAKind(Slot referenceSlot) {

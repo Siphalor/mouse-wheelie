@@ -43,6 +43,9 @@ public class InteractionManager {
 	private static Waiter waiter = null;
 
 	public static void push(InteractionEvent interactionEvent) {
+		if (interactionEvent == null) {
+			return;
+		}
 		interactionEventQueue.add(interactionEvent);
 		if (waiter == null)
 			triggerSend(TriggerType.INITIAL);
