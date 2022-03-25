@@ -18,6 +18,8 @@
 package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.network.ClickEventFactory;
+import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -36,21 +38,25 @@ import java.util.function.Consumer;
 @SuppressWarnings("WeakerAccess")
 public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	protected final T screen;
-	protected final ClickHandler clickHandler;
+	protected final ClickEventFactory clickEventFactory;
 
 	public static final int INVALID_SCOPE = Integer.MAX_VALUE;
 
-	protected ContainerScreenHelper(T screen, ClickHandler clickHandler) {
+	protected ContainerScreenHelper(T screen, ClickEventFactory clickEventFactory) {
 		this.screen = screen;
-		this.clickHandler = clickHandler;
+		this.clickEventFactory = clickEventFactory;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends HandledScreen<?>> ContainerScreenHelper<T> of(T screen, ClickHandler clickHandler) {
+	public static <T extends HandledScreen<?>> ContainerScreenHelper<T> of(T screen, ClickEventFactory clickEventFactory) {
 		if (screen instanceof CreativeInventoryScreen) {
-			return (ContainerScreenHelper<T>) new CreativeContainerScreenHelper<>((CreativeInventoryScreen) screen, clickHandler);
+			return (ContainerScreenHelper<T>) new CreativeContainerScreenHelper<>((CreativeInventoryScreen) screen, clickEventFactory);
 		}
-		return new ContainerScreenHelper<>(screen, clickHandler);
+		return new ContainerScreenHelper<>(screen, clickEventFactory);
+	}
+
+	public InteractionManager.InteractionEvent createClickEvent(Slot slot, int action, SlotActionType actionType) {
+		return clickEventFactory.create(slot, action, actionType);
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
@@ -150,14 +156,14 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void sendSingleItem(Slot slot) {
-		clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
-		clickHandler.handleClick(slot, 1, SlotActionType.PICKUP);
-		clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
-		clickHandler.handleClick(slot, 0, SlotActionType.PICKUP);
+		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
+		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
+		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
+		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 	}
 
 	public void sendStack(Slot slot) {
-		clickHandler.handleClick(slot, 0, SlotActionType.QUICK_MOVE);
+		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
 	}
 
 	public void sendAllOfAKind(Slot referenceSlot) {
@@ -174,7 +180,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public void dropStack(Slot slot) {
-		clickHandler.handleClick(slot, 1, SlotActionType.THROW);
+		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.THROW));
 	}
 
 	public void dropAllOfAKind(Slot referenceSlot) {
@@ -188,9 +194,5 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void dropAllFrom(Slot referenceSlot) {
 		runInScope(getScope(referenceSlot), this::dropStack);
-	}
-
-	public interface ClickHandler {
-		void handleClick(Slot slot, int data, SlotActionType slotActionType);
 	}
 }

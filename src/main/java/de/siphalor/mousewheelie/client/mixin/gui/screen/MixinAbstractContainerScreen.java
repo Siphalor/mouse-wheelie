@@ -71,7 +71,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Unique
 	private final Lazy<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = new Lazy<>(
-			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> onMouseClick(slot, -1, data, slotActionType))
+			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
+				onMouseClick(null, slot.id, data, slotActionType);
+				return InteractionManager.TICK_WAITER;
+			}))
 	);
 
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
