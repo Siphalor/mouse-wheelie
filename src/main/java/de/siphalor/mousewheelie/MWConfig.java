@@ -55,6 +55,9 @@ public class MWConfig {
 		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
 		public boolean hotbarScope = true;
 
+		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
+		public boolean betterFastDragging = false;
+
 		@AConfigListener()
 		public void onReload() {
 			InteractionManager.setTickRate(interactionRate);
