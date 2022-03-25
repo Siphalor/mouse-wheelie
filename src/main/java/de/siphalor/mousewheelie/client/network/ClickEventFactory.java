@@ -15,10 +15,12 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.network;
 
-import de.siphalor.mousewheelie.client.util.ScrollAction;
 
-public interface ISpecialScrollableScreen {
-	ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount);
+import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
+
+public interface ClickEventFactory {
+	InteractionManager.InteractionEvent create(Slot slot, int action, SlotActionType slotActionType);
 }
