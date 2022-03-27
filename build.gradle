@@ -42,7 +42,8 @@ dependencies {
 			'fabric-lifecycle-events-v1',
 			'fabric-key-binding-api-v1',
             'fabric-networking-api-v1',
-			'fabric-resource-loader-v0'
+			'fabric-resource-loader-v0',
+			'fabric-registry-sync-v0'
 	]
 	fabric_deps.forEach { include(modImplementation(fabricApi.module(it, fabric_api_version)))}
 	modImplementation(fabricApi.module("fabric-item-groups-v0", fabric_api_version))
