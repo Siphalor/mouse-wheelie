@@ -152,7 +152,7 @@ public class MWClient implements ClientModInitializer {
 	}
 
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {
-		double scrollAmount = scrollY * CLIENT.options.mouseWheelSensitivity;
+		double scrollAmount = scrollY * CLIENT.options.getMouseWheelSensitivity().getValue();
 		ScrollAction result;
 		if (CLIENT.currentScreen instanceof ISpecialScrollableScreen) {
 			result = ((ISpecialScrollableScreen) CLIENT.currentScreen).mouseWheelie_onMouseScrolledSpecial(mouseX, mouseY, scrollAmount);
