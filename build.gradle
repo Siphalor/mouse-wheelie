@@ -152,9 +152,10 @@ if (project.hasProperty("curseforgeToken")) {
 			changelogType = "markdown"
 			changelog = project.getChangelog()
 			addGameVersion("Fabric")
-			for (version in ((String) project.mod_mc_versions).split(";")) {
+			/*for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
-			}
+			}*/
+			addGameVersion("1.19-Snapshot")
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
@@ -188,7 +189,7 @@ tasks.modrinth.group = "upload"
 if (project.hasProperty("githubToken")) {
 	githubRelease {
 		token project.githubToken
-		targetCommitish = project.minecraft_major_version
+		targetCommitish = "unstable"
 		releaseName = "Version $project.mod_version for $project.mod_mc_version_specifier"
 		body = project.getChangelog()
 		releaseAssets remapJar.getArchiveFile()
