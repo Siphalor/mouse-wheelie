@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
+import com.google.common.base.Suppliers;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
@@ -34,7 +35,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
-import net.minecraft.util.Lazy;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
@@ -47,6 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @SuppressWarnings("WeakerAccess")
 @Mixin(HandledScreen.class)
@@ -74,7 +75,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Unique
-	private final Lazy<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = new Lazy<>(
+	private final Supplier<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = Suppliers.memoize(
 			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
 				onMouseClick(null, slot.id, data, slotActionType);
 				return InteractionManager.TICK_WAITER;
