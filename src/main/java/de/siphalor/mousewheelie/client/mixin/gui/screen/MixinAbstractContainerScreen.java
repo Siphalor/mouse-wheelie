@@ -77,7 +77,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Unique
 	private final Supplier<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = Suppliers.memoize(
 			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
-				onMouseClick(null, slot.id, data, slotActionType);
+				onMouseClick(slot, slot.id, data, slotActionType);
 				return InteractionManager.TICK_WAITER;
 			}))
 	);
@@ -201,7 +201,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				&& GLFW.glfwGetMouseButton(client.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_MIDDLE) != 0
 				&& (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
-		InventorySorter sorter = new InventorySorter((HandledScreen<?>) (Object) this, focusedSlot);
+		InventorySorter sorter = new InventorySorter(screenHelper.get(), (HandledScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;
 		if (hasShiftDown()) {
 			sortMode = MWConfig.sort.shiftSort;
