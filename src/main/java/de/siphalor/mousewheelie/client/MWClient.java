@@ -145,6 +145,10 @@ public class MWClient implements ClientModInitializer {
 		return CLIENT.mouse.getY() * (double) CLIENT.getWindow().getScaledHeight() / (double) CLIENT.getWindow().getHeight();
 	}
 
+	public static boolean isOnLocalServer() {
+		return CLIENT.getServer() != null;
+	}
+
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {
 		double scrollAmount = scrollY * CLIENT.options.mouseWheelSensitivity;
 		ScrollAction result;
