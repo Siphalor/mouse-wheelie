@@ -152,10 +152,9 @@ if (project.hasProperty("curseforgeToken")) {
 			changelogType = "markdown"
 			changelog = project.getChangelog()
 			addGameVersion("Fabric")
-			/*for (version in ((String) project.mod_mc_versions).split(";")) {
+			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
-			}*/
-			addGameVersion("1.19-Snapshot")
+			}
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
