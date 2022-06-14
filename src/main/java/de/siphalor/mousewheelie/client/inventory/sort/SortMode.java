@@ -17,12 +17,11 @@
 
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.tweed4.tailor.DropdownMaterial;
 import it.unimi.dsi.fastutil.ints.IntArrays;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
 import java.util.*;
@@ -98,55 +97,6 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		return "mousewheelie.sortmode." + name.toLowerCase(Locale.ENGLISH);
 	}
 
-	protected static int compareEqualItems(ItemStack a, ItemStack b) {
-		// compare counts
-		int cmp = Integer.compare(b.getCount(), a.getCount());
-		if (cmp != 0) {
-			return cmp;
-		}
-		return compareEqualItems2(a, b);
-	}
-
-	private static int compareEqualItems2(ItemStack a, ItemStack b) {
-		// compare names
-		if (a.hasCustomName()) {
-			if (!b.hasCustomName()) {
-				return -1;
-			}
-			return compareEqualItems3(a, b);
-		}
-		if (b.hasCustomName()) {
-			return 1;
-		}
-		return compareEqualItems3(a, b);
-	}
-
-	private static int compareEqualItems3(ItemStack a, ItemStack b) {
-		// compare tooltips
-		Iterator<Text> tooltipsA = a.getTooltip(null, TooltipContext.Default.NORMAL).iterator();
-		Iterator<Text> tooltipsB = b.getTooltip(null, TooltipContext.Default.NORMAL).iterator();
-
-		while (tooltipsA.hasNext()) {
-			if (!tooltipsB.hasNext()) {
-				return 1;
-			}
-
-			int cmp = tooltipsA.next().getString().compareToIgnoreCase(tooltipsB.next().getString());
-			if (cmp != 0) {
-				return cmp;
-			}
-		}
-		if (tooltipsB.hasNext()) {
-			return -1;
-		}
-		return compareEqualItems4(a, b);
-	}
-
-	private static int compareEqualItems4(ItemStack a, ItemStack b) {
-		// compare damage
-		return Integer.compare(a.getDamage(), b.getDamage());
-	}
-
 	static {
 		NONE = register("none", new SortMode("none") {});
 		ALPHABET = register("alphabet", new SortMode("alphabet") {
@@ -171,7 +121,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					if (strings[b].equals("")) return -1;
 					int comp = strings[a].compareToIgnoreCase(strings[b]);
 					if (comp == 0) {
-						return compareEqualItems(stacks[a], stacks[b]);
+						return ItemStackUtils.compareEqualItems(stacks[a], stacks[b]);
 					}
 					return comp;
 				});
@@ -208,7 +158,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					if (cmp != 0) {
 						return cmp;
 					}
-					return compareEqualItems(stack, stack2);
+					return ItemStackUtils.compareEqualItems(stack, stack2);
 				});
 
 				return sortIds;
@@ -224,7 +174,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					if (cmp != 0) {
 						return cmp;
 					}
-					return compareEqualItems(stacks[a], stacks[b]);
+					return ItemStackUtils.compareEqualItems(stacks[a], stacks[b]);
 				});
 
 				return sortIds;

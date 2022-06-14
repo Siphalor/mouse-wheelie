@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
+import com.google.common.base.Suppliers;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
@@ -34,7 +35,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Lazy;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
@@ -47,6 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @SuppressWarnings("WeakerAccess")
 @Mixin(ContainerScreen.class)
@@ -74,9 +75,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Unique
-	private final Lazy<ContainerScreenHelper<ContainerScreen<?>>> screenHelper = new Lazy<>(
+	private final Supplier<ContainerScreenHelper<ContainerScreen<?>>> screenHelper = Suppliers.memoize(
 			() -> ContainerScreenHelper.of((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
-				onMouseClick(null, slot.id, data, slotActionType);
+				onMouseClick(slot, slot.id, data, slotActionType);
 				return InteractionManager.TICK_WAITER;
 			}))
 	);
@@ -142,8 +143,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 						}
 					} else {
 						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
-						callbackInfoReturnable.setReturnValue(true);
 					}
+					callbackInfoReturnable.setReturnValue(true);
 				}
 			} else if (hasControlDown()) {
 				Slot hoveredSlot = getSlotAt(x, y);
@@ -200,7 +201,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 				&& GLFW.glfwGetMouseButton(minecraft.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_MIDDLE) != 0
 				&& (!focusedSlot.getStack().isEmpty() == playerInventory.getCursorStack().isEmpty()))
 			return false;
-		InventorySorter sorter = new InventorySorter((ContainerScreen<?>) (Object) this, focusedSlot);
+		InventorySorter sorter = new InventorySorter(screenHelper.get(), (ContainerScreen<?>) (Object) this, focusedSlot);
 		SortMode sortMode;
 		if (hasShiftDown()) {
 			sortMode = MWConfig.sort.shiftSort;
