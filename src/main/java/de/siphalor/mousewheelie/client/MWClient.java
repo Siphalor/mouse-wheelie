@@ -105,31 +105,25 @@ public class MWClient implements ClientModInitializer {
 	public static boolean performRefill() {
 		if (refillHand == null) return false;
 
-		if (!InteractionManager.isReady())
-			return false;
-
 		Hand hand = refillHand;
 		refillHand = null;
 		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			// interaction only gets pushed softly so it can be removed if the refill was not successful
-			InteractionManager.interactionEventQueue.add(
-					new InteractionManager.PacketEvent(
-							new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN),
-							triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
-					)
+			// interaction only gets pushed softly, so it can be removed if the refill was not successful
+			if (!InteractionManager.isReady())
+				return false;
+
+			InteractionManager.PacketEvent swapHandsEvent = new InteractionManager.PacketEvent(
+					new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN),
+					triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
 			);
-		}
-		if (SlotRefiller.refill()) {
-			if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-				InteractionManager.push(
-						new InteractionManager.PacketEvent(
-								new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN),
-								triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
-						)
-				);
+			InteractionManager.push(swapHandsEvent);
+			if (SlotRefiller.refill()) {
+				InteractionManager.push(swapHandsEvent);
+			} else {
+				InteractionManager.clear();
 			}
 		} else {
-			InteractionManager.clear();
+			SlotRefiller.refill();
 		}
 
 		return true;
@@ -149,6 +143,10 @@ public class MWClient implements ClientModInitializer {
 
 	public static double getMouseY() {
 		return CLIENT.mouse.getY() * (double) CLIENT.window.getScaledHeight() / (double) CLIENT.window.getHeight();
+	}
+
+	public static boolean isOnLocalServer() {
+		return CLIENT.getServer() != null;
 	}
 
 	public static boolean triggerScroll(double mouseX, double mouseY, double scrollY) {

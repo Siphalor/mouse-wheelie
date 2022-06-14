@@ -34,6 +34,9 @@ import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
@@ -42,6 +45,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	protected final T screen;
 	protected final ClickEventFactory clickEventFactory;
 	protected final IntSet lockedSlots = new IntRBTreeSet();
+	protected final ReadWriteLock lockedSlotsLock = new ReentrantReadWriteLock();
 
 	public static final int INVALID_SCOPE = Integer.MAX_VALUE;
 
@@ -59,22 +63,40 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public InteractionManager.InteractionEvent createClickEvent(Slot slot, int action, SlotActionType actionType) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return null;
 		}
 		return clickEventFactory.create(slot, action, actionType);
 	}
 
 	public boolean isSlotLocked(Slot slot) {
-		return lockedSlots.contains(slot.id);
+		Lock readLock = lockedSlotsLock.readLock();
+		readLock.lock();
+		try {
+			return lockedSlots.contains(slot.id);
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	public void lockSlot(Slot slot) {
-		lockedSlots.add(slot.id);
+		Lock writeLock = lockedSlotsLock.writeLock();
+		writeLock.lock();
+		try {
+			lockedSlots.add(slot.id);
+		} finally {
+			writeLock.unlock();
+		}
 	}
 
 	public void unlockSlot(Slot slot) {
-		lockedSlots.remove(slot.id);
+		Lock writeLock = lockedSlotsLock.writeLock();
+		writeLock.lock();
+		try {
+			lockedSlots.remove(slot.id);
+		} finally {
+			writeLock.unlock();
+		}
 	}
 
 	private InteractionManager.InteractionEvent unlockAfter(InteractionManager.InteractionEvent event, Slot slot) {
@@ -186,7 +208,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void sendSingleItem(Slot slot) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return;
 		}
 
@@ -197,11 +219,11 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void sendSingleItemLocked(Slot slot) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return;
 		}
 
-		lockedSlots.add(slot.id);
+		lockSlot(slot);
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
@@ -213,11 +235,11 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void sendStackLocked(Slot slot) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return;
 		}
 
-		lockedSlots.add(slot.id);
+		lockSlot(slot);
 		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE), slot));
 	}
 
@@ -235,7 +257,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void dropStack(Slot slot) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return;
 		}
 
@@ -243,11 +265,11 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	}
 
 	public void dropStackLocked(Slot slot) {
-		if (lockedSlots.contains(slot.id)) {
+		if (isSlotLocked(slot)) {
 			return;
 		}
 
-		lockedSlots.add(slot.id);
+		lockSlot(slot);
 		InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 1, SlotActionType.THROW), slot));
 	}
 

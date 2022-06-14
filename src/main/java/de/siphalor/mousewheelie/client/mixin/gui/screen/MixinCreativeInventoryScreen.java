@@ -23,7 +23,6 @@ import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
@@ -84,7 +83,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 			if (hoverSlot != null) {
 				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) ->
 						new InteractionManager.CallbackEvent(() -> {
-							onMouseClick(slot, ((ISlot) slot).mouseWheelie_getInvSlot(), data, slotActionType);
+							onMouseClick(slot, slot.id, data, slotActionType);
 							return InteractionManager.TICK_WAITER;
 						})
 				).scroll(hoverSlot, scrollAmount < 0);
