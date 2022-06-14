@@ -18,6 +18,7 @@
 package de.siphalor.mousewheelie;
 
 import com.google.common.base.CaseFormat;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.tweed4.annotated.*;
@@ -43,6 +44,12 @@ public class MWConfig {
 		)
 		public int interactionRate = 10;
 
+		@AConfigEntry(
+				comment = "Sets the interval in milliseconds for singleplayer and local multiplayer.",
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..")
+		)
+		public int integratedInteractionRate = 1;
+
 		@AConfigEntry(environment = ConfigEnvironment.UNIVERSAL, comment = "Enables using armor/elytra items to swap them with the currently equipped item.")
 		public boolean enableQuickArmorSwapping = true;
 
@@ -58,9 +65,13 @@ public class MWConfig {
 		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
 		public boolean betterFastDragging = false;
 
-		@AConfigListener()
-		public void onReload() {
-			InteractionManager.setTickRate(interactionRate);
+		@AConfigListener("interaction-rate")
+		public void onReloadInteractionRate() {
+			if (MWClient.isOnLocalServer()) {
+				InteractionManager.setTickRate(integratedInteractionRate);
+			} else {
+				InteractionManager.setTickRate(interactionRate);
+			}
 		}
 	}
 
