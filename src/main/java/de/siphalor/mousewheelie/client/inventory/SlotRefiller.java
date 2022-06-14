@@ -18,7 +18,6 @@
 package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -66,7 +65,10 @@ public class SlotRefiller {
 						playerInventory.selectedSlot = slot;
 						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
 					} else {
-						InteractionManager.push(new InteractionManager.PacketEvent(new PickFromInventoryC2SPacket(slot), triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot >= 36 && MWClient.lastUpdatedSlot < 45));
+						InteractionManager.push(new InteractionManager.PacketEvent(
+								new PickFromInventoryC2SPacket(slot),
+								triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE
+						));
 					}
 					return true;
 				}
@@ -86,14 +88,37 @@ public class SlotRefiller {
 	}
 
 	public static abstract class Rule {
+		/**
+		 * Creates a new rule.
+		 * Automatically registers this rule to the list of rules.
+		 */
 		public Rule() {
 			rules.add(this);
 		}
 
+		/**
+		 * Checks if the rule is valid for the given stack.
+		 *
+		 * @param oldStack The stack to check.
+		 * @return Whether the rule applies to the given stack.
+		 */
 		abstract boolean matches(ItemStack oldStack);
 
+		/**
+		 * Find a matching slot for the given base stack in the player inventory.
+		 *
+		 * @param playerInventory The player inventory to search in.
+		 * @param oldStack        The base stack to search for.
+		 * @return The slot index of the matching stack or -1 if no match was found.
+		 */
 		abstract int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack);
 
+		/***
+		 * Utility function that iterates over all slots of the player inventory and returns the first slot that matches the given predicate.
+		 * @param playerInventory The player inventory to search in.
+		 * @param consumer        The predicate to check for.
+		 * @return The slot index of the matching stack or -1 if no match was found.
+		 */
 		protected int iterateInventory(PlayerInventory playerInventory, Function<ItemStack, Boolean> consumer) {
 			for (int i = 0; i < playerInventory.main.size(); i++) {
 				if (consumer.apply(playerInventory.main.get(i)))
