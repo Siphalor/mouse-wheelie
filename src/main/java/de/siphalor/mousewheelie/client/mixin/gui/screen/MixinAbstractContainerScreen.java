@@ -143,8 +143,8 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 						}
 					} else {
 						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
-						callbackInfoReturnable.setReturnValue(true);
 					}
+					callbackInfoReturnable.setReturnValue(true);
 				}
 			} else if (hasControlDown()) {
 				Slot hoveredSlot = getSlotAt(x, y);
