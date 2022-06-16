@@ -60,7 +60,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 			boolean overTabs = (this.x <= mouseX && mouseX <= this.x + this.width) && (yOverTopTabs || yOverBottomTabs);
 
 			if (overTabs) {
-				if (FabricLoader.getInstance().isModLoaded("fabric") || FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
+				if (FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 					FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
 					int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount), 0, ItemGroup.GROUPS.length - 1);
 					int newPage = helper.getPageForTabIndex(newIndex);
