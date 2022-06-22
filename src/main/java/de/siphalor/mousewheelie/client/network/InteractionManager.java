@@ -17,11 +17,15 @@
 
 package de.siphalor.mousewheelie.client.network;
 
+import de.siphalor.mousewheelie.client.MWClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -39,6 +43,11 @@ public class InteractionManager {
 
 	public static final Waiter DUMMY_WAITER = (TriggerType triggerType) -> true;
 	public static final Waiter TICK_WAITER = (TriggerType triggerType) -> triggerType == TriggerType.TICK;
+
+	public static final PacketEvent SWAP_WITH_OFFHAND_EVENT = new PacketEvent(
+			new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_HELD_ITEMS, BlockPos.ORIGIN, Direction.DOWN),
+			triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
+	);
 
 	private static Waiter waiter = null;
 

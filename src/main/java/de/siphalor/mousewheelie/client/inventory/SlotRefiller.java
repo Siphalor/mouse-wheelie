@@ -29,6 +29,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.util.Hand;
 import net.minecraft.util.DefaultedList;
 
 import java.util.ArrayList;
@@ -50,8 +51,16 @@ public class SlotRefiller {
 		SlotRefiller.stack = stack;
 	}
 
-	@SuppressWarnings("UnusedReturnValue")
+	/**
+	 * @deprecated Use {@link #refill(Hand)} instead.
+	 */
+	@Deprecated
 	public static boolean refill() {
+		return refill(Hand.MAIN_HAND);
+	}
+
+	@SuppressWarnings("UnusedReturnValue")
+	public static boolean refill(Hand hand) {
 		Iterator<Rule> iterator = rules.descendingIterator();
 		while (iterator.hasNext()) {
 			Rule rule = iterator.next();
@@ -61,14 +70,39 @@ public class SlotRefiller {
 					if (slot == playerInventory.selectedSlot) {
 						return true;
 					}
+
 					if (slot < 9) {
-						playerInventory.selectedSlot = slot;
-						InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot)));
+						if (MWConfig.refill.restoreSelectedSlot) {
+							if (hand == Hand.MAIN_HAND && !playerInventory.offHand.get(0).isEmpty()) {
+								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+							}
+							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot), InteractionManager.TICK_WAITER));
+							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot), InteractionManager.TICK_WAITER));
+							if (hand == Hand.MAIN_HAND) {
+								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+							}
+						} else {
+							if (hand == Hand.OFF_HAND) {
+								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+							}
+							playerInventory.selectedSlot = slot;
+							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot), InteractionManager.TICK_WAITER));
+							if (hand == Hand.OFF_HAND) {
+								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+							}
+						}
 					} else {
+						if (hand == Hand.OFF_HAND) {
+							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+						}
 						InteractionManager.push(new InteractionManager.PacketEvent(
 								new PickFromInventoryC2SPacket(slot),
 								triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE
 						));
+						if (hand == Hand.OFF_HAND) {
+							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+						}
 					}
 					return true;
 				}

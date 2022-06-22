@@ -20,6 +20,7 @@ package de.siphalor.mousewheelie.client.inventory;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -138,10 +139,11 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
 				for (Slot slot : screen.getContainer().slots) {
 					if (getScope(slot) == referenceScope) continue;
-					if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+					if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 						sendStack(slot);
-						if (!Screen.hasControlDown())
+						if (!Screen.hasControlDown()) {
 							break;
+						}
 					}
 				}
 			} else {
@@ -150,17 +152,20 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 				for (Slot slot : screen.getContainer().slots) {
 					if (getScope(slot) == referenceScope) continue;
 					if (getScope(slot) <= 0 == scrollUp) {
-						if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+						if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 							if (slot.getStack().getCount() < stackSize) {
 								stackSize = slot.getStack().getCount();
 								moveSlot = slot;
-								if (stackSize == 1) break;
+								if (stackSize == 1) {
+									break;
+								}
 							}
 						}
 					}
 				}
-				if (moveSlot != null)
+				if (moveSlot != null) {
 					sendSingleItem(moveSlot);
+				}
 			}
 		}
 	}
@@ -246,7 +251,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	public void sendAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
 		runInScope(getScope(referenceSlot), slot -> {
-			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+			if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 				sendStack(slot);
 			}
 		});
@@ -276,7 +281,7 @@ public class ContainerScreenHelper<T extends ContainerScreen<?>> {
 	public void dropAllOfAKind(Slot referenceSlot) {
 		ItemStack referenceStack = referenceSlot.getStack().copy();
 		runInScope(getScope(referenceSlot), slot -> {
-			if (slot.getStack().isItemEqualIgnoreDamage(referenceStack)) {
+			if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 				dropStack(slot);
 			}
 		});

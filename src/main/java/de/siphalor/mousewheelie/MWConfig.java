@@ -21,6 +21,7 @@ import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.tweed4.annotated.*;
 import de.siphalor.tweed4.config.ConfigEnvironment;
 import de.siphalor.tweed4.config.ConfigScope;
@@ -59,6 +60,9 @@ public class MWConfig {
 		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
 
+		@AConfigEntry(comment = "Whether item types should check nbt data.\nThis is for example used by scrolling and drop-clicking.\nNONE disables this, ALL checks for exactly the same nbt and SOME allows for differences in damage and echantments.")
+		public ItemStackUtils.NbtMatchMode itemKindsNbtMatchMode = ItemStackUtils.NbtMatchMode.SOME;
+
 		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
 		public boolean hotbarScope = true;
 
@@ -67,10 +71,15 @@ public class MWConfig {
 
 		@AConfigListener("interaction-rate")
 		public void onReloadInteractionRate() {
+			if (!MWClient.isOnLocalServer()) {
+				InteractionManager.setTickRate(interactionRate);
+			}
+		}
+
+		@AConfigListener("integrated-interaction-rate")
+		public void onReloadIntegratedInteractionRate() {
 			if (MWClient.isOnLocalServer()) {
 				InteractionManager.setTickRate(integratedInteractionRate);
-			} else {
-				InteractionManager.setTickRate(interactionRate);
 			}
 		}
 	}
@@ -117,6 +126,9 @@ public class MWConfig {
 	public static class Refill {
 		@AConfigEntry(comment = "Refills stacks in the off hand")
 		public boolean offHand = true;
+
+		@AConfigEntry(comment = "Restore the refilled item to the originally selected slot.\nThis will take a tad more time. You might want to turn this off on slow connections.")
+		public boolean restoreSelectedSlot = true;
 
 		@AConfigEntry(comment = "Refill when eating items")
 		public boolean eat = true;
