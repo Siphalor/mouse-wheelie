@@ -32,6 +32,7 @@
 	"tweed4_tailor_screen.screen.mousewheelie.sort.control-sort": "Control + middle mouse click",
 	"tweed4_tailor_screen.screen.mousewheelie.refill": "Refill",
 	"tweed4_tailor_screen.screen.mousewheelie.refill.off-hand": "Refill the off hand",
+	"tweed4_tailor_screen.screen.mousewheelie.refill.restore-selected-slot": "Restore selected slot",
 	"tweed4_tailor_screen.screen.mousewheelie.refill.eat": "Refill when eating food",
 	"tweed4_tailor_screen.screen.mousewheelie.refill.drop": "Refill when dropping items",
 	"tweed4_tailor_screen.screen.mousewheelie.refill.use": "Refill when using items",
