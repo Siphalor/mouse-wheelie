@@ -116,7 +116,7 @@ public class MWClient implements ClientModInitializer {
 					new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN),
 					triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
 			);
-			InteractionManager.push(swapHandsEvent);
+			InteractionManager.interactionEventQueue.add(swapHandsEvent);
 			if (SlotRefiller.refill()) {
 				InteractionManager.push(swapHandsEvent);
 			} else {
