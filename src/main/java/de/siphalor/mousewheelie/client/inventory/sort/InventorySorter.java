@@ -160,7 +160,7 @@ public class InventorySorter {
 			InteractionManager.push(screenHelper.createClickEvent(inventorySlots[sortIds[i]], 0, SlotActionType.PICKUP));
 			doneSlashEmpty.set(slotCount + sortIds[i]); // Mark the origin slot as empty (because we picked the stack up, duh)
 			currentStack = stacks[sortIds[i]]; // Save the stack we're currently working with
-			int workingSlotId = inventorySlots[sortIds[i]].id;
+			Slot workingSlot = inventorySlots[sortIds[i]]; // A slot that we can use when fiddling around with swapping stacks
 			int id = i; // id will reflect the target slot in the following loop
 			do { // This loop follows chained stack moves (e.g. 1->2->5->1).
 				if (
@@ -178,11 +178,11 @@ public class InventorySorter {
 					if (currentStack.getCount() < stacks[id].getCount()) { // Clicking with a low stack on a full stack does nothing
 						// The workaround is: click working slot, click target slot, click working slot, click target slot, click working slot
 						int targetSlotId = inventorySlots[id].id;
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 
 						currentStack = stacks[id];
 						doneSlashEmpty.set(id); // mark the current target as done
