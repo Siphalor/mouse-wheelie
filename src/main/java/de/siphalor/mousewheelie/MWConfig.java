@@ -67,10 +67,15 @@ public class MWConfig {
 
 		@AConfigListener("interaction-rate")
 		public void onReloadInteractionRate() {
+			if (!MWClient.isOnLocalServer()) {
+				InteractionManager.setTickRate(interactionRate);
+			}
+		}
+
+		@AConfigListener("integrated-interaction-rate")
+		public void onReloadIntegratedInteractionRate() {
 			if (MWClient.isOnLocalServer()) {
 				InteractionManager.setTickRate(integratedInteractionRate);
-			} else {
-				InteractionManager.setTickRate(interactionRate);
 			}
 		}
 	}
