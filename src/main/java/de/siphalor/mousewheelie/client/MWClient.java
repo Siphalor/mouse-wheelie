@@ -26,7 +26,6 @@ import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
 import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
 import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
-import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
@@ -43,13 +42,10 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
@@ -107,24 +103,10 @@ public class MWClient implements ClientModInitializer {
 
 		Hand hand = refillHand;
 		refillHand = null;
-		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			// interaction only gets pushed softly, so it can be removed if the refill was not successful
-			if (!InteractionManager.isReady())
-				return false;
-
-			InteractionManager.PacketEvent swapHandsEvent = new InteractionManager.PacketEvent(
-					new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN),
-					triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
-			);
-			InteractionManager.interactionEventQueue.add(swapHandsEvent);
-			if (SlotRefiller.refill()) {
-				InteractionManager.push(swapHandsEvent);
-			} else {
-				InteractionManager.clear();
-			}
-		} else {
-			SlotRefiller.refill();
+		if (hand == Hand.OFF_HAND && !MWConfig.refill.offHand) {
+			return false;
 		}
+		SlotRefiller.refill(hand);
 
 		return true;
 	}

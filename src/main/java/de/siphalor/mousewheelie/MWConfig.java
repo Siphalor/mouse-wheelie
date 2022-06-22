@@ -123,6 +123,9 @@ public class MWConfig {
 		@AConfigEntry(comment = "Refills stacks in the off hand")
 		public boolean offHand = true;
 
+		@AConfigEntry(comment = "Restore the refilled item to the originally selected slot.\nThis will take a tad more time. You might want to turn this off on slow connections.")
+		public boolean restoreSelectedSlot = true;
+
 		@AConfigEntry(comment = "Refill when eating items")
 		public boolean eat = true;
 
