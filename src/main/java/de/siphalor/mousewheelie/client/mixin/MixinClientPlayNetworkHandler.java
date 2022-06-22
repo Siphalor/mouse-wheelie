@@ -26,12 +26,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,6 +45,9 @@ public class MixinClientPlayNetworkHandler {
 	@Shadow
 	@Final
 	private MinecraftClient client;
+
+	@Unique
+	private int blockedRefills;
 
 	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmScreenActionS2CPacket packet, CallbackInfo callbackInfo) {
@@ -98,6 +104,22 @@ public class MixinClientPlayNetworkHandler {
 			}
 	)
 	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		MWClient.performRefill();
+		if (packet.getSyncId() == 0) {
+			if (blockedRefills > 0) {
+				blockedRefills--;
+				return;
+			}
+
+			MWClient.performRefill();
+		}
+	}
+
+	@Inject(method = "sendPacket", at = @At("HEAD"))
+	public void onSend(Packet<?> packet, CallbackInfo callbackInfo) {
+		if (packet instanceof PlayerActionC2SPacket) {
+			if (((PlayerActionC2SPacket) packet).getAction() == PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
+				blockedRefills = 2;
+			}
+		}
 	}
 }
