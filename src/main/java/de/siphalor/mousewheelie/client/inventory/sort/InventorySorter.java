@@ -133,6 +133,10 @@ public class InventorySorter {
 
 		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, Arrays.asList(inventorySlots)));
 		// sortIds now maps the slot index (the target id) to which slot's contents should be moved there (the origin id)
+		int[] origin2Target = new int[slotCount];
+		for (int i = 0; i < origin2Target.length; i++) {
+			origin2Target[sortIds[i]] = i;
+		}
 
 		// This is a combined bitset to save whether eac slot is done or empty.
 		// It consists of all bits for the done states in the first half and the empty states in the second half.
@@ -172,7 +176,7 @@ public class InventorySorter {
 					// If the current stack and the target stack are completely equal, then we can skip this step in the chain
 					if (stacks[id].getCount() == currentStack.getCount()) {
 						doneSlashEmpty.set(id); // mark the current target as done
-						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						id = origin2Target[id];
 						continue;
 					}
 					if (currentStack.getCount() < stacks[id].getCount()) { // Clicking with a low stack on a full stack does nothing
@@ -186,7 +190,7 @@ public class InventorySorter {
 
 						currentStack = stacks[id];
 						doneSlashEmpty.set(id); // mark the current target as done
-						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						id = origin2Target[id];
 						continue;
 					}
 				}
