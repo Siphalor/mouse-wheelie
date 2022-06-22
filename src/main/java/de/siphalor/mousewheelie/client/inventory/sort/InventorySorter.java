@@ -133,6 +133,10 @@ public class InventorySorter {
 
 		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, Arrays.asList(inventorySlots)));
 		// sortIds now maps the slot index (the target id) to which slot's contents should be moved there (the origin id)
+		int[] origin2Target = new int[slotCount];
+		for (int i = 0; i < origin2Target.length; i++) {
+			origin2Target[sortIds[i]] = i;
+		}
 
 		// This is a combined bitset to save whether eac slot is done or empty.
 		// It consists of all bits for the done states in the first half and the empty states in the second half.
@@ -160,7 +164,7 @@ public class InventorySorter {
 			InteractionManager.push(screenHelper.createClickEvent(inventorySlots[sortIds[i]], 0, SlotActionType.PICKUP));
 			doneSlashEmpty.set(slotCount + sortIds[i]); // Mark the origin slot as empty (because we picked the stack up, duh)
 			currentStack = stacks[sortIds[i]]; // Save the stack we're currently working with
-			int workingSlotId = inventorySlots[sortIds[i]].id;
+			Slot workingSlot = inventorySlots[sortIds[i]]; // A slot that we can use when fiddling around with swapping stacks
 			int id = i; // id will reflect the target slot in the following loop
 			do { // This loop follows chained stack moves (e.g. 1->2->5->1).
 				if (
@@ -172,21 +176,21 @@ public class InventorySorter {
 					// If the current stack and the target stack are completely equal, then we can skip this step in the chain
 					if (stacks[id].getCount() == currentStack.getCount()) {
 						doneSlashEmpty.set(id); // mark the current target as done
-						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						id = origin2Target[id];
 						continue;
 					}
 					if (currentStack.getCount() < stacks[id].getCount()) { // Clicking with a low stack on a full stack does nothing
 						// The workaround is: click working slot, click target slot, click working slot, click target slot, click working slot
 						int targetSlotId = inventorySlots[id].id;
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[workingSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 
 						currentStack = stacks[id];
 						doneSlashEmpty.set(id); // mark the current target as done
-						id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+						id = origin2Target[id];
 						continue;
 					}
 				}
