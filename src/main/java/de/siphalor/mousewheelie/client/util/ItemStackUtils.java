@@ -17,13 +17,19 @@
 
 package de.siphalor.mousewheelie.client.util;
 
+import com.google.common.collect.Sets;
+import de.siphalor.mousewheelie.MWConfig;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
 import java.util.Iterator;
+import java.util.Set;
 
 public class ItemStackUtils {
+	private static final NbtCompound EMPTY_COMPOUND = new NbtCompound();
+
 	public static int compareEqualItems(ItemStack a, ItemStack b) {
 		// compare counts
 		int cmp = Integer.compare(b.getCount(), a.getCount());
@@ -71,5 +77,62 @@ public class ItemStackUtils {
 	private static int compareEqualItems4(ItemStack a, ItemStack b) {
 		// compare damage
 		return Integer.compare(a.getDamage(), b.getDamage());
+	}
+
+	public static NbtCompound getTagOrEmpty(ItemStack stack) {
+		if (stack.hasNbt()) {
+			return stack.getNbt();
+		}
+		return EMPTY_COMPOUND;
+	}
+
+	public static boolean areTagsEqualExcept(ItemStack a, ItemStack b, String... keys) {
+		NbtCompound tagA = getTagOrEmpty(a);
+		NbtCompound tagB = getTagOrEmpty(b);
+		Set<String> checkedKeys = Sets.newHashSet(keys);
+		if (!areTagsEqualExceptOneSided(tagA, tagB, checkedKeys)) {
+			return false;
+		}
+		return areTagsEqualExceptOneSided(tagB, tagA, checkedKeys);
+	}
+
+	private static boolean areTagsEqualExceptOneSided(NbtCompound tagA, NbtCompound tagB, Set<String> checkedKeys) {
+		for (String key : tagA.getKeys()) {
+			if (checkedKeys.contains(key)) {
+				continue;
+			}
+			if (!tagB.contains(key)) {
+				return false;
+			}
+			//noinspection ConstantConditions
+			if (!tagA.get(key).equals(tagB.get(key))) {
+				return false;
+			}
+			checkedKeys.add(key);
+		}
+		return true;
+	}
+
+	public static boolean areItemsOfSameKind(ItemStack stack1, ItemStack stack2) {
+		return areItemsOfSameKind(stack1, stack2, MWConfig.general.itemKindsNbtMatchMode);
+	}
+
+	public static boolean areItemsOfSameKind(ItemStack stack1, ItemStack stack2, NbtMatchMode mode) {
+		switch (mode) {
+			case NONE:
+				return stack1.getItem() == stack2.getItem();
+			case ALL:
+				return ItemStack.areEqual(stack1, stack2);
+			case SOME:
+				if (!ItemStack.areItemsEqual(stack1, stack2)) {
+					return false;
+				}
+				return areTagsEqualExcept(stack1, stack2, "Damage", "Enchantments");
+		}
+		return false; // unreachable
+	}
+
+	public enum NbtMatchMode {
+		NONE, SOME, ALL
 	}
 }

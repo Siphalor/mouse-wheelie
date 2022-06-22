@@ -100,13 +100,9 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	static {
 		NONE = register("none", new SortMode("none") {});
 		ALPHABET = register("alphabet", new SortMode("alphabet") {
-			String[] strings;
-			ItemStack[] stacks;
-
 			@Override
 			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
-				this.stacks = stacks;
-				strings = new String[sortIds.length];
+				String[] strings = new String[sortIds.length];
 				for (int i = 0; i < sortIds.length; i++) {
 					ItemStack stack = stacks[i];
 					strings[i] = stack.isEmpty() ? "" : stack.getName().getString();
