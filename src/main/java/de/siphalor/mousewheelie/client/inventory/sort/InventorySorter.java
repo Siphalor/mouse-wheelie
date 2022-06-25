@@ -181,11 +181,11 @@ public class InventorySorter {
 					}
 					if (currentStack.getCount() < stacks[id].getCount()) { // Clicking with a low stack on a full stack does nothing
 						// The workaround is: click working slot, click target slot, click working slot, click target slot, click working slot
-						int targetSlotId = inventorySlots[id].id;
+						Slot targetSlot = inventorySlots[id];
 						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(targetSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
-						InteractionManager.push(screenHelper.createClickEvent(inventorySlots[targetSlotId], 0, SlotActionType.PICKUP));
+						InteractionManager.push(screenHelper.createClickEvent(targetSlot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(screenHelper.createClickEvent(workingSlot, 0, SlotActionType.PICKUP));
 
 						currentStack = stacks[id];
