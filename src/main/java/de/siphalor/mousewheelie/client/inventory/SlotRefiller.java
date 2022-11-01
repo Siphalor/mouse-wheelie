@@ -22,19 +22,19 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 
@@ -175,15 +175,52 @@ public class SlotRefiller {
 	}
 
 	public static class ItemGroupRule extends Rule {
+		private FeatureSet getFeatureSet() {
+			if (MinecraftClient.getInstance().world != null) {
+				return MinecraftClient.getInstance().world.getEnabledFeatures();
+			} else {
+				return FeatureSet.empty();
+			}
+		}
+
+		private static boolean containsBroad(FeatureSet featureSet, ItemGroup group, ItemStack stack) {
+			return group.contains(featureSet, stack) || group.contains(featureSet, stack.getItem().getDefaultStack());
+		}
+
 		@Override
 		boolean matches(ItemStack oldStack) {
-			return MWConfig.refill.rules.itemgroup && oldStack.getItem().getGroup() != null;
+			if (!MWConfig.refill.rules.itemgroup) {
+				return false;
+			}
+			FeatureSet featureSet = getFeatureSet();
+			for (ItemGroup group : ItemGroups.GROUPS) {
+				if (containsBroad(featureSet, group, oldStack)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-			ItemGroup group = oldStack.getItem().getGroup();
-			return iterateInventory(playerInventory, stack -> stack.getItem().getGroup() == group);
+			FeatureSet featureSet = getFeatureSet();
+			List<ItemGroup> checkGroups = new ArrayList<>();
+			for (ItemGroup group : ItemGroups.GROUPS) {
+				if (containsBroad(featureSet, group, oldStack)) {
+					checkGroups.add(group);
+				}
+			}
+			if (checkGroups.isEmpty()) {
+				return -1;
+			}
+			return iterateInventory(playerInventory, stack -> {
+				for (ItemGroup group : checkGroups) {
+					if (containsBroad(featureSet, group, stack)) {
+						return true;
+					}
+				}
+				return false;
+			});
 		}
 	}
 

@@ -29,6 +29,7 @@ import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
@@ -64,21 +65,21 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 			if (overTabs) {
 				if (FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 					FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
-					int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount), 0, ItemGroup.GROUPS.length - 1);
+					int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount), 0, ItemGroups.GROUPS.length - 1);
 					int newPage = helper.getPageForTabIndex(newIndex);
 					if (newPage < helper.getCurrentPage())
 						helper.previousPage();
 					if (newPage > helper.getCurrentPage())
 						helper.nextPage();
-					setSelectedTab(ItemGroup.GROUPS[newIndex]);
+					setSelectedTab(ItemGroups.GROUPS[newIndex]);
 				} else {
-					setSelectedTab(ItemGroup.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount)), 0, ItemGroup.GROUPS.length - 1)]);
+					setSelectedTab(ItemGroups.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount)), 0, ItemGroups.GROUPS.length - 1)]);
 				}
 				return ScrollAction.SUCCESS;
 			}
 		}
 
-		if (MWConfig.scrolling.enable && selectedTab != ItemGroup.INVENTORY.getIndex()) {
+		if (MWConfig.scrolling.enable && selectedTab != ItemGroups.INVENTORY.getIndex()) {
 			if (MWConfig.scrolling.scrollCreativeMenuItems == hasAltDown())
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);

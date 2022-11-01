@@ -23,7 +23,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -64,7 +64,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 
 	@Override
 	public int getScope(Slot slot) {
-		if (screen.getSelectedTab() == ItemGroup.INVENTORY.getIndex()) {
+		if (screen.getSelectedTab() == ItemGroups.INVENTORY.getIndex()) {
 			return super.getScope(slot);
 		}
 		if (slot.inventory instanceof PlayerInventory) {
