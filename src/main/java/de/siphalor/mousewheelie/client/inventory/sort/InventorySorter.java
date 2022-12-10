@@ -25,7 +25,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -203,7 +202,7 @@ public class InventorySorter {
 				if (doneSlashEmpty.get(slotCount + id)) {
 					break;
 				}
-				id = ArrayUtils.indexOf(sortIds, id); // find the next target (by looking where the current target is set as origin)
+				id = origin2Target[id];
 			} while (!doneSlashEmpty.get(id)); // If we find a target that is marked as done already, then we can break the chain.
 		}
 	}
