@@ -37,17 +37,21 @@ import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.List;
+
 @Mixin(CreativeInventoryScreen.class)
 public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> implements ISpecialScrollableScreen, IContainerScreen {
 
 	@Shadow
-	private static int selectedTab;
+	private static ItemGroup selectedTab;
 
 	@Shadow
 	protected abstract void setSelectedTab(ItemGroup itemGroup_1);
 
 	@Shadow
 	protected abstract void onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType);
+
+	@Shadow public abstract boolean isInventoryTabSelected();
 
 	public MixinCreativeInventoryScreen(CreativeInventoryScreen.CreativeScreenHandler container_1, PlayerInventory playerInventory_1, Text textComponent_1) {
 		super(container_1, playerInventory_1, textComponent_1);
@@ -63,23 +67,28 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 			boolean overTabs = (0 <= relMouseX && relMouseX <= this.backgroundWidth) && (yOverTopTabs || yOverBottomTabs);
 
 			if (overTabs) {
+				List<ItemGroup> groupsToDisplay = ItemGroups.getGroupsToDisplay();
+				int selectedTabIndex = groupsToDisplay.indexOf(selectedTab);
+				if (selectedTabIndex < 0) {
+					return ScrollAction.FAILURE;
+				}
 				if (FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
 					FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
-					int newIndex = MathHelper.clamp(selectedTab + (int) Math.round(scrollAmount), 0, ItemGroups.GROUPS.length - 1);
+					int newIndex = MathHelper.clamp(selectedTabIndex + (int) Math.round(scrollAmount), 0, groupsToDisplay.size() - 1);
 					int newPage = helper.getPageForTabIndex(newIndex);
 					if (newPage < helper.getCurrentPage())
 						helper.previousPage();
 					if (newPage > helper.getCurrentPage())
 						helper.nextPage();
-					setSelectedTab(ItemGroups.GROUPS[newIndex]);
+					setSelectedTab(groupsToDisplay.get(newIndex));
 				} else {
-					setSelectedTab(ItemGroups.GROUPS[MathHelper.clamp((int) (selectedTab + Math.round(scrollAmount)), 0, ItemGroups.GROUPS.length - 1)]);
+					setSelectedTab(groupsToDisplay.get(MathHelper.clamp((int) (selectedTabIndex + Math.round(scrollAmount)), 0, groupsToDisplay.size() - 1)));
 				}
 				return ScrollAction.SUCCESS;
 			}
 		}
 
-		if (MWConfig.scrolling.enable && selectedTab != ItemGroups.INVENTORY.getIndex()) {
+		if (MWConfig.scrolling.enable && !isInventoryTabSelected()) {
 			if (MWConfig.scrolling.scrollCreativeMenuItems == hasAltDown())
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);

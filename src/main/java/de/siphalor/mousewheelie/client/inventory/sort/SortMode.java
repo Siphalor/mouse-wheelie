@@ -22,7 +22,7 @@ import de.siphalor.tweed4.tailor.DropdownMaterial;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.*;
 
@@ -163,7 +163,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		RAW_ID = register("raw_id", new SortMode("raw_id") {
 			@Override
 			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
-				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registry.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
+				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registries.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
 
 				IntArrays.quickSort(sortIds, (a, b) -> {
 					int cmp = Integer.compare(rawIds[a], rawIds[b]);

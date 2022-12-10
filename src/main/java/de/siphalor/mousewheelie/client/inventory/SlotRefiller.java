@@ -22,12 +22,10 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -175,16 +173,9 @@ public class SlotRefiller {
 	}
 
 	public static class ItemGroupRule extends Rule {
-		private FeatureSet getFeatureSet() {
-			if (MinecraftClient.getInstance().world != null) {
-				return MinecraftClient.getInstance().world.getEnabledFeatures();
-			} else {
-				return FeatureSet.empty();
-			}
-		}
 
-		private static boolean containsBroad(FeatureSet featureSet, ItemGroup group, ItemStack stack) {
-			return group.contains(featureSet, stack) || group.contains(featureSet, stack.getItem().getDefaultStack());
+		private static boolean containsBroad(ItemGroup group, ItemStack stack) {
+			return group.contains(stack) || group.contains(stack.getItem().getDefaultStack());
 		}
 
 		@Override
@@ -192,9 +183,8 @@ public class SlotRefiller {
 			if (!MWConfig.refill.rules.itemgroup) {
 				return false;
 			}
-			FeatureSet featureSet = getFeatureSet();
-			for (ItemGroup group : ItemGroups.GROUPS) {
-				if (containsBroad(featureSet, group, oldStack)) {
+			for (ItemGroup group : ItemGroups.getGroups()) {
+				if (containsBroad(group, oldStack)) {
 					return true;
 				}
 			}
@@ -203,10 +193,9 @@ public class SlotRefiller {
 
 		@Override
 		int findMatchingStack(PlayerInventory playerInventory, ItemStack oldStack) {
-			FeatureSet featureSet = getFeatureSet();
 			List<ItemGroup> checkGroups = new ArrayList<>();
-			for (ItemGroup group : ItemGroups.GROUPS) {
-				if (containsBroad(featureSet, group, oldStack)) {
+			for (ItemGroup group : ItemGroups.getGroups()) {
+				if (containsBroad(group, oldStack)) {
 					checkGroups.add(group);
 				}
 			}
@@ -215,7 +204,7 @@ public class SlotRefiller {
 			}
 			return iterateInventory(playerInventory, stack -> {
 				for (ItemGroup group : checkGroups) {
-					if (containsBroad(featureSet, group, stack)) {
+					if (containsBroad(group, stack)) {
 						return true;
 					}
 				}
