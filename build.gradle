@@ -48,7 +48,7 @@ dependencies {
 	fabric_deps.forEach { include(modImplementation(fabricApi.module(it, fabric_api_version)))}
 	modImplementation(fabricApi.module("fabric-item-groups-v0", fabric_api_version))
 
-	modApi("com.terraformersmc:modmenu:3.1.0")
+	modApi("com.terraformersmc:modmenu:4.1.1")
 
 	include(modApi("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.7.0+mc22w17a"))
 	include(modApi("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.3.1+mc22w17a"))
