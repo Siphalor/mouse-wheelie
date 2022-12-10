@@ -217,6 +217,10 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			return;
 		}
 
+		if (slot.getStack().getCount() == 1) {
+			InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
+			return;
+		}
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
@@ -229,6 +233,10 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		}
 
 		lockSlot(slot);
+		if (slot.getStack().getCount() == 1) {
+			InteractionManager.push(unlockAfter(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE), slot));
+			return;
+		}
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 1, SlotActionType.PICKUP));
 		InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.QUICK_MOVE));
