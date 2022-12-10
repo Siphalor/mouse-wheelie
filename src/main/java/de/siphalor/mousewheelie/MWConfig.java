@@ -110,13 +110,17 @@ public class MWConfig {
 	@AConfigBackground("textures/block/barrel_top.png")
 	public static class Sort {
 		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
-		public SortMode primarySort = SortMode.RAW_ID;
+		public SortMode primarySort = SortMode.CREATIVE;
 
 		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing shift.")
 		public SortMode shiftSort = SortMode.QUANTITY;
 
 		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing control.")
 		public SortMode controlSort = SortMode.ALPHABET;
+
+		@AConfigEntry(comment = "Whether the creative search sorting should be optimized for performance.\n" +
+				"This will make use of more memory in exchange for processor time, only disable this if you run into memory issues.")
+		public boolean optimizeCreativeSearchSort = true;
 	}
 
 	@AConfigEntry(comment = "Configure refill related stuff here.")
@@ -204,6 +208,22 @@ public class MWConfig {
 
 			moveConfigEntry(dataObject, general, "hold-tool-pick", "tool-picking", "hold-tool");
 			moveConfigEntry(dataObject, general, "hold-block-tool-pick", "tool-picking", "hold-block");
+		}
+	}
+
+	@AConfigFixer("sort")
+	public <V extends DataValue<V, L, O>, L extends DataList<V, L, O>, O extends DataObject<V, L, O>>
+	void fixSortModes(O sort, O mainConfig) {
+		if (!sort.has("optimize-creative-search-sort")) {
+			if (sort.getString("primary-sort", "").equalsIgnoreCase("raw_id")) {
+				sort.set("primary-sort", "creative");
+			}
+			if (sort.getString("shift-sort", "").equalsIgnoreCase("raw_id")) {
+				sort.set("shift-sort", "creative");
+			}
+			if (sort.getString("control-sort", "").equalsIgnoreCase("raw_id")) {
+				sort.set("control-sort", "creative");
+			}
 		}
 	}
 

@@ -30,6 +30,8 @@ import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -43,8 +45,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+
+import java.util.Collection;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
@@ -58,6 +63,11 @@ public class MWClient implements ClientModInitializer {
 	public static final KeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
 	public static final KeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
 	public static final KeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+
+	public static final Object2IntMap<Object> stackToSearchPositionLookup = new Object2IntOpenCustomHashMap<>(Util.identityHashStrategy());
+	static {
+		stackToSearchPositionLookup.defaultReturnValue(-1);
+	}
 
 	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
@@ -153,5 +163,31 @@ public class MWClient implements ClientModInitializer {
 			}
 		}
 		return false;
+	}
+
+	public static int getStackSearchPosition(ItemStack stack) {
+		int pos = stackToSearchPositionLookup.getInt(stack);
+		if (pos < 0) {
+			return stackToSearchPositionLookup.getInt(stack.getItem());
+		}
+		return pos;
+	}
+
+	public static void refreshItemSearchPositionLookup() {
+		if (MWConfig.sort.optimizeCreativeSearchSort) {
+			Collection<ItemStack> displayStacks = ItemGroups.SEARCH.getDisplayStacks();
+			int i = 0;
+			for (ItemStack stack : displayStacks) {
+				Item item = stack.getItem();
+				if (!stackToSearchPositionLookup.containsKey(item)) {
+					stackToSearchPositionLookup.put(item, i);
+					i++;
+				}
+				stackToSearchPositionLookup.put(stack, i);
+				i++;
+			}
+		} else {
+			stackToSearchPositionLookup.clear();
+		}
 	}
 }

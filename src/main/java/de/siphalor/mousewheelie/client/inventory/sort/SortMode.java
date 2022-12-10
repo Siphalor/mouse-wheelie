@@ -17,10 +17,15 @@
 
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.tweed4.tailor.DropdownMaterial;
 import it.unimi.dsi.fastutil.ints.IntArrays;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 
@@ -30,7 +35,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	private static final Map<String, SortMode> SORT_MODES = new HashMap<>();
 	private final String name;
 
-	public static final SortMode NONE, ALPHABET, QUANTITY, RAW_ID;
+	public static final SortMode NONE, ALPHABET, CREATIVE, QUANTITY, RAW_ID;
 
 	public static <T extends SortMode> T register(String name, T sortMode) {
 		SORT_MODES.put(name, sortMode);
@@ -97,6 +102,16 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		return "mousewheelie.sortmode." + name.toLowerCase(Locale.ENGLISH);
 	}
 
+	private static void sortByValues(int[] sortIds, ItemStack[] stacks, int[] values) {
+		IntArrays.quickSort(sortIds, 0, sortIds.length, (a, b) -> {
+			int cmp = Integer.compare(values[a], values[b]);
+			if (cmp != 0) {
+				return cmp;
+			}
+			return ItemStackUtils.compareEqualItems(stacks[a], stacks[b]);
+		});
+	}
+
 	static {
 		NONE = register("none", new SortMode("none") {});
 		ALPHABET = register("alphabet", new SortMode("alphabet") {
@@ -122,6 +137,31 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					return comp;
 				});
 
+				return sortIds;
+			}
+		});
+		CREATIVE = register("creative", new SortMode("creative") {
+			@Override
+			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
+				int[] sortValues = new int[sortIds.length];
+				if (MWConfig.sort.optimizeCreativeSearchSort) {
+					for (int i = 0; i < stacks.length; i++) {
+						sortValues[i] = MWClient.getStackSearchPosition(stacks[i]);
+					}
+				} else {
+					Collection<ItemStack> displayStacks = ItemGroups.SEARCH.getDisplayStacks();
+					List<ItemStack> displayStackList;
+					if (displayStacks instanceof List) {
+						displayStackList = (List<ItemStack>) displayStacks;
+					} else {
+						displayStackList = new ArrayList<>(displayStacks);
+					}
+					Object2IntMap<Object> lookup = new Object2IntOpenHashMap<>(stacks.length);
+					for (int i = 0; i < stacks.length; i++) {
+						sortValues[i] = lookup.computeIfAbsent(stacks[i], displayStackList::indexOf);
+					}
+				}
+				SortMode.sortByValues(sortIds, stacks, sortValues);
 				return sortIds;
 			}
 		});
@@ -163,16 +203,8 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 		RAW_ID = register("raw_id", new SortMode("raw_id") {
 			@Override
 			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
-				Integer[] rawIds = Arrays.stream(stacks).map(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registries.ITEM.getRawId(stack.getItem())).toArray(Integer[]::new);
-
-				IntArrays.quickSort(sortIds, (a, b) -> {
-					int cmp = Integer.compare(rawIds[a], rawIds[b]);
-					if (cmp != 0) {
-						return cmp;
-					}
-					return ItemStackUtils.compareEqualItems(stacks[a], stacks[b]);
-				});
-
+				int[] rawIds = Arrays.stream(stacks).mapToInt(stack -> stack.isEmpty() ? Integer.MAX_VALUE : Registries.ITEM.getRawId(stack.getItem())).toArray();
+				sortByValues(sortIds, stacks, rawIds);
 				return sortIds;
 			}
 		});
