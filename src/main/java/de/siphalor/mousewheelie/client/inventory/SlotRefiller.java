@@ -22,6 +22,7 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
@@ -59,6 +60,12 @@ public class SlotRefiller {
 
 	@SuppressWarnings("UnusedReturnValue")
 	public static boolean refill(Hand hand) {
+		if (stack.getItem() == Items.TRIDENT) {
+			if (EnchantmentHelper.getLoyalty(stack) > 0) {
+				return false;
+			}
+		}
+
 		Iterator<Rule> iterator = rules.descendingIterator();
 		while (iterator.hasNext()) {
 			Rule rule = iterator.next();
