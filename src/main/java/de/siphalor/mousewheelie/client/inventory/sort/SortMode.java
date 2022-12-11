@@ -18,8 +18,9 @@
 package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.util.CreativeSearchOrder;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
+import de.siphalor.mousewheelie.client.util.StackMatcher;
 import de.siphalor.tweed4.tailor.DropdownMaterial;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -30,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 public abstract class SortMode implements DropdownMaterial<SortMode> {
 	private static final Map<String, SortMode> SORT_MODES = new HashMap<>();
@@ -103,7 +105,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	}
 
 	private static void sortByValues(int[] sortIds, ItemStack[] stacks, int[] values) {
-		IntArrays.quickSort(sortIds, 0, sortIds.length, (a, b) -> {
+		IntArrays.quickSort(sortIds, (a, b) -> {
 			int cmp = Integer.compare(values[a], values[b]);
 			if (cmp != 0) {
 				return cmp;
@@ -145,9 +147,12 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 			public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
 				int[] sortValues = new int[sortIds.length];
 				if (MWConfig.sort.optimizeCreativeSearchSort) {
+					Lock lock = CreativeSearchOrder.getReadLock();
+					lock.lock();
 					for (int i = 0; i < stacks.length; i++) {
-						sortValues[i] = MWClient.getStackSearchPosition(stacks[i]);
+						sortValues[i] = CreativeSearchOrder.getStackSearchPosition(stacks[i]);
 					}
+					lock.unlock();
 				} else {
 					Collection<ItemStack> displayStacks = ItemGroups.SEARCH.getDisplayStacks();
 					List<ItemStack> displayStackList;
@@ -156,9 +161,22 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					} else {
 						displayStackList = new ArrayList<>(displayStacks);
 					}
-					Object2IntMap<Object> lookup = new Object2IntOpenHashMap<>(stacks.length);
+					Object2IntMap<StackMatcher> lookup = new Object2IntOpenHashMap<>(stacks.length);
 					for (int i = 0; i < stacks.length; i++) {
-						sortValues[i] = lookup.computeIfAbsent(stacks[i], displayStackList::indexOf);
+						final ItemStack stack = stacks[i];
+						sortValues[i] = lookup.computeIfAbsent(StackMatcher.of(stack), matcher -> {
+							int index = displayStackList.indexOf(matcher);
+							if (index == -1) {
+								return lookup.computeIfAbsent(StackMatcher.ignoreNbt(stack), matcher2 -> {
+									int plainIndex = displayStackList.indexOf(matcher2);
+									if (plainIndex == -1) {
+										return Integer.MAX_VALUE;
+									}
+									return plainIndex;
+								});
+							}
+							return index;
+						});
 					}
 				}
 				SortMode.sortByValues(sortIds, stacks, sortValues);

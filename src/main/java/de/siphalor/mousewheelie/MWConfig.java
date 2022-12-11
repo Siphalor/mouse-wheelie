@@ -21,6 +21,7 @@ import com.google.common.base.CaseFormat;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.CreativeSearchOrder;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.tweed4.annotated.*;
 import de.siphalor.tweed4.config.ConfigEnvironment;
@@ -104,7 +105,7 @@ public class MWConfig {
 		public boolean scrollCreativeMenuTabs = true;
 	}
 
-	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
+	@AConfigEntry(comment = "Change sort modes. Existing sort modes are: alphabet, creative, raw_id and quantity")
 	public static Sort sort = new Sort();
 
 	@AConfigBackground("textures/block/barrel_top.png")
@@ -118,9 +119,17 @@ public class MWConfig {
 		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing control.")
 		public SortMode controlSort = SortMode.ALPHABET;
 
-		@AConfigEntry(comment = "Whether the creative search sorting should be optimized for performance.\n" +
-				"This will make use of more memory in exchange for processor time, only disable this if you run into memory issues.")
+		@AConfigEntry(
+				comment = "Whether the creative search sorting should be optimized for performance.\n" +
+						"This will make use of more memory in exchange for processor time, only disable this if you run into memory issues.",
+				scope = ConfigScope.SMALLEST
+		)
 		public boolean optimizeCreativeSearchSort = true;
+
+		@AConfigListener("optimize-creative-search-sort")
+		public void onReloadOptimizeCreativeSearchSort() {
+			CreativeSearchOrder.refreshItemSearchPositionLookup();
+		}
 	}
 
 	@AConfigEntry(comment = "Configure refill related stuff here.")

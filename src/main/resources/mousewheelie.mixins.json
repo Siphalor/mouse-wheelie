@@ -7,7 +7,6 @@
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
 		"MixinCreativeSlot",
-		"MixinItemGroups",
 		"MixinMinecraftClient",
 		"MixinSlot",
 		"entity.MixinClientPlayerEntity",
