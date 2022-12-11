@@ -76,7 +76,7 @@ public class InventorySorter {
 		}
 		ArrayList<Slot> inventorySlots = new ArrayList<>();
 		for (Slot slot : containerScreen.getScreenHandler().slots) {
-			if (originScope == screenHelper.getScope(slot)) {
+			if (originScope == screenHelper.getScope(slot, true)) {
 				inventorySlots.add(slot);
 			}
 		}

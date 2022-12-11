@@ -179,6 +179,10 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public int getScope(Slot slot) {
+		return getScope(slot, false);
+	}
+
+	public int getScope(Slot slot, boolean forceSmallerScopes) {
 		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.size() || !slot.canInsert(ItemStack.EMPTY)) {
 			return INVALID_SCOPE;
 		}
@@ -196,7 +200,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			}
 		} else {
 			if (slot.inventory instanceof PlayerInventory) {
-				if (MWConfig.general.hotbarScope && isHotbarSlot(slot))
+				if ((forceSmallerScopes || MWConfig.general.hotbarScope) && isHotbarSlot(slot))
 					return -1;
 				return 0;
 			}
