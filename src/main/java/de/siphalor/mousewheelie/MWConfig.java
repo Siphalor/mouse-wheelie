@@ -63,7 +63,7 @@ public class MWConfig {
 		@AConfigEntry(comment = "Whether item types should check nbt data.\nThis is for example used by scrolling and drop-clicking.\nNONE disables this, ALL checks for exactly the same nbt and SOME allows for differences in damage and echantments.")
 		public ItemStackUtils.NbtMatchMode itemKindsNbtMatchMode = ItemStackUtils.NbtMatchMode.SOME;
 
-		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing the inventory or sorting the main inventory will not affect the hotbar and vice-versa.")
+		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing all items of a kind or the whole inventory will not affect the hotbar and vice-versa.")
 		public boolean hotbarScope = true;
 
 		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")

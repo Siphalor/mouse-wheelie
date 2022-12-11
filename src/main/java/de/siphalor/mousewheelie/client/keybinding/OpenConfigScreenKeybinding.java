@@ -25,6 +25,7 @@ import de.siphalor.tweed4.config.TweedRegistry;
 import de.siphalor.tweed4.tailor.coat.CoatTailor;
 import de.siphalor.tweed4.tailor.screen.ScreenTailorScreenFactory;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
@@ -37,7 +38,7 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
 	@Override
 	public boolean onPressedPriority() {
 		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof ContainerScreen<?>) {
+		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof ContainerScreen<?> || minecraftClient.currentScreen instanceof TitleScreen) {
 			TweedRegistry.TAILORS.getOrEmpty(new Identifier("tweed4", "coat")).ifPresent(tailor -> {
 				if (tailor instanceof CoatTailor) {
 					ScreenTailorScreenFactory<?> screenFactory = ((CoatTailor) tailor).getScreenFactories().get(MouseWheelie.MOD_ID);
