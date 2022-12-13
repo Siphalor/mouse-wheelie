@@ -65,7 +65,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 	@Override
 	public int getScope(Slot slot, boolean forceSmallerScopes) {
 		if (screen.getSelectedTab() == ItemGroup.INVENTORY.getIndex()) {
-			return super.getScope(slot);
+			return super.getScope(slot, forceSmallerScopes);
 		}
 		if (slot.inventory instanceof PlayerInventory) {
 			if (isHotbarSlot(slot)) {
