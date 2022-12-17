@@ -28,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -36,7 +37,7 @@ import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class InteractionManager {
-	public static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
+	private static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
 	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 	private static ScheduledFuture<?> tickFuture;
 
@@ -55,9 +56,22 @@ public class InteractionManager {
 		if (interactionEvent == null) {
 			return;
 		}
-		interactionEventQueue.add(interactionEvent);
-		if (waiter == null)
-			triggerSend(TriggerType.INITIAL);
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.add(interactionEvent);
+			if (waiter == null)
+				triggerSend(TriggerType.INITIAL);
+		}
+	}
+
+	public static void pushAll(Collection<InteractionEvent> interactionEvents) {
+		if (interactionEvents == null) {
+			return;
+		}
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.addAll(interactionEvents);
+			if (waiter == null)
+				triggerSend(TriggerType.INITIAL);
+		}
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
@@ -65,40 +79,53 @@ public class InteractionManager {
 	}
 
 	public static void triggerSend(TriggerType triggerType) {
-		if (waiter == null || waiter.trigger(triggerType)) {
-			do {
-				InteractionEvent event = interactionEventQueue.poll();
-				if (event == null) {
-					waiter = null;
-					break;
-				}
-				waiter = event.send();
-			} while (waiter.trigger(TriggerType.INITIAL));
+		synchronized (interactionEventQueue) {
+			if (waiter == null || waiter.trigger(triggerType)) {
+				do {
+					InteractionEvent event = interactionEventQueue.poll();
+					if (event == null) {
+						waiter = null;
+						break;
+					}
+					waiter = event.send();
+				} while (waiter.trigger(TriggerType.INITIAL));
+			}
 		}
 	}
 
 	public static void setTickRate(long milliSeconds) {
 		if (tickFuture != null) {
-			tickFuture.cancel(true);
+			tickFuture.cancel(false);
 		}
 		tickFuture = scheduledExecutor.scheduleAtFixedRate(InteractionManager::tick, milliSeconds, milliSeconds, TimeUnit.MILLISECONDS);
 	}
 
 	public static void tick() {
-		triggerSend(TriggerType.TICK);
+		try {
+			triggerSend(TriggerType.TICK);
+		} catch (Exception e) {
+			System.err.println("Mouse Wheelie: Error while ticking InteractionManager");
+			e.printStackTrace();
+		}
 	}
 
 	public static void setWaiter(Waiter waiter) {
-		InteractionManager.waiter = waiter;
+		synchronized (interactionEventQueue) {
+			InteractionManager.waiter = waiter;
+		}
 	}
 
 	public static void clear() {
-		interactionEventQueue.clear();
-		waiter = null;
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.clear();
+			waiter = null;
+		}
 	}
 
 	public static boolean isReady() {
-		return waiter == null && interactionEventQueue.isEmpty();
+		synchronized (interactionEventQueue) {
+			return waiter == null && interactionEventQueue.isEmpty();
+		}
 	}
 
 	@FunctionalInterface
