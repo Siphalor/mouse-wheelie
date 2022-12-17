@@ -109,7 +109,7 @@ public class InventorySorter {
 				clickEvents.clear();
 				continue;
 			}
-			InteractionManager.interactionEventQueue.addAll(clickEvents);
+			InteractionManager.pushAll(clickEvents);
 			InteractionManager.triggerSend(InteractionManager.TriggerType.GUI_CONFIRM);
 			clickEvents.clear();
 			if (stackSize > 0) {
