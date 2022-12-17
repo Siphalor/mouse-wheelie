@@ -63,8 +63,13 @@ public class MWConfig {
 		@AConfigEntry(comment = "Whether item types should check nbt data.\nThis is for example used by scrolling and drop-clicking.\nNONE disables this, ALL checks for exactly the same nbt and SOME allows for differences in damage and echantments.")
 		public ItemStackUtils.NbtMatchMode itemKindsNbtMatchMode = ItemStackUtils.NbtMatchMode.SOME;
 
-		@AConfigEntry(comment = "This option will treat the hotbar as a separate scope.\nThis means that pushing all items of a kind or the whole inventory will not affect the hotbar and vice-versa.")
-		public boolean hotbarScope = true;
+		public enum HotbarScoping {HARD, SOFT, NONE}
+
+		@AConfigEntry(comment = "Lets you define how the hotbar will be treated when scrolling multiple items from the inventory.\n" +
+				"  HARD: The hotbar will always be treated separately.\n" +
+				"  SOFT: The hotbar will be treated as part of the inventory. This does not apply when sending the whole inventory (ctrl+shift).\n" +
+				"  NONE: The hotbar will be treated as part of the inventory. This also applies when sending the whole inventory (ctrl+shift).")
+		public HotbarScoping hotbarScoping = HotbarScoping.SOFT;
 
 		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
 		public boolean betterFastDragging = false;
@@ -128,7 +133,7 @@ public class MWConfig {
 		public boolean offHand = true;
 
 		@AConfigEntry(comment = "Restore the refilled item to the originally selected slot.\nThis will take a tad more time. You might want to turn this off on slow connections.")
-		public boolean restoreSelectedSlot = true;
+		public boolean restoreSelectedSlot = false;
 
 		@AConfigEntry(comment = "Refill when eating items")
 		public boolean eat = true;
@@ -204,6 +209,8 @@ public class MWConfig {
 
 			moveConfigEntry(dataObject, general, "hold-tool-pick", "tool-picking", "hold-tool");
 			moveConfigEntry(dataObject, general, "hold-block-tool-pick", "tool-picking", "hold-block");
+
+			general.remove("hotbar-scope");
 		}
 	}
 
