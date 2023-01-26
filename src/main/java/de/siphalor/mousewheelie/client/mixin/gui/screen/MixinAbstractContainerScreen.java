@@ -79,7 +79,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
 				onMouseClick(slot, slot.id, data, slotActionType);
 				return InteractionManager.TICK_WAITER;
-			}))
+			}, true))
 	);
 
 	@Inject(method = "mouseDragged", at = @At("RETURN"))

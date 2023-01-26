@@ -109,7 +109,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			InteractionManager.Waiter waiter = event.send();
 			unlockSlot(slot);
 			return waiter;
-		});
+		}, event.shouldRunOnMainThread());
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {

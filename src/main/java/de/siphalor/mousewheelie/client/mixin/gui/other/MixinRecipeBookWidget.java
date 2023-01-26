@@ -154,7 +154,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						client.interactionManager.clickSlot(craftingScreenHandler.syncId, craftingScreenHandler.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
 						refreshResults(false);
 						return InteractionManager.TICK_WAITER;
-					}));
+					}, true));
 					callbackInfoReturnable.setReturnValue(true);
 				}
 			}
