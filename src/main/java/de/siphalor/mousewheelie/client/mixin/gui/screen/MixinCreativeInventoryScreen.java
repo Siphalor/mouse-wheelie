@@ -72,7 +72,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				if (selectedTabIndex < 0) {
 					return ScrollAction.FAILURE;
 				}
-				if (FabricLoader.getInstance().isModLoaded("fabric-item-groups")) {
+				if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
 					FabricCreativeGuiHelper helper = new FabricCreativeGuiHelper((CreativeInventoryScreen) (Object) this);
 					int newIndex = MathHelper.clamp(selectedTabIndex + (int) Math.round(scrollAmount), 0, groupsToDisplay.size() - 1);
 					int newPage = helper.getPageForTabIndex(newIndex);
