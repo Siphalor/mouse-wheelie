@@ -74,6 +74,9 @@ public class MWConfig {
 		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
 		public boolean betterFastDragging = false;
 
+		@AConfigEntry(comment = "Enables dragging bundles while holding right-click to pick up or put out multiple stacks in a single swipe.")
+		public boolean enableBundleDragging = true;
+
 		@AConfigListener("interaction-rate")
 		public void onReloadInteractionRate() {
 			if (!MWClient.isOnLocalServer()) {

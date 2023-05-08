@@ -21,6 +21,7 @@
 	"tweed4_tailor_screen.screen.mousewheelie.general.item-kinds-nbt-match-mode": "Match item kinds by NBT",
 	"tweed4_tailor_screen.screen.mousewheelie.general.hotbar-scoping": "Treat hotbar separately",
 	"tweed4_tailor_screen.screen.mousewheelie.general.better-fast-dragging": "Better fast dragging",
+	"tweed4_tailor_screen.screen.mousewheelie.general.enable-bundle-dragging": "Enable Bundle dragging",
 	"tweed4_tailor_screen.screen.mousewheelie.scrolling": "Scrolling",
 	"tweed4_tailor_screen.screen.mousewheelie.scrolling.enable": "Enable item scrolling",
 	"tweed4_tailor_screen.screen.mousewheelie.scrolling.invert": "Invert scroll direction",
