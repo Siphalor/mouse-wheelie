@@ -35,6 +35,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -229,6 +231,13 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		}
 	}
 
+	public int getComplementaryScope(int scope) {
+		if (scope <= 0) {
+			return 1;
+		}
+		return 0;
+	}
+
 	public void sendSingleItem(Slot slot) {
 		if (isSlotLocked(slot)) {
 			return;
@@ -284,6 +293,29 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void sendAllFrom(Slot referenceSlot) {
 		runInScope(getScope(referenceSlot, true), true, this::sendStack);
+	}
+
+	public void depositAllFrom(Slot referenceSlot) {
+		depositAllFrom(getScope(referenceSlot, false));
+	}
+
+	public void depositAllFrom(int scope) {
+		int complementaryScope = getComplementaryScope(scope);
+
+		Set<ItemKind> itemKinds = new HashSet<>();
+		runInScope(complementaryScope, slot -> {
+			if (slot.hasStack()) {
+				itemKinds.add(ItemKind.of(slot.getStack()));
+			}
+		});
+
+		runInScope(scope, slot -> {
+			if (slot.hasStack()) {
+				if (itemKinds.contains(ItemKind.of(slot.getStack()))) {
+					sendStackLocked(slot);
+				}
+			}
+		});
 	}
 
 	public void dropStack(Slot slot) {

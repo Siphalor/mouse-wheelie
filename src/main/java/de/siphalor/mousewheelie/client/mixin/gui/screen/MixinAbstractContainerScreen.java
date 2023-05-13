@@ -157,6 +157,12 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
+			} else if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if (hoveredSlot != null) {
+					screenHelper.get().depositAllFrom(hoveredSlot);
+					callbackInfoReturnable.setReturnValue(true);
+				}
 			}
 		}
 	}

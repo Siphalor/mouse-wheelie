@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -157,6 +158,31 @@ public class ItemStackUtils {
 				return areTagsEqualExcept(stack1, stack2, "Damage", "Enchantments");
 		}
 		return false; // unreachable
+	}
+
+	public static int hashByKind(ItemStack stack, NbtMatchMode mode) {
+		switch (mode) {
+			case NONE:
+				return stack.getItem().hashCode();
+			case ALL:
+				return stack.hashCode();
+			case SOME:
+				HashCodeBuilder hashCodeBuilder = new HashCodeBuilder()
+						.append(stack.getItem());
+				CompoundTag nbt = stack.getTag();
+				if (nbt == null) {
+					return hashCodeBuilder.toHashCode();
+				}
+
+				nbt.getKeys().stream().sorted().forEachOrdered(key -> {
+					if (key.equals("Damage") || key.equals("Enchantments")) {
+						return;
+					}
+					hashCodeBuilder.append(key).append(nbt.get(key));
+				});
+				return hashCodeBuilder.toHashCode();
+		}
+		return 0;
 	}
 
 	public enum NbtMatchMode {

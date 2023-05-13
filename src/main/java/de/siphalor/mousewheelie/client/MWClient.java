@@ -60,6 +60,7 @@ public class MWClient implements ClientModInitializer {
 	public static final ActionModifierKeybinding WHOLE_STACK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "whole_stack_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding ALL_OF_KIND_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "all_of_kind_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_CONTROL, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding DROP_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "drop_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding DEPOSIT_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "deposit_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
 
 	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
@@ -67,15 +68,15 @@ public class MWClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		KeyBindingHelper.registerKeyBinding(OPEN_CONFIG_SCREEN);
-
-		KeyBindingHelper.registerKeyBinding(WHOLE_STACK_MODIFIER);
-		KeyBindingHelper.registerKeyBinding(ALL_OF_KIND_MODIFIER);
-		KeyBindingHelper.registerKeyBinding(DROP_MODIFIER);
-
 		KeyBindingHelper.registerKeyBinding(SORT_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_UP_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(PICK_TOOL_KEY_BINDING);
+
+		KeyBindingHelper.registerKeyBinding(WHOLE_STACK_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(ALL_OF_KIND_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DROP_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DEPOSIT_MODIFIER);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
