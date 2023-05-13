@@ -18,6 +18,7 @@
 package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
@@ -26,7 +27,6 @@ import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -126,9 +126,9 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			if (!referenceSlot.canInsert(ItemStack.EMPTY)) {
 				sendStack(referenceSlot);
 			}
-			if (Screen.hasControlDown()) {
+			if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 				sendAllOfAKind(referenceSlot);
-			} else if (Screen.hasShiftDown()) {
+			} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 				sendStack(referenceSlot);
 			} else {
 				sendSingleItem(referenceSlot);
@@ -136,12 +136,14 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		} else {
 			ItemStack referenceStack = referenceSlot.getStack().copy();
 			int referenceScope = getScope(referenceSlot);
-			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+			boolean wholeStackModifier = MWClient.WHOLE_STACK_MODIFIER.isPressed();
+			boolean allOfKindModifier = MWClient.ALL_OF_KIND_MODIFIER.isPressed();
+			if (wholeStackModifier || allOfKindModifier) {
 				for (Slot slot : screen.getScreenHandler().slots) {
 					if (getScope(slot) == referenceScope) continue;
 					if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 						sendStack(slot);
-						if (!Screen.hasControlDown()) {
+						if (!allOfKindModifier) {
 							break;
 						}
 					}

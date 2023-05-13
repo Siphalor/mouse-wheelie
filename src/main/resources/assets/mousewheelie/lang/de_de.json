@@ -1,6 +1,9 @@
 {
 	"key.categories.mousewheelie": "Mouse Wheelie",
 	"key.mousewheelie.open_config_screen": "Einstellungen öffnen",
+	"key.mousewheelie.whole_stack_modifier": "Ganze-Stacks-Modifikator",
+	"key.mousewheelie.all_of_kind_modifier": "Alle-einer-Art-Modifikator",
+	"key.mousewheelie.drop_modifier": "Fallenlassen-Modifikator",
 	"key.mousewheelie.sort_inventory": "Inventar sortieren",
 	"key.mousewheelie.scroll_up": "Hochscrollen",
 	"key.mousewheelie.scroll_down": "Runterscrollen",
