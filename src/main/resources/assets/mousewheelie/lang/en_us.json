@@ -22,7 +22,7 @@
 	"tweed4_tailor_screen.screen.mousewheelie.general.integrated-interaction-rate": "Singleplayer Interaction rate",
 	"tweed4_tailor_descriptions.mousewheelie.general.integrated-interaction-rate": "Sets the interval in milliseconds for singleplayer and local multiplayer.",
 	"tweed4_tailor_screen.screen.mousewheelie.general.enable-quick-armor-swapping": "Quick Armor Swapping",
-	"tweed4_tailor_descriptions.mousewheelie.general.enable-quick-armor-swapping": "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
+	"tweed4_tailor_descriptions.mousewheelie.general.enable-quick-armor-swapping": "Enables quick swapping of armor pieces and elytra pieces by clicking them while in hand.",
 	"tweed4_tailor_screen.screen.mousewheelie.general.enable-drop-modifier": "Drop with Alt+Click",
 	"tweed4_tailor_descriptions.mousewheelie.general.enable-drop-modifier": "Enables dropping items when holding the drop modifier (alt by default) and clicking on them.\nThe modifier can be changed in the vanilla controls menu.",
 	"tweed4_tailor_screen.screen.mousewheelie.general.enable-quick-craft": "Enable quick crafting",
