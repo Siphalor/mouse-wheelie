@@ -88,7 +88,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x, y);
 			if (hoveredSlot != null) {
-				if (MWConfig.general.enableAltDropping && MWClient.DROP_MODIFIER.isPressed()) {
+				if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 					screenHelper.get().dropStackLocked(hoveredSlot);
 				} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 					screenHelper.get().sendStackLocked(hoveredSlot);
@@ -111,7 +111,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					}
 
 					if (!slots.isEmpty()) {
-						if (MWConfig.general.enableAltDropping && MWClient.DROP_MODIFIER.isPressed()) {
+						if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 							for (Slot slot : slots) {
 								screenHelper.get().dropStackLocked(slot);
 							}
@@ -133,7 +133,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			if (MWConfig.general.enableAltDropping && MWClient.DROP_MODIFIER.isPressed()) {
+			if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
 					if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {

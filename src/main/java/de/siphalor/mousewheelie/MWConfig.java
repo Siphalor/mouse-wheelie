@@ -54,8 +54,8 @@ public class MWConfig {
 		@AConfigEntry(environment = ConfigEnvironment.UNIVERSAL, comment = "Enables using armor/elytra items to swap them with the currently equipped item.")
 		public boolean enableQuickArmorSwapping = true;
 
-		@AConfigEntry(comment = "Enables dropping items when pressing alt and clicking on them.")
-		public boolean enableAltDropping = true;
+		@AConfigEntry(comment = "Enables dropping items when holding the drop modifier (alt by default) and clicking on them.\nThe modifier can be changed in the vanilla controls menu.")
+		public boolean enableDropModifier = true;
 
 		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
@@ -209,6 +209,8 @@ public class MWConfig {
 
 			moveConfigEntry(dataObject, general, "hold-tool-pick", "tool-picking", "hold-tool");
 			moveConfigEntry(dataObject, general, "hold-block-tool-pick", "tool-picking", "hold-block");
+
+			moveConfigEntry(dataObject, general, "enable-alt-dropping", "general", "enable-drop-modifier");
 
 			general.remove("hotbar-scope");
 		}
