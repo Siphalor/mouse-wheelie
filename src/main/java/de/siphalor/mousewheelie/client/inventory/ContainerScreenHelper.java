@@ -17,11 +17,14 @@
 
 package de.siphalor.mousewheelie.client.inventory;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
+import de.siphalor.mousewheelie.client.util.ReverseIterator;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -36,6 +39,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -125,6 +129,16 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		}
 
 		if (shallSend) {
+			// If deposit modifier and restock modifier are equal, deposit modifier takes precedence
+			if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				depositAllFrom(referenceSlot);
+				return;
+			}
+			if (MWClient.RESTOCK_MODIFIER.isPressed()) {
+				restockAll(getComplementaryScope(getScope(referenceSlot)));
+				return;
+			}
+
 			if (!referenceSlot.canInsert(ItemStack.EMPTY)) {
 				sendStack(referenceSlot);
 			}
@@ -136,6 +150,20 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 				sendSingleItem(referenceSlot);
 			}
 		} else {
+			// If deposit modifier and restock modifier are equal, restock modifier takes precedence
+			if (MWClient.RESTOCK_MODIFIER.isPressed()) {
+				if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+					restockAll(referenceSlot);
+				} else {
+					restockAllOfAKind(referenceSlot);
+				}
+				return;
+			}
+			if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				depositAllFrom(getComplementaryScope(getScope(referenceSlot)));
+				return;
+			}
+
 			ItemStack referenceStack = referenceSlot.getStack().copy();
 			int referenceScope = getScope(referenceSlot);
 			boolean wholeStackModifier = MWClient.WHOLE_STACK_MODIFIER.isPressed();
@@ -316,6 +344,88 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 				}
 			}
 		});
+	}
+
+	public void restockAllOfAKind(Slot referenceSlot) {
+		int scope = getScope(referenceSlot, true);
+		int complementaryScope = getComplementaryScope(scope);
+		restockAllOfAKind(
+				screen.getScreenHandler().slots.stream()
+						.filter(slot -> getScope(slot, true) == scope && ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceSlot.getStack()))
+						.iterator(),
+				complementaryScope
+		);
+	}
+
+	private void restockAllOfAKind(Iterator<Slot> targetSlots, int complementaryScope) {
+		Iterator<Slot> takeSlots = ReverseIterator.of(screen.getScreenHandler().slots);
+		Slot currentTakeSlot = null;
+		int currentTakeCount = 0;
+
+		while (targetSlots.hasNext()) {
+			Slot targetSlot = targetSlots.next();
+			ItemStack targetStack = targetSlot.getStack();
+			int space = targetStack.getMaxCount() - targetStack.getCount();
+
+			while (space > 0) {
+				if (currentTakeCount == 0) {
+					while (true) {
+						if (!takeSlots.hasNext()) {
+							return;
+						}
+
+						currentTakeSlot = takeSlots.next();
+						if (getScope(currentTakeSlot, false) != complementaryScope) {
+							continue;
+						}
+
+						ItemStack currentTakeStack = currentTakeSlot.getStack();
+						currentTakeCount = currentTakeStack.getCount();
+
+						if (currentTakeCount <= 0) {
+							continue;
+						}
+						if (ItemStackUtils.areItemsOfSameKind(currentTakeStack, targetStack)) {
+							break;
+						}
+					}
+					InteractionManager.push(clickEventFactory.create(currentTakeSlot, 0, SlotActionType.PICKUP));
+				}
+
+				InteractionManager.push(clickEventFactory.create(targetSlot, 0, SlotActionType.PICKUP));
+				space -= currentTakeCount;
+
+				if (space <= 0) {
+					currentTakeCount = -space;
+					continue;
+				}
+				currentTakeCount = 0;
+			}
+		}
+
+		if (currentTakeCount > 0) {
+			InteractionManager.push(clickEventFactory.create(currentTakeSlot, 0, SlotActionType.PICKUP));
+		}
+	}
+
+	public void restockAll(Slot referenceSlot) {
+		restockAll(getScope(referenceSlot, false));
+	}
+
+	public void restockAll(int scope) {
+		ListMultimap<ItemKind, Slot> slotsByItemKind = ArrayListMultimap.create();
+		runInScope(scope, slot -> {
+			ItemStack stack = slot.getStack();
+			int count = stack.getCount();
+			if (count > 0 && count < stack.getMaxCount()) {
+				slotsByItemKind.put(ItemKind.of(stack), slot);
+			}
+		});
+		int complementaryScope = getComplementaryScope(scope);
+
+		slotsByItemKind.asMap().forEach((itemKind, slots) ->
+			restockAllOfAKind(slots.iterator(), complementaryScope)
+		);
 	}
 
 	public void dropStack(Slot slot) {

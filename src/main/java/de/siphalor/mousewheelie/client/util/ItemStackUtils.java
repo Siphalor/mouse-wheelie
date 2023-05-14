@@ -24,6 +24,7 @@ import net.minecraft.item.DyeableItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -33,6 +34,10 @@ import java.util.Set;
 
 public class ItemStackUtils {
 	private static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
+
+	public static boolean canCombine(ItemStack a, ItemStack b) {
+		return ScreenHandler.canStacksCombine(a, b);
+	}
 
 	public static int compareEqualItems(ItemStack a, ItemStack b) {
 		// compare counts
@@ -182,7 +187,7 @@ public class ItemStackUtils {
 				});
 				return hashCodeBuilder.toHashCode();
 		}
-		return 0;
+		return 0; // unreachable
 	}
 
 	public enum NbtMatchMode {
