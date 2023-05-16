@@ -87,7 +87,7 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 						new InteractionManager.CallbackEvent(() -> {
 							onMouseClick(slot, slot.id, data, slotActionType);
 							return InteractionManager.TICK_WAITER;
-						})
+						}, true)
 				).scroll(hoverSlot, scrollAmount < 0);
 				return ScrollAction.SUCCESS;
 			}

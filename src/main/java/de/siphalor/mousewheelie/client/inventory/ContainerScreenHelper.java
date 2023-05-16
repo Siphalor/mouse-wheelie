@@ -17,16 +17,19 @@
 
 package de.siphalor.mousewheelie.client.inventory;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
+import de.siphalor.mousewheelie.client.util.ReverseIterator;
 import de.siphalor.mousewheelie.client.util.accessors.ISlot;
 import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -35,6 +38,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -109,7 +115,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 			InteractionManager.Waiter waiter = event.send();
 			unlockSlot(slot);
 			return waiter;
-		});
+		}, event.shouldRunOnMainThread());
 	}
 
 	public void scroll(Slot referenceSlot, boolean scrollUp) {
@@ -123,25 +129,51 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		}
 
 		if (shallSend) {
+			// If deposit modifier and restock modifier are equal, deposit modifier takes precedence
+			if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				depositAllFrom(referenceSlot);
+				return;
+			}
+			if (MWClient.RESTOCK_MODIFIER.isPressed()) {
+				restockAll(getComplementaryScope(getScope(referenceSlot)));
+				return;
+			}
+
 			if (!referenceSlot.canInsert(ItemStack.EMPTY)) {
 				sendStack(referenceSlot);
 			}
-			if (Screen.hasControlDown()) {
+			if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 				sendAllOfAKind(referenceSlot);
-			} else if (Screen.hasShiftDown()) {
+			} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 				sendStack(referenceSlot);
 			} else {
 				sendSingleItem(referenceSlot);
 			}
 		} else {
+			// If deposit modifier and restock modifier are equal, restock modifier takes precedence
+			if (MWClient.RESTOCK_MODIFIER.isPressed()) {
+				if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+					restockAll(referenceSlot);
+				} else {
+					restockAllOfAKind(referenceSlot);
+				}
+				return;
+			}
+			if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				depositAllFrom(getComplementaryScope(getScope(referenceSlot)));
+				return;
+			}
+
 			ItemStack referenceStack = referenceSlot.getStack().copy();
 			int referenceScope = getScope(referenceSlot);
-			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+			boolean wholeStackModifier = MWClient.WHOLE_STACK_MODIFIER.isPressed();
+			boolean allOfKindModifier = MWClient.ALL_OF_KIND_MODIFIER.isPressed();
+			if (wholeStackModifier || allOfKindModifier) {
 				for (Slot slot : screen.getScreenHandler().slots) {
 					if (getScope(slot) == referenceScope) continue;
 					if (ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceStack)) {
 						sendStack(slot);
-						if (!Screen.hasControlDown()) {
+						if (!allOfKindModifier) {
 							break;
 						}
 					}
@@ -227,6 +259,13 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		}
 	}
 
+	public int getComplementaryScope(int scope) {
+		if (scope <= 0) {
+			return 1;
+		}
+		return 0;
+	}
+
 	public void sendSingleItem(Slot slot) {
 		if (isSlotLocked(slot)) {
 			return;
@@ -282,6 +321,111 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 
 	public void sendAllFrom(Slot referenceSlot) {
 		runInScope(getScope(referenceSlot, true), true, this::sendStack);
+	}
+
+	public void depositAllFrom(Slot referenceSlot) {
+		depositAllFrom(getScope(referenceSlot, false));
+	}
+
+	public void depositAllFrom(int scope) {
+		int complementaryScope = getComplementaryScope(scope);
+
+		Set<ItemKind> itemKinds = new HashSet<>();
+		runInScope(complementaryScope, slot -> {
+			if (slot.hasStack()) {
+				itemKinds.add(ItemKind.of(slot.getStack()));
+			}
+		});
+
+		runInScope(scope, slot -> {
+			if (slot.hasStack()) {
+				if (itemKinds.contains(ItemKind.of(slot.getStack()))) {
+					sendStackLocked(slot);
+				}
+			}
+		});
+	}
+
+	public void restockAllOfAKind(Slot referenceSlot) {
+		int scope = getScope(referenceSlot, true);
+		int complementaryScope = getComplementaryScope(scope);
+		restockAllOfAKind(
+				screen.getScreenHandler().slots.stream()
+						.filter(slot -> getScope(slot, true) == scope && ItemStackUtils.areItemsOfSameKind(slot.getStack(), referenceSlot.getStack()))
+						.iterator(),
+				complementaryScope
+		);
+	}
+
+	private void restockAllOfAKind(Iterator<Slot> targetSlots, int complementaryScope) {
+		Iterator<Slot> takeSlots = ReverseIterator.of(screen.getScreenHandler().slots);
+		Slot currentTakeSlot = null;
+		int currentTakeCount = 0;
+
+		while (targetSlots.hasNext()) {
+			Slot targetSlot = targetSlots.next();
+			ItemStack targetStack = targetSlot.getStack();
+			int space = targetStack.getMaxCount() - targetStack.getCount();
+
+			while (space > 0) {
+				if (currentTakeCount == 0) {
+					while (true) {
+						if (!takeSlots.hasNext()) {
+							return;
+						}
+
+						currentTakeSlot = takeSlots.next();
+						if (getScope(currentTakeSlot, false) != complementaryScope) {
+							continue;
+						}
+
+						ItemStack currentTakeStack = currentTakeSlot.getStack();
+						currentTakeCount = currentTakeStack.getCount();
+
+						if (currentTakeCount <= 0) {
+							continue;
+						}
+						if (ItemStackUtils.areItemsOfSameKind(currentTakeStack, targetStack)) {
+							break;
+						}
+					}
+					InteractionManager.push(clickEventFactory.create(currentTakeSlot, 0, SlotActionType.PICKUP));
+				}
+
+				InteractionManager.push(clickEventFactory.create(targetSlot, 0, SlotActionType.PICKUP));
+				space -= currentTakeCount;
+
+				if (space <= 0) {
+					currentTakeCount = -space;
+					continue;
+				}
+				currentTakeCount = 0;
+			}
+		}
+
+		if (currentTakeCount > 0) {
+			InteractionManager.push(clickEventFactory.create(currentTakeSlot, 0, SlotActionType.PICKUP));
+		}
+	}
+
+	public void restockAll(Slot referenceSlot) {
+		restockAll(getScope(referenceSlot, false));
+	}
+
+	public void restockAll(int scope) {
+		ListMultimap<ItemKind, Slot> slotsByItemKind = ArrayListMultimap.create();
+		runInScope(scope, slot -> {
+			ItemStack stack = slot.getStack();
+			int count = stack.getCount();
+			if (count > 0 && count < stack.getMaxCount()) {
+				slotsByItemKind.put(ItemKind.of(stack), slot);
+			}
+		});
+		int complementaryScope = getComplementaryScope(scope);
+
+		slotsByItemKind.asMap().forEach((itemKind, slots) ->
+			restockAllOfAKind(slots.iterator(), complementaryScope)
+		);
 	}
 
 	public void dropStack(Slot slot) {
