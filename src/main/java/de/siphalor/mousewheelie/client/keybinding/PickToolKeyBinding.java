@@ -40,7 +40,7 @@ public class PickToolKeyBinding extends AmecsKeyBinding implements PriorityKeyBi
 		if (playerEntity != null) {
 			HitResult hitResult = playerEntity.raycast(4.5D, 0.0F, false);
 			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				return new ToolPicker(playerEntity.getInventory()).pickToolFor(playerEntity.world.getBlockState(((BlockHitResult) hitResult).getBlockPos()));
+				return new ToolPicker(playerEntity.getInventory()).pickToolFor(playerEntity.getWorld().getBlockState(((BlockHitResult) hitResult).getBlockPos()));
 			} else {
 				return new ToolPicker(playerEntity.getInventory()).pickWeapon();
 			}

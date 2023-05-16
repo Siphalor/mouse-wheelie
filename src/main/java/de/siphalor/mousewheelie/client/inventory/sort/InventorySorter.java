@@ -96,7 +96,7 @@ public class InventorySorter {
 				ItemStack targetStack = stacks[j];
 				if (targetStack.isEmpty()) continue;
 				if (targetStack.getCount() >= targetStack.getItem().getMaxCount()) continue;
-				if (stack.getItem() == targetStack.getItem() && ItemStack.areNbtEqual(stack, targetStack)) {
+				if (ItemStack.canCombine(stack, targetStack)) {
 					int delta = targetStack.getItem().getMaxCount() - targetStack.getCount();
 					delta = Math.min(delta, stackSize);
 					stackSize -= delta;
@@ -170,7 +170,7 @@ public class InventorySorter {
 						stacks[id].getItem() == currentStack.getItem()
 								//&& stacks[id].getCount() == currentStack.getCount()
 								&& !doneSlashEmpty.get(slotCount + id)
-								&& ItemStack.areNbtEqual(stacks[id], currentStack)
+								&& ItemStack.canCombine(stacks[id], currentStack)
 				) {
 					// If the current stack and the target stack are completely equal, then we can skip this step in the chain
 					if (stacks[id].getCount() == currentStack.getCount()) {

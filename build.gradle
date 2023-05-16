@@ -43,12 +43,13 @@ dependencies {
 			'fabric-key-binding-api-v1',
             'fabric-networking-api-v1',
 			'fabric-resource-loader-v0',
-			'fabric-registry-sync-v0'
+			'fabric-registry-sync-v0',
+			'fabric-screen-api-v1'
 	]
 	fabric_deps.forEach { include(modImplementation(fabricApi.module(it, fabric_api_version)))}
 	modImplementation(fabricApi.module("fabric-item-group-api-v1", fabric_api_version))
 
-	modApi("com.terraformersmc:modmenu:6.1.0-rc.4")
+	modApi("com.terraformersmc:modmenu:7.0.0-beta.2")
 
 	include(modApi(platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")))
 	def tweed_deps = [
@@ -57,7 +58,7 @@ dependencies {
 			"tailor-screen", "tailor-coat",
 			"tailor-lang-json-descriptions"
 	]
-	tweed_deps.forEach { include(modApi("de.siphalor.tweed4:tweed4-$it-$minecraft_major_version")) }
+	tweed_deps.forEach { include(modApi("de.siphalor.tweed4:tweed4-$it-$minecraft_major_version")) { exclude module: 'modmenu'} }
 	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version"))
 
 	modImplementation(include("de.siphalor:amecsapi-$minecraft_major_version:${project.amecs_version}")) {
@@ -160,7 +161,8 @@ if (project.hasProperty("curseforgeToken")) {
 			changelogType = "markdown"
 			changelog = project.getChangelog()
 			addGameVersion("Fabric")
-			for (version in ((String) project.mod_mc_versions).split(";")) {
+			String mcVersions = project.hasProperty("curseforge_mc_versions") ? project.property("curseforge_mc_versions") : project.mod_mc_versions
+			for (version in (mcVersions).split(";")) {
 				addGameVersion(version)
 			}
 			relations {

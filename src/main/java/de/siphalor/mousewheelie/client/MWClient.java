@@ -87,13 +87,13 @@ public class MWClient implements ClientModInitializer {
 			if (MWConfig.toolPicking.holdTool && (isTool(item) || isWeapon(item))) {
 				ToolPicker toolPicker = new ToolPicker(player.getInventory());
 				if (result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
-					index = toolPicker.findToolFor(player.world.getBlockState(((BlockHitResult) result).getBlockPos()));
+					index = toolPicker.findToolFor(player.getWorld().getBlockState(((BlockHitResult) result).getBlockPos()));
 				} else {
 					index = toolPicker.findWeapon();
 				}
 			}
 			if (MWConfig.toolPicking.holdBlock && item instanceof BlockItem && result.getType() == HitResult.Type.BLOCK && result instanceof BlockHitResult) {
-				BlockState blockState = player.world.getBlockState(((BlockHitResult) result).getBlockPos());
+				BlockState blockState = player.getWorld().getBlockState(((BlockHitResult) result).getBlockPos());
 				if (blockState.getBlock() == ((BlockItem) item).getBlock()) {
 					ToolPicker toolPicker = new ToolPicker(player.getInventory());
 					index = toolPicker.findToolFor(blockState);

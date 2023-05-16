@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class CreativeSearchOrder {
 
 			if (stackToSearchPositionLookup.isEmpty() || !Objects.equals(enabledFeatures, lastFeatureSet)) {
 				ItemGroups.updateDisplayContext(enabledFeatures, true, client.world.getRegistryManager());
-				Collection<ItemStack> displayStacks = new ArrayList<>(ItemGroups.SEARCH.getDisplayStacks());
+				Collection<ItemStack> displayStacks = new ArrayList<>(Registries.ITEM_GROUP.get(ItemGroups.SEARCH).getDisplayStacks());
 				new Thread(() -> {
 					Lock lock = stackToSearchPositionLookupLock.writeLock();
 					lock.lock();
