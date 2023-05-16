@@ -72,6 +72,14 @@ dependencies {
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 }
 
+// Workaround for https://github.com/gradle/gradle/issues/10195
+configurations.include.transitive = true
+configurations.include.dependencies.each {
+	if (!it.name.contains("bom")) {
+		it.transitive = false
+	}
+}
+
 //sourceSets.main.java.exclude("**/ModMenu*")
 
 license {
