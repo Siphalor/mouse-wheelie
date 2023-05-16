@@ -87,7 +87,19 @@ public class InteractionManager {
 						waiter = null;
 						break;
 					}
-					waiter = event.send();
+					if (event.shouldRunOnMainThread()) {
+						Waiter blockingWaiter = tt -> false;
+						waiter = blockingWaiter;
+						MinecraftClient.getInstance().execute(() -> {
+							synchronized (interactionEventQueue) {
+								if (waiter == blockingWaiter) {
+									waiter = event.send();
+								}
+							}
+						});
+					} else {
+						waiter = event.send();
+					}
 				} while (waiter.trigger(TriggerType.INITIAL));
 			}
 		}
@@ -172,6 +184,9 @@ public class InteractionManager {
 		 * @return the number of inventory packets to wait for
 		 */
 		Waiter send();
+		default boolean shouldRunOnMainThread() {
+			return false;
+		}
 	}
 
 	public static class ClickEvent implements InteractionEvent {
@@ -198,18 +213,34 @@ public class InteractionManager {
 			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return waiter;
 		}
+
+		@Override
+		public boolean shouldRunOnMainThread() {
+			return true;
+		}
 	}
 
 	public static class CallbackEvent implements InteractionEvent {
 		private final Supplier<Waiter> callback;
+		private final boolean shouldRunOnMainThread;
 
 		public CallbackEvent(Supplier<Waiter> callback) {
+			this(callback, false);
+		}
+
+		public CallbackEvent(Supplier<Waiter> callback, boolean shouldRunOnMainThread) {
 			this.callback = callback;
+			this.shouldRunOnMainThread = shouldRunOnMainThread;
 		}
 
 		@Override
 		public Waiter send() {
 			return callback.get();
+		}
+
+		@Override
+		public boolean shouldRunOnMainThread() {
+			return shouldRunOnMainThread;
 		}
 	}
 
@@ -234,6 +265,11 @@ public class InteractionManager {
 		public Waiter send() {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return waiter;
+		}
+
+		@Override
+		public boolean shouldRunOnMainThread() {
+			return false;
 		}
 	}
 }
