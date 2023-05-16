@@ -31,7 +31,7 @@ import de.siphalor.tweed4.data.DataObject;
 import de.siphalor.tweed4.data.DataValue;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = "tweed4:coat", casing = CaseFormat.LOWER_HYPHEN)
+@ATweedConfig(environment = ConfigEnvironment.CLIENT, scope = ConfigScope.SMALLEST, tailors = {"tweed4:lang_json_descriptions", "tweed4:coat"}, casing = CaseFormat.LOWER_HYPHEN)
 @AConfigBackground("textures/block/green_concrete_powder.png")
 public class MWConfig {
 	@AConfigEntry(comment = "General settings")
@@ -40,38 +40,27 @@ public class MWConfig {
 	@AConfigBackground("textures/block/acacia_log.png")
 	public static class General {
 		@AConfigEntry(
-				comment = "Sets the interval in milliseconds in which certain packets are fired.\nLower numbers increase the speed but might be rejected by servers.",
 				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..")
 		)
 		public int interactionRate = 10;
-
 		@AConfigEntry(
-				comment = "Sets the interval in milliseconds for singleplayer and local multiplayer.",
 				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..")
 		)
 		public int integratedInteractionRate = 1;
 
-		@AConfigEntry(environment = ConfigEnvironment.UNIVERSAL, comment = "Enables using armor/elytra items to swap them with the currently equipped item.")
+		@AConfigEntry(environment = ConfigEnvironment.UNIVERSAL)
 		public boolean enableQuickArmorSwapping = true;
 
-		@AConfigEntry(comment = "Enables dropping items when pressing alt and clicking on them.")
-		public boolean enableAltDropping = true;
+		public boolean enableDropModifier = true;
 
-		@AConfigEntry(comment = "Enables right-clicking in recipe books/villager trading to swiftly craft/trade.")
 		public boolean enableQuickCraft = true;
 
-		@AConfigEntry(comment = "Whether item types should check nbt data.\nThis is for example used by scrolling and drop-clicking.\nNONE disables this, ALL checks for exactly the same nbt and SOME allows for differences in damage and echantments.")
 		public ItemStackUtils.NbtMatchMode itemKindsNbtMatchMode = ItemStackUtils.NbtMatchMode.SOME;
 
 		public enum HotbarScoping {HARD, SOFT, NONE}
 
-		@AConfigEntry(comment = "Lets you define how the hotbar will be treated when scrolling multiple items from the inventory.\n" +
-				"  HARD: The hotbar will always be treated separately.\n" +
-				"  SOFT: The hotbar will be treated as part of the inventory. This does not apply when sending the whole inventory (ctrl+shift).\n" +
-				"  NONE: The hotbar will be treated as part of the inventory. This also applies when sending the whole inventory (ctrl+shift).")
 		public HotbarScoping hotbarScoping = HotbarScoping.SOFT;
 
-		@AConfigEntry(comment = "This helps when you regularly move your mouse faster than the game can pick up.\nThis will impact performance though.")
 		public boolean betterFastDragging = false;
 
 		@AConfigListener("interaction-rate")
@@ -93,94 +82,56 @@ public class MWConfig {
 
 	@AConfigBackground("textures/block/dark_prismarine.png")
 	public static class Scrolling {
-		@AConfigEntry(comment = "Enables scrolling of stacks")
 		public boolean enable = true;
-
-		@AConfigEntry(comment = "Invert the scroll direction when scrolling items")
 		public boolean invert = false;
-
-		@AConfigEntry(comment = "If enabled items will be moved according to whether your scrolling up or down.\nIf disabled you will scroll to change the amount of items present (up will increase - down will decrease")
 		public boolean directionalScrolling = true;
-
-		@AConfigEntry(comment = "Sets whether to by default scroll items\nout of the creative menu.")
 		public boolean scrollCreativeMenuItems = true;
-
-		@AConfigEntry(comment = "Sets whether creative mode tabs can\nbe switched by scrolling over them.")
 		public boolean scrollCreativeMenuTabs = true;
 	}
 
-	@AConfigEntry(comment = "Change sort modes. Existing sort modes are ALPHABET, RAW_ID and QUANTITY")
 	public static Sort sort = new Sort();
 
 	@AConfigBackground("textures/block/barrel_top.png")
 	public static class Sort {
-		@AConfigEntry(comment = "Sets the sort mode for normal sorting.")
 		public SortMode primarySort = SortMode.RAW_ID;
-
-		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing shift.")
 		public SortMode shiftSort = SortMode.QUANTITY;
-
-		@AConfigEntry(comment = "Sets the sort mode for sorting whilst pressing control.")
 		public SortMode controlSort = SortMode.ALPHABET;
 	}
 
-	@AConfigEntry(comment = "Configure refill related stuff here.")
 	public static Refill refill = new Refill();
 
 	@AConfigBackground("textures/block/horn_coral_block.png")
 	public static class Refill {
-		@AConfigEntry(comment = "Refills stacks in the off hand")
 		public boolean offHand = true;
-
-		@AConfigEntry(comment = "Restore the refilled item to the originally selected slot.\nThis will take a tad more time. You might want to turn this off on slow connections.")
 		public boolean restoreSelectedSlot = false;
 
-		@AConfigEntry(comment = "Refill when eating items")
 		public boolean eat = true;
-
-		@AConfigEntry(comment = "Refill when dropping items")
 		public boolean drop = true;
 
-		@AConfigEntry(comment = "Refill when using up items")
 		public boolean use = true;
 
-		@AConfigEntry(comment = "Refill on other occasions")
 		public boolean other = true;
 
-		@AConfigEntry(comment = "Enable/Disable specific rules for how to refill items")
 		public Rules rules = new Rules();
 
 		@AConfigBackground("textures/block/yellow_terracotta.png")
 		public static class Rules {
-			@AConfigEntry(comment = "Tries to find any block items")
 			public boolean anyBlock = false;
-			@AConfigEntry(comment = "Find items of the same item group")
 			public boolean itemgroup = false;
-			@AConfigEntry(comment = "Try to find similar items through the item type hierarchy")
 			public boolean itemHierarchy = false;
-			@AConfigEntry(comment = "Try to find similar block items through the block type hierarchy")
 			public boolean blockHierarchy = false;
-			@AConfigEntry(comment = "Try to find other food items")
 			public boolean food = false;
-			@AConfigEntry(comment = "Try to find equal items (no nbt matching)")
 			public boolean equalItems = true;
-			@AConfigEntry(comment = "Try to find equal stacks (nbt matching")
 			public boolean equalStacks = true;
 		}
 	}
 
-	@AConfigEntry(comment = "Configure picking the correct tool for the currently faced block.")
 	public static ToolPicking toolPicking = new ToolPicking();
 
 	@AConfigBackground("textures/block/coarse_dirt.png")
 	public static class ToolPicking {
-		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding a tool.")
 		public boolean holdTool = true;
-
-		@AConfigEntry(comment = "Pick correct tool when middle clicking whilst holding the same block as faced.")
 		public boolean holdBlock = false;
-
-		@AConfigEntry(comment = "Allows picking tools from the inventory.\nIf disabled picking will only happen from the hotbar.")
 		public boolean pickFromInventory = true;
 	}
 
@@ -209,6 +160,8 @@ public class MWConfig {
 
 			moveConfigEntry(dataObject, general, "hold-tool-pick", "tool-picking", "hold-tool");
 			moveConfigEntry(dataObject, general, "hold-block-tool-pick", "tool-picking", "hold-block");
+
+			moveConfigEntry(dataObject, general, "enable-alt-dropping", "general", "enable-drop-modifier");
 
 			general.remove("hotbar-scope");
 		}

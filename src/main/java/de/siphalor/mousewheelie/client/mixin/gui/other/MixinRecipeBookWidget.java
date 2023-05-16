@@ -26,7 +26,6 @@ import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
@@ -120,7 +119,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 				InteractionManager.clear();
 				InteractionManager.setWaiter((InteractionManager.TriggerType triggerType) -> MWClient.lastUpdatedSlot >= craftingContainer.getCraftingSlotCount());
 			}
-			InteractionManager.pushClickEvent(craftingContainer.syncId, resSlot, 0, Screen.hasShiftDown() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
+			InteractionManager.pushClickEvent(craftingContainer.syncId, resSlot, 0, MWClient.WHOLE_STACK_MODIFIER.isPressed() ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP);
 		}
 	}
 
@@ -137,7 +136,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						return;
 					}
 					int resSlot = craftingContainer.getCraftingResultSlotIndex();
-					if (Screen.hasControlDown()) {
+					if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 						if (oldRecipe != recipe || craftingContainer.slots.get(resSlot).getStack().isEmpty() || canCraftMore(recipe)) {
 							InteractionManager.push(new InteractionManager.PacketEvent(new CraftRequestC2SPacket(craftingContainer.syncId, recipe, true), (triggerType) -> MWClient.lastUpdatedSlot >= craftingContainer.getCraftingSlotCount()));
 						}
@@ -154,7 +153,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 						client.interactionManager.clickSlot(craftingContainer.syncId, craftingContainer.getCraftingResultSlotIndex(), 0, SlotActionType.THROW, client.player);
 						refreshResults(false);
 						return InteractionManager.TICK_WAITER;
-					}));
+					}, true));
 					callbackInfoReturnable.setReturnValue(true);
 				}
 			}

@@ -19,6 +19,7 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import com.google.common.base.Suppliers;
 import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
@@ -79,7 +80,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			() -> ContainerScreenHelper.of((ContainerScreen<?>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
 				onMouseClick(slot, slot.id, data, slotActionType);
 				return InteractionManager.TICK_WAITER;
-			}))
+			}, true))
 	);
 
 	@Inject(method = "mouseDragged", at = @At("RETURN"))
@@ -87,11 +88,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x, y);
 			if (hoveredSlot != null) {
-				if (MWConfig.general.enableAltDropping && hasAltDown()) {
+				if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 					screenHelper.get().dropStackLocked(hoveredSlot);
-				} else if (hasShiftDown()) {
+				} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 					screenHelper.get().sendStackLocked(hoveredSlot);
-				} else if (hasControlDown()) {
+				} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 					screenHelper.get().sendAllOfAKind(hoveredSlot);
 				}
 			}
@@ -110,15 +111,15 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					}
 
 					if (!slots.isEmpty()) {
-						if (MWConfig.general.enableAltDropping && hasAltDown()) {
+						if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 							for (Slot slot : slots) {
 								screenHelper.get().dropStackLocked(slot);
 							}
-						} else if (hasShiftDown()) {
+						} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 							for (Slot slot : slots) {
 								screenHelper.get().sendStackLocked(slot);
 							}
-						} else if (hasControlDown()) {
+						} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 							for (Slot slot : slots) {
 								screenHelper.get().sendAllOfAKind(slot);
 							}
@@ -132,11 +133,11 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
-			if (MWConfig.general.enableAltDropping && hasAltDown()) {
+			if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
-					if (hasControlDown()) {
-						if (hasShiftDown()) {
+					if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
+						if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 							screenHelper.get().dropAllFrom(hoveredSlot);
 						} else {
 							screenHelper.get().dropAllOfAKind(hoveredSlot);
@@ -146,13 +147,29 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
-			} else if (hasControlDown()) {
+			} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 				Slot hoveredSlot = getSlotAt(x, y);
 				if (hoveredSlot != null) {
-					if (hasShiftDown()) {
+					if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
 						screenHelper.get().sendAllFrom(hoveredSlot);
 					} else {
 						screenHelper.get().sendAllOfAKind(hoveredSlot);
+					}
+					callbackInfoReturnable.setReturnValue(true);
+				}
+			} else if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if (hoveredSlot != null) {
+					screenHelper.get().depositAllFrom(hoveredSlot);
+					callbackInfoReturnable.setReturnValue(true);
+				}
+			} else if (MWClient.RESTOCK_MODIFIER.isPressed()) {
+				Slot hoveredSlot = getSlotAt(x, y);
+				if (hoveredSlot != null) {
+					if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+						screenHelper.get().restockAll(hoveredSlot);
+					} else {
+						screenHelper.get().restockAllOfAKind(hoveredSlot);
 					}
 					callbackInfoReturnable.setReturnValue(true);
 				}
