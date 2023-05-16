@@ -54,7 +54,7 @@ dependencies {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 
-	modApi platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")
+	include(modApi(platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")))
 	def tweed_deps = [
 	        "base", "annotated",
 			"data", "data-hjson",
