@@ -19,6 +19,7 @@ package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -44,7 +45,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 			for (Slot testSlot : screen.getContainer().slots) {
 				if (getScope(testSlot) != scope) {
 					ItemStack itemStack = testSlot.getStack();
-					if (Container.canStacksCombine(slot.getStack(), itemStack) && itemStack.getCount() < itemStack.getMaxCount()) {
+					if (ItemStackUtils.canCombine(slot.getStack(), itemStack) && itemStack.getCount() < itemStack.getMaxCount()) {
 						InteractionManager.push(clickEventFactory.create(slot, 0, SlotActionType.PICKUP));
 						InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 						return;
@@ -88,7 +89,7 @@ public class CreativeContainerScreenHelper<T extends CreativeInventoryScreen> ex
 				if (itemStack.isEmpty()) {
 					InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 					return;
-				} else if (Container.canStacksCombine(itemStack, slot.getStack()) && itemStack.getCount() < itemStack.getMaxCount()) {
+				} else if (ItemStackUtils.canCombine(itemStack, slot.getStack()) && itemStack.getCount() < itemStack.getMaxCount()) {
 					count -= itemStack.getCount();
 					InteractionManager.push(clickEventFactory.create(testSlot, 0, SlotActionType.PICKUP));
 					if (count <= 0) return;

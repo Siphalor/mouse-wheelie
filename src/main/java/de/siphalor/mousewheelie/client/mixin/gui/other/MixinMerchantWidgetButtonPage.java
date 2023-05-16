@@ -18,6 +18,7 @@
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.MWConfig;
+import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.accessors.IMerchantScreen;
 import de.siphalor.mousewheelie.client.util.accessors.ISpecialClickableButtonWidget;
@@ -47,7 +48,7 @@ public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWid
 			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.field_19165 + ((IMerchantScreen) screen).getRecipeIdOffset());
 			((IMerchantScreen) screen).mouseWheelie_syncRecipeId();
 			if (screen instanceof ContainerScreen) {
-				if (Screen.hasShiftDown())
+				if (MWClient.WHOLE_STACK_MODIFIER.isPressed())
 					InteractionManager.pushClickEvent(((ContainerScreen<?>) screen).getContainer().syncId, 2, 1, SlotActionType.QUICK_MOVE);
 				else
 					InteractionManager.pushClickEvent(((ContainerScreen<?>) screen).getContainer().syncId, 2, 1, SlotActionType.PICKUP);

@@ -22,10 +22,7 @@ import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.ToolPicker;
-import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
-import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
-import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
-import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
+import de.siphalor.mousewheelie.client.keybinding.*;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
@@ -46,6 +43,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
@@ -59,6 +57,11 @@ public class MWClient implements ClientModInitializer {
 	public static final KeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
 	public static final KeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
 	public static final KeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding WHOLE_STACK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "whole_stack_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding ALL_OF_KIND_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "all_of_kind_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_CONTROL, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding DROP_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "drop_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding DEPOSIT_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "deposit_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding RESTOCK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "restock_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
 
 	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
@@ -70,6 +73,12 @@ public class MWClient implements ClientModInitializer {
 		KeyBindingHelper.registerKeyBinding(SCROLL_UP_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(PICK_TOOL_KEY_BINDING);
+
+		KeyBindingHelper.registerKeyBinding(WHOLE_STACK_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(ALL_OF_KIND_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DROP_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DEPOSIT_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(RESTOCK_MODIFIER);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
