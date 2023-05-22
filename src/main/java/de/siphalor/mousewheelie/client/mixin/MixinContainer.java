@@ -47,7 +47,7 @@ public abstract class MixinContainer {
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
 		//noinspection ConstantConditions
-		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.other) {
+		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.enable && MWConfig.refill.other) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
 			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
 				ItemStack stack = inventory.getMainHandStack();

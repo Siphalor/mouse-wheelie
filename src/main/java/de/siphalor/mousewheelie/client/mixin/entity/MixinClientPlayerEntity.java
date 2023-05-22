@@ -45,7 +45,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
 	@Inject(method = "dropSelectedItem", at = @At("HEAD"))
 	public void onDropSelectedItem(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
-		if (MWConfig.refill.drop) {
+		if (MWConfig.refill.enable && MWConfig.refill.drop) {
 			if (!getMainHandStack().isEmpty()) {
 				MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, getMainHandStack().copy());
 			}
