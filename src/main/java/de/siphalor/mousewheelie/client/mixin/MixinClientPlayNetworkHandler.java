@@ -66,7 +66,7 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/PlayerContainer;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdateHotbar(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (MWConfig.refill.other) {
+		if (MWConfig.refill.enable && MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
@@ -83,7 +83,7 @@ public class MixinClientPlayNetworkHandler {
 	@Inject(method = "onContainerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Container;setStackInSlot(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdateOther(ContainerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		//noinspection ConstantConditions
-		if (MWConfig.refill.other && client.player.container == client.player.playerContainer && packet.getSlot() == 45) {
+		if (MWConfig.refill.enable && MWConfig.refill.other && client.player.container == client.player.playerContainer && packet.getSlot() == 45) {
 			PlayerInventory inventory = client.player.inventory;
 			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
 				if (packet.getSlot() == 45) {
