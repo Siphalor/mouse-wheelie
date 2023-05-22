@@ -63,7 +63,7 @@ public class CreativeSearchOrder {
 
 			if (stackToSearchPositionLookup.isEmpty() || !Objects.equals(enabledFeatures, lastFeatureSet)) {
 				ItemGroups.updateDisplayContext(enabledFeatures, true, client.world.getRegistryManager());
-				Collection<ItemStack> displayStacks = new ArrayList<>(ItemGroups.SEARCH.getDisplayStacks());
+				Collection<ItemStack> displayStacks = new ArrayList<>(ItemGroups.getSearchGroup().getDisplayStacks());
 				new Thread(() -> {
 					Lock lock = stackToSearchPositionLookupLock.writeLock();
 					lock.lock();
