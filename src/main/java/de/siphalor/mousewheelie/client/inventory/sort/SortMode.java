@@ -154,7 +154,7 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 					}
 					lock.unlock();
 				} else {
-					Collection<ItemStack> displayStacks = Registries.ITEM_GROUP.get(ItemGroups.SEARCH).getDisplayStacks();
+					Collection<ItemStack> displayStacks = ItemGroups.getSearchGroup().getDisplayStacks();
 					List<ItemStack> displayStackList;
 					if (displayStacks instanceof List) {
 						displayStackList = (List<ItemStack>) displayStacks;

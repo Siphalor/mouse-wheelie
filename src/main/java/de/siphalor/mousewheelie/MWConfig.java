@@ -115,14 +115,14 @@ public class MWConfig {
 
 	@AConfigBackground("textures/block/horn_coral_block.png")
 	public static class Refill {
+		public boolean enable = true;
+
 		public boolean offHand = true;
 		public boolean restoreSelectedSlot = false;
 
 		public boolean eat = true;
 		public boolean drop = true;
-
 		public boolean use = true;
-
 		public boolean other = true;
 
 		public Rules rules = new Rules();
