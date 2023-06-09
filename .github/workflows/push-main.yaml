@@ -16,9 +16,8 @@ jobs:
           for lang in src/main/resources/assets/*/lang/*.json
           do
             rename=$(echo "$lang" | sed -e 's/\b\w\+\.json$/\L\0/' -e 's/\b\([a-z]\+\)\.json$/\/\1_\1.json/')
-            mv "$lang" "$rename"
+            mv "$lang" "$rename" || true
           done
-          echo done
 
       - name: Commit
         uses: EndBug/add-and-commit@v9
