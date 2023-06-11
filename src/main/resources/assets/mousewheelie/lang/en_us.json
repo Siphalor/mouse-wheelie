@@ -4,6 +4,8 @@
     "key.mousewheelie.whole_stack_modifier": "Whole Stack Modifier",
     "key.mousewheelie.all_of_kind_modifier": "All of Kind Modifier",
     "key.mousewheelie.drop_modifier": "Drop Modifier",
+	"key.mousewheelie.deposit_modifier": "Deposit Modifier",
+	"key.mousewheelie.restock_modifier": "Restock Modifier",
     "key.mousewheelie.sort_inventory": "Sort Inventory",
     "key.mousewheelie.scroll_up": "Scroll Items Up",
     "key.mousewheelie.scroll_down": "Scroll Items Down",
