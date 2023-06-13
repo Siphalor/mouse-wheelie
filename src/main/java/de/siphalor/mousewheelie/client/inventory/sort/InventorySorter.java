@@ -19,6 +19,8 @@ package de.siphalor.mousewheelie.client.inventory.sort;
 
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.network.MWClientNetworking;
+import de.siphalor.mousewheelie.common.network.ReorderInventoryPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -122,48 +124,71 @@ public class InventorySorter {
 	}
 
 	public void sort(SortMode sortMode) {
+		if (inventorySlots.length <= 1) {
+			return;
+		}
+
 		combineStacks();
-		ItemStack currentStack;
-		final int slotCount = stacks.length;
-		int[] sortIds = new int[slotCount];
+		int[] sortIds = new int[stacks.length];
 		for (int i = 0; i < sortIds.length; i++) {
 			sortIds[i] = i;
 		}
 
 		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, Arrays.asList(inventorySlots)));
-		// sortIds now maps the slot index (the target id) to which slot's contents should be moved there (the origin id)
+
+		if (MWClientNetworking.canSendReorderPacket()) {
+			this.reorderInventory(sortIds);
+		} else {
+			this.sortOnClient(sortIds);
+		}
+	}
+
+	protected void reorderInventory(int[] sortedIds) {
+		int[] slotMappings = new int[sortedIds.length * 2];
+		for (int i = 0; i < sortedIds.length; i++) {
+			slotMappings[i * 2] = inventorySlots[sortedIds[i]].id;
+			slotMappings[i * 2 + 1] = inventorySlots[i].id;
+		}
+		MWClientNetworking.send(new ReorderInventoryPacket(containerScreen.getScreenHandler().syncId, slotMappings));
+	}
+
+	protected void sortOnClient(int[] sortedIds) {
+		ItemStack currentStack;
+		final int slotCount = stacks.length;
+
+		// sortedIds now maps the slot index (the target id) to which slot's contents should be moved there (the origin id)
 		int[] origin2Target = new int[slotCount];
 		for (int i = 0; i < origin2Target.length; i++) {
-			origin2Target[sortIds[i]] = i;
+			origin2Target[sortedIds[i]] = i;
 		}
 
 		// This is a combined bitset to save whether eac slot is done or empty.
 		// It consists of all bits for the done states in the first half and the empty states in the second half.
 		BitSet doneSlashEmpty = new BitSet(slotCount * 2);
 		for (int i = 0; i < slotCount; i++) { // Iterate all slots to set up the state bit set
-			if (i == sortIds[i]) { // If the target slot is equal to the origin,
+			if (i == sortedIds[i]) { // If the target slot is equal to the origin,
 				doneSlashEmpty.set(i); // then we're done with that slot already.
 				continue;
 			}
 			if (stacks[i].isEmpty()) doneSlashEmpty.set(slotCount + i); // mark if it's empty
 		}
 		// Iterate all slots, with i as the target slot index
-		// sortIds[i] is therefore the origin slot
+		// sortedIds[i] is therefore the origin slot
 		for (int i = 0; i < slotCount; i++) {
 			if (doneSlashEmpty.get(i)) { // See if we're already done,
 				continue; // and skip.
 			}
-			if (doneSlashEmpty.get(slotCount + sortIds[i])) { // If the origin is empty,
-				doneSlashEmpty.set(sortIds[i]); // we can mark it as done
+			if (doneSlashEmpty.get(slotCount + sortedIds[i])) { // If the origin is empty,
+				doneSlashEmpty.set(sortedIds[i]); // we can mark it as done
 				continue; // and skip.
 			}
 
 			// This is where the action happens.
 			// Pick up the stack at the origin slot.
-			InteractionManager.push(screenHelper.createClickEvent(inventorySlots[sortIds[i]], 0, SlotActionType.PICKUP));
-			doneSlashEmpty.set(slotCount + sortIds[i]); // Mark the origin slot as empty (because we picked the stack up, duh)
-			currentStack = stacks[sortIds[i]]; // Save the stack we're currently working with
-			Slot workingSlot = inventorySlots[sortIds[i]]; // A slot that we can use when fiddling around with swapping stacks
+			InteractionManager.push(screenHelper.createClickEvent(inventorySlots[sortedIds[i]], 0, SlotActionType.PICKUP));
+			doneSlashEmpty.set(slotCount + sortedIds[i]); // Mark the origin slot as empty (because we picked the stack up, duh)
+			currentStack = stacks[sortedIds[i]]; // Save the stack we're currently working with
+			Slot workingSlot = inventorySlots[sortedIds[i]]; // A slot that we can use when fiddling around with swapping stacks
 			int id = i; // id will reflect the target slot in the following loop
 			do { // This loop follows chained stack moves (e.g. 1->2->5->1).
 				if (
