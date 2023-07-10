@@ -95,5 +95,7 @@
     "tweed4_tailor_screen.screen.mousewheelie.tool-picking.hold-block": "Clicar com o botão do meio do mouse enquanto segura o mesmo bloco",
     "tweed4_tailor_screen.screen.mousewheelie.tool-picking.hold-block.description": "Seleciona a ferramenta correta quando clicando com o botão do meio do mouse (trocável) enquanto segura o mesmo bloco que está olhando.",
     "tweed4_tailor_screen.screen.mousewheelie.tool-picking.pick-from-inventory": "Seleciona de todo o inventário",
-    "tweed4_tailor_screen.screen.mousewheelie.tool-picking.pick-from-inventory.description": "Permite selecionar ferramentas do inventário inteiro.\nSe desabilitado, só irá selecionar da hotbar."
+    "tweed4_tailor_screen.screen.mousewheelie.tool-picking.pick-from-inventory.description": "Permite selecionar ferramentas do inventário inteiro.\nSe desabilitado, só irá selecionar da hotbar.",
+    "key.mousewheelie.restock_modifier": "Modificador de Reabastecimento",
+    "key.mousewheelie.deposit_modifier": "Modificador de Depósito"
 }
