@@ -95,5 +95,6 @@
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.description": "Gegenstände können durch Scrollen über einem Gegenstandsstapel leicht in das Inventar oder heraus bewegt werden.\nIn Kombination mit Modifikationen wie der Umschalt- oder Steuerungstaste (in den Tastenbelegungseinstellungen anpassbar) können ganze Stapel gescrollt werden, alle Gegenstände einer Sorte oder alle Gegenstände eines Inventars.",
     "tweed4_tailor_screen.screen.mousewheelie.general.enable-bundle-dragging": "Bündelverschiebung aktivieren",
     "tweed4_tailor_screen.screen.mousewheelie.refill.enable.description": "Aktiviert automatische Gegenstandsauffüllung.\nDeaktiviere dies, um automatisches Auffüllen zu deaktivieren.",
-    "tweed4_tailor_screen.screen.mousewheelie.refill.enable": "Aktiviere automatische Gegenstandsauffüllung"
+    "tweed4_tailor_screen.screen.mousewheelie.refill.enable": "Aktiviere automatische Gegenstandsauffüllung",
+    "key.mousewheelie.restock_modifier": "Auffüll Modifikator"
 }
