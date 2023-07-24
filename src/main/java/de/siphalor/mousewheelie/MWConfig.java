@@ -107,6 +107,8 @@ public class MWConfig {
 		public boolean offHand = true;
 		public boolean restoreSelectedSlot = false;
 
+		public boolean itemChanges = true;
+
 		public boolean eat = true;
 		public boolean drop = true;
 		public boolean use = true;

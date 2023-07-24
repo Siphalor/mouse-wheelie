@@ -50,15 +50,9 @@ public abstract class MixinContainer {
 		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.enable && MWConfig.refill.other) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
 			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
-				ItemStack stack = inventory.getMainHandStack();
-				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {
-					MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
-				}
+				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getMainHandStack(), itemStacks.get(index));
 			} else if (40 == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
-				ItemStack stack = inventory.getStack(40);
-				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {
-					MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
-				}
+				MWClient.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.getStack(40), itemStacks.get(index));
 			}
 		}
 	}

@@ -66,6 +66,8 @@
     "tweed4_tailor_screen.screen.mousewheelie.refill.off-hand.description": "Refills stacks in the off hand.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.restore-selected-slot": "Restore selected slot",
     "tweed4_tailor_screen.screen.mousewheelie.refill.restore-selected-slot.description": "Restore the refilled item to the originally selected slot.\nThis will take a tad more time. You might want to turn this off on slow connections.",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes": "Refill when current item changes",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes.description": "Refill when the item just used changes to a different item.\nThis is e.g. triggered when filling or emptying water buckets.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.eat": "Refill when eating food",
     "tweed4_tailor_screen.screen.mousewheelie.refill.eat.description": "Refill when the last food item in the hand has been consumed.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.drop": "Refill when dropping items",

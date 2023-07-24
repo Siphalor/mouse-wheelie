@@ -47,7 +47,7 @@ public abstract class MixinLivingEntity {
 		if ((Object) this instanceof PlayerEntity && MWConfig.refill.enable && MWConfig.refill.eat && activeItemStack.isEmpty()) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
 			activeItemStack.setCount(1);
-			MWClient.scheduleRefill(getActiveHand(), playerInventory, activeItemStack.copy());
+			MWClient.scheduleRefillUnchecked(getActiveHand(), playerInventory, activeItemStack.copy());
 			activeItemStack.setCount(0);
 		}
 	}
