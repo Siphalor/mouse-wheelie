@@ -76,13 +76,13 @@ public class InventorySorter {
 			this.inventorySlots = new Slot[0];
 			return;
 		}
-		ArrayList<Slot> inventorySlots = new ArrayList<>();
+		ArrayList<Slot> slotsInScope = new ArrayList<>();
 		for (Slot slot : containerScreen.getScreenHandler().slots) {
 			if (originScope == screenHelper.getScope(slot, true)) {
-				inventorySlots.add(slot);
+				slotsInScope.add(slot);
 			}
 		}
-		this.inventorySlots = inventorySlots.toArray(new Slot[0]);
+		this.inventorySlots = slotsInScope.toArray(new Slot[0]);
 	}
 
 	private void combineStacks() {
