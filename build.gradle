@@ -53,9 +53,7 @@ dependencies {
 	fabric_deps.forEach { include(modImplementation(fabricApi.module(it, fabric_api_version)))}
 	modImplementation(fabricApi.module("fabric-item-groups-v0", fabric_api_version))
 
-	modImplementation("com.terraformersmc:modmenu:(,1.17)") {
-		exclude group: "net.fabricmc.fabric-api"
-	}
+	modCompileOnly "com.terraformersmc:modmenu:(,1.17)"
 
 	include(modApi(platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")))
 	def tweed_deps = [
