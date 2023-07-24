@@ -96,6 +96,7 @@ public class MWConfig {
 		public SortMode primarySort = SortMode.RAW_ID;
 		public SortMode shiftSort = SortMode.QUANTITY;
 		public SortMode controlSort = SortMode.ALPHABET;
+		public boolean serverAcceleratedSorting = true;
 	}
 
 	public static Refill refill = new Refill();
