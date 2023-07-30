@@ -35,6 +35,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	compileOnly(annotationProcessor("org.projectlombok:lombok:$lombok_version"))
+	testCompileOnly(testAnnotationProcessor("org.projectlombok:lombok:$lombok_version"))
+
 	def fabric_deps = [
 	        'fabric-api-base',
             'fabric-events-interaction-v0',
@@ -44,12 +47,13 @@ dependencies {
             'fabric-networking-api-v1',
 			'fabric-tag-extensions-v0',
 			'fabric-tool-attribute-api-v1',
+			'fabric-mining-level-api-v1',
 			'fabric-resource-loader-v0'
 	]
 	fabric_deps.forEach { include(modImplementation(fabricApi.module(it, fabric_api_version)))}
 	modImplementation(fabricApi.module("fabric-item-groups-v0", fabric_api_version))
 
-	modImplementation("com.terraformersmc:modmenu:2.0.14")
+	modCompileOnly "com.terraformersmc:modmenu:2.0.14"
 
 	include(modApi(platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")))
 	def tweed_deps = [
