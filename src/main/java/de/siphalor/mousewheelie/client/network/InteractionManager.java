@@ -18,6 +18,7 @@
 package de.siphalor.mousewheelie.client.network;
 
 import de.siphalor.mousewheelie.client.MWClient;
+import lombok.CustomLog;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
+@CustomLog
 public class InteractionManager {
 	private static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
 	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
@@ -87,22 +89,31 @@ public class InteractionManager {
 						waiter = null;
 						break;
 					}
-					if (event.shouldRunOnMainThread()) {
-						Waiter blockingWaiter = tt -> false;
-						waiter = blockingWaiter;
-						MinecraftClient.getInstance().execute(() -> {
-							synchronized (interactionEventQueue) {
-								if (waiter == blockingWaiter) {
-									waiter = event.send();
-								}
-							}
-						});
-					} else {
-						waiter = event.send();
-					}
+
+					doSendEvent(event);
 				} while (waiter.trigger(TriggerType.INITIAL));
 			}
 		}
+	}
+
+	private static void doSendEvent(InteractionEvent event) {
+		if (event.shouldRunOnMainThread()) {
+			runOnMainThread(event);
+		} else {
+			waiter = event.send();
+		}
+	}
+
+	private static void runOnMainThread(InteractionEvent event) {
+		Waiter blockingWaiter = tt -> false;
+		waiter = blockingWaiter;
+		MinecraftClient.getInstance().execute(() -> {
+			synchronized (interactionEventQueue) {
+				if (waiter == blockingWaiter) {
+					waiter = event.send();
+				}
+			}
+		});
 	}
 
 	public static void setTickRate(long milliSeconds) {
@@ -116,8 +127,7 @@ public class InteractionManager {
 		try {
 			triggerSend(TriggerType.TICK);
 		} catch (Exception e) {
-			System.err.println("Mouse Wheelie: Error while ticking InteractionManager");
-			e.printStackTrace();
+			log.error("Error while ticking InteractionManager", e);
 		}
 	}
 
@@ -265,11 +275,6 @@ public class InteractionManager {
 		public Waiter send() {
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 			return waiter;
-		}
-
-		@Override
-		public boolean shouldRunOnMainThread() {
-			return false;
 		}
 	}
 }

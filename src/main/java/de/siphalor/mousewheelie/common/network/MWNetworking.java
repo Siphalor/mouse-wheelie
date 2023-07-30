@@ -15,21 +15,19 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.common.network;
 
-import lombok.RequiredArgsConstructor;
+import de.siphalor.mousewheelie.MouseWheelie;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 
-@RequiredArgsConstructor
-public enum ScrollAction {
-	PASS(false, false), SUCCESS(true, true), FAILURE(false, true), ABORT(true, false);
-	final boolean cancelCustomActions;
-	final boolean cancelAllActions;
+public class MWNetworking {
+	protected MWNetworking() {}
 
-	public boolean cancelsAllActions() {
-		return cancelAllActions;
-	}
+	protected static final Identifier REORDER_INVENTORY_C2S_PACKET = new Identifier(MouseWheelie.MOD_ID, "reorder_inventory_c2s");
 
-	public boolean cancelsCustomActions() {
-		return cancelCustomActions;
+	protected static PacketByteBuf createBuffer() {
+		return new PacketByteBuf(Unpooled.buffer());
 	}
 }

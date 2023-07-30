@@ -25,7 +25,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
@@ -70,13 +69,8 @@ public class MixinClientPlayNetworkHandler {
 		if (MWConfig.refill.enable && MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.getInventory();
-			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
-				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
-					ItemStack stack = inventory.getStack(inventory.selectedSlot);
-					if (!stack.isEmpty()) {
-						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
-					}
-				}
+			if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
+				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getStack(inventory.selectedSlot), packet.getItemStack());
 			}
 		}
 	}
@@ -86,13 +80,8 @@ public class MixinClientPlayNetworkHandler {
 		//noinspection ConstantConditions
 		if (MWConfig.refill.enable && MWConfig.refill.other && client.player.currentScreenHandler == client.player.playerScreenHandler && packet.getSlot() == 45) {
 			PlayerInventory inventory = client.player.getInventory();
-			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
-				if (packet.getSlot() == 45) {
-					ItemStack stack = inventory.offHand.get(0);
-					if (!stack.isEmpty()) {
-						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
-					}
-				}
+			if (packet.getSlot() == 45) { // OFF_HAND
+				MWClient.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.offHand.get(0), packet.getItemStack());
 			}
 		}
 	}
