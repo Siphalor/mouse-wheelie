@@ -34,8 +34,9 @@ public abstract class MixinAbstractButtonWidget {
 	public void mouseClicked(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (this.clicked(x, y)) {
 			if (this instanceof ISpecialClickableButtonWidget) {
-				if (((ISpecialClickableButtonWidget) this).mouseClicked(button))
+				if (((ISpecialClickableButtonWidget) this).mouseClicked(button)) {
 					callbackInfoReturnable.setReturnValue(true);
+				}
 			}
 		}
 	}

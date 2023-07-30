@@ -30,7 +30,10 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	private static final Map<String, SortMode> SORT_MODES = new HashMap<>();
 	private final String name;
 
-	public static final SortMode NONE, ALPHABET, QUANTITY, RAW_ID;
+	public static final SortMode NONE;
+	public static final SortMode ALPHABET;
+	public static final SortMode QUANTITY;
+	public static final SortMode RAW_ID;
 
 	public static <T extends SortMode> T register(String name, T sortMode) {
 		SORT_MODES.put(name, sortMode);
@@ -53,27 +56,6 @@ public abstract class SortMode implements DropdownMaterial<SortMode> {
 	 * @return The sorted array of slot indices
 	 */
 	public int[] sort(int[] sortIds, ItemStack[] stacks, SortContext context) {
-		Integer[] boxedSortIds = new Integer[sortIds.length];
-		for (int i = 0; i < sortIds.length; i++) {
-			boxedSortIds[i] = sortIds[i];
-		}
-		boxedSortIds = sort(boxedSortIds, stacks);
-		for (int i = 0; i < sortIds.length; i++) {
-			sortIds[i] = boxedSortIds[i];
-		}
-		return sortIds;
-	}
-
-	/**
-	 * Sorts the given slot ids using the given stacks in the slots. Sorting may be done in place.
-	 * @param sortIds An array of the current slot indices
-	 * @param stacks The stacks in the respective slots
-	 * @return The sorted array of slot indices
-	 * @deprecated Please use the primitive variant {@link SortMode#sort(int[], ItemStack[], SortContext)} instead.
-	 * @see SortMode#sort(int[], ItemStack[], SortContext)
-	 */
-	@Deprecated
-	public Integer[] sort(Integer[] sortIds, ItemStack[] stacks) {
 		return sortIds;
 	}
 

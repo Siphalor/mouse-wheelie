@@ -102,9 +102,35 @@ public class MWClient implements ClientModInitializer {
 		});
 	}
 
-	public static void scheduleRefill(Hand hand, PlayerInventory inventory, ItemStack stack) {
+	/**
+	 * Schedules a refill if a refill scenario is encountered.
+	 * @param hand the hand to potentially refill
+	 * @param inventory the player inventory
+	 * @param oldStack the old stack in the hand
+	 * @param newStack the new stack in the hand
+	 * @return whether a refill has been scheduled
+	 */
+	public static boolean scheduleRefillChecked(Hand hand, PlayerInventory inventory, ItemStack oldStack, ItemStack newStack) {
+		if (MinecraftClient.getInstance().currentScreen != null) {
+			return false;
+		}
+
+		if (!oldStack.isEmpty() && (newStack.isEmpty() || (MWConfig.refill.itemChanges && oldStack.getItem() != newStack.getItem()))) {
+			scheduleRefillUnchecked(hand, inventory, oldStack.copy());
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Unconditionally schedules a refill.
+	 * @param hand the hand to refill
+	 * @param inventory the player inventory
+	 * @param referenceStack the stack to decide the refilling by
+	 */
+	public static void scheduleRefillUnchecked(Hand hand, PlayerInventory inventory, ItemStack referenceStack) {
 		refillHand = hand;
-		SlotRefiller.set(inventory, stack);
+		SlotRefiller.set(inventory, referenceStack);
 	}
 
 	public static boolean performRefill() {
