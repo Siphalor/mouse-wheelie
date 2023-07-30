@@ -34,8 +34,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
@@ -44,6 +46,8 @@ public class SlotRefiller {
 	private static ItemStack stack;
 
 	private static final ConcurrentLinkedDeque<Rule> rules = new ConcurrentLinkedDeque<>();
+
+	private SlotRefiller() {}
 
 	public static void set(PlayerInventory playerInventory, ItemStack stack) {
 		SlotRefiller.playerInventory = playerInventory;
@@ -60,60 +64,73 @@ public class SlotRefiller {
 
 	@SuppressWarnings("UnusedReturnValue")
 	public static boolean refill(Hand hand) {
-		if (stack.getItem() == Items.TRIDENT) {
-			if (EnchantmentHelper.getLoyalty(stack) > 0) {
-				return false;
-			}
+		if (stack.getItem() == Items.TRIDENT && EnchantmentHelper.getLoyalty(stack) > 0) {
+			return false;
 		}
 
 		Iterator<Rule> iterator = rules.descendingIterator();
 		while (iterator.hasNext()) {
 			Rule rule = iterator.next();
-			if (rule.matches(stack)) {
-				int slot = rule.findMatchingStack(playerInventory, stack);
-				if (slot != -1) {
-					if (slot == playerInventory.selectedSlot) {
-						return true;
-					}
+			if (!rule.matches(stack)) {
+				continue;
+			}
 
-					if (slot < 9) {
-						if (MWConfig.refill.restoreSelectedSlot) {
-							if (hand == Hand.MAIN_HAND && !playerInventory.offHand.get(0).isEmpty()) {
-								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-							}
-							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot), InteractionManager.TICK_WAITER));
-							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot), InteractionManager.TICK_WAITER));
-							if (hand == Hand.MAIN_HAND) {
-								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-							}
-						} else {
-							if (hand == Hand.OFF_HAND) {
-								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-							}
-							playerInventory.selectedSlot = slot;
-							InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(slot), InteractionManager.TICK_WAITER));
-							if (hand == Hand.OFF_HAND) {
-								InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-							}
-						}
-					} else {
-						if (hand == Hand.OFF_HAND) {
-							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-						}
-						InteractionManager.push(new InteractionManager.PacketEvent(
-								new PickFromInventoryC2SPacket(slot),
-								triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE
-						));
-						if (hand == Hand.OFF_HAND) {
-							InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-						}
-					}
-					return true;
-				}
+			int slot = rule.findMatchingStack(playerInventory, stack);
+
+			if (slot != -1) {
+				refillFromSlot(hand, slot);
+				return true;
 			}
 		}
 		return false;
+	}
+
+	private static void refillFromSlot(Hand hand, int slot) {
+		if (slot == playerInventory.selectedSlot) {
+			return;
+		}
+
+		if (slot < 9) {
+			refillFromHotbar(hand, slot);
+		} else {
+			refillFromInventory(hand, slot);
+		}
+	}
+
+	private static void refillFromHotbar(Hand hand, int hotbarSlot) {
+		if (MWConfig.refill.restoreSelectedSlot) {
+			if (hand == Hand.MAIN_HAND && !playerInventory.offHand.get(0).isEmpty()) {
+				InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			}
+			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(hotbarSlot), InteractionManager.TICK_WAITER));
+			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot), InteractionManager.TICK_WAITER));
+			if (hand == Hand.MAIN_HAND) {
+				InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			}
+		} else {
+			if (hand == Hand.OFF_HAND) {
+				InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			}
+			playerInventory.selectedSlot = hotbarSlot;
+			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(hotbarSlot), InteractionManager.TICK_WAITER));
+			if (hand == Hand.OFF_HAND) {
+				InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			}
+		}
+	}
+
+	private static void refillFromInventory(Hand hand, int inventorySlot) {
+		if (hand == Hand.OFF_HAND) {
+			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+		}
+		InteractionManager.push(new InteractionManager.PacketEvent(
+				new PickFromInventoryC2SPacket(inventorySlot),
+				triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE
+		));
+		if (hand == Hand.OFF_HAND) {
+			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+		}
 	}
 
 	static {
@@ -126,12 +143,12 @@ public class SlotRefiller {
 		rules.add(new EqualStackRule());
 	}
 
-	public static abstract class Rule {
+	public abstract static class Rule {
 		/**
 		 * Creates a new rule.
 		 * Automatically registers this rule to the list of rules.
 		 */
-		public Rule() {
+		protected Rule() {
 			rules.add(this);
 		}
 
@@ -155,12 +172,12 @@ public class SlotRefiller {
 		/***
 		 * Utility function that iterates over all slots of the player inventory and returns the first slot that matches the given predicate.
 		 * @param playerInventory The player inventory to search in.
-		 * @param consumer        The predicate to check for.
+		 * @param predicate       The predicate to check for.
 		 * @return The slot index of the matching stack or -1 if no match was found.
 		 */
-		protected int iterateInventory(PlayerInventory playerInventory, Function<ItemStack, Boolean> consumer) {
+		protected int iterateInventory(PlayerInventory playerInventory, Predicate<ItemStack> predicate) {
 			for (int i = 0; i < playerInventory.main.size(); i++) {
-				if (consumer.apply(playerInventory.main.get(i)))
+				if (predicate.test(playerInventory.main.get(i)))
 					return i;
 			}
 			return -1;
@@ -275,7 +292,7 @@ public class SlotRefiller {
 				for (Iterator<Class<?>> iterator = classes.iterator(); iterator.hasNext(); classRank--) {
 					if (classRank <= 0) break;
 					if (classRank <= currentRank) continue outer;
-					if (clazz.equals(iterator.next())) {
+					if (Objects.equals(clazz, iterator.next())) {
 						if (classRank >= classesSize) return i;
 						currentRank = classRank;
 						index = i;

@@ -233,12 +233,9 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		} else {
 			if (slot.inventory instanceof PlayerInventory) {
 				if (isHotbarSlot(slot)) {
-					if (MWConfig.general.hotbarScoping == MWConfig.General.HotbarScoping.HARD) {
+					if (MWConfig.general.hotbarScoping == MWConfig.General.HotbarScoping.HARD
+							|| MWConfig.general.hotbarScoping == MWConfig.General.HotbarScoping.SOFT && preferSmallerScopes) {
 						return -1;
-					} else if (MWConfig.general.hotbarScoping == MWConfig.General.HotbarScoping.SOFT) {
-						if (preferSmallerScopes) {
-							return -1;
-						}
 					}
 				}
 				return 0;
@@ -338,10 +335,9 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		});
 
 		runInScope(scope, slot -> {
-			if (slot.hasStack()) {
-				if (itemKinds.contains(ItemKind.of(slot.getStack()))) {
-					sendStackLocked(slot);
-				}
+			if (slot.hasStack() && itemKinds.contains(ItemKind.of(slot.getStack()))) {
+				sendStackLocked(slot);
+
 			}
 		});
 	}
@@ -424,7 +420,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		int complementaryScope = getComplementaryScope(scope);
 
 		slotsByItemKind.asMap().forEach((itemKind, slots) ->
-			restockAllOfAKind(slots.iterator(), complementaryScope)
+				restockAllOfAKind(slots.iterator(), complementaryScope)
 		);
 	}
 
