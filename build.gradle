@@ -37,6 +37,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	compileOnly(annotationProcessor("org.projectlombok:lombok:$lombok_version"))
+	testCompileOnly(testAnnotationProcessor("org.projectlombok:lombok:$lombok_version"))
+
 	def fabric_deps = [
 	        'fabric-api-base',
             'fabric-events-interaction-v0',
@@ -78,6 +81,13 @@ configurations.include.dependencies.each {
 	if (!it.name.contains("bom")) {
 		it.transitive = false
 	}
+}
+
+// Force loader version
+configurations.configureEach {
+   resolutionStrategy {
+     force("net.fabricmc:fabric-loader:$project.loader_version")
+   }
 }
 
 //sourceSets.main.java.exclude("**/ModMenu*")

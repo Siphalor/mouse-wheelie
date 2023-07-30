@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.inventory.sort;
 
+import lombok.Value;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -28,29 +29,15 @@ import java.util.List;
  *
  * @see SortMode#sort(int[], ItemStack[], SortContext)
  */
+@Value
 public class SortContext {
-	private final ContainerScreen<?> screen;
-	private final List<Slot> relevantSlots;
-
-	public SortContext(ContainerScreen<?> screen, List<Slot> relevantSlots) {
-		this.screen = screen;
-		this.relevantSlots = relevantSlots;
-	}
-
 	/**
-	 * Gets the screen that is currently sorted on.
-	 * @return The screen
+	 * The screen that is currently sorted on.
 	 */
-	public ContainerScreen<?> getScreen() {
-		return screen;
-	}
-
+	ContainerScreen<?> screen;
 	/**
-	 * Gets the slots that are the target of the current sort action.
+	 * The slots that are the target of the current sort action.
 	 * These slots are usually in the same scope (see {@link de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper#getScope(Slot)}).
-	 * @return The relevant slots
 	 */
-	public List<Slot> getRelevantSlots() {
-		return relevantSlots;
-	}
+	List<Slot> relevantSlots;
 }

@@ -96,6 +96,7 @@ public class MWConfig {
 		public SortMode primarySort = SortMode.RAW_ID;
 		public SortMode shiftSort = SortMode.QUANTITY;
 		public SortMode controlSort = SortMode.ALPHABET;
+		public boolean serverAcceleratedSorting = true;
 	}
 
 	public static Refill refill = new Refill();
@@ -106,6 +107,8 @@ public class MWConfig {
 
 		public boolean offHand = true;
 		public boolean restoreSelectedSlot = false;
+
+		public boolean itemChanges = true;
 
 		public boolean eat = true;
 		public boolean drop = true;

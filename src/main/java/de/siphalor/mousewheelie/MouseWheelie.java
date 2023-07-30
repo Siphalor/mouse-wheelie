@@ -17,33 +17,42 @@
 
 package de.siphalor.mousewheelie;
 
+import de.siphalor.mousewheelie.common.network.MWLogicalServerNetworking;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
+import net.minecraft.world.World;
 
 public class MouseWheelie implements ModInitializer {
 	public static final String MOD_ID = "mousewheelie";
+	public static final String MOD_NAME = "Mouse Wheelie";
 
 	@Override
 	public void onInitialize() {
-		UseItemCallback.EVENT.register((player, world, hand) -> {
-			ItemStack stack = player.getStackInHand(hand);
-			if (MWConfig.general.enableQuickArmorSwapping && !world.isClient()) {
-				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
-				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-					ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
-					int index = 5 + (3 - equipmentSlot.getEntitySlotId());
-					if (!equipmentStack.isEmpty() && player.container.getSlot(index).canTakeItems(player)) {
-						player.setStackInHand(hand, equipmentStack);
-						player.equipStack(equipmentSlot, stack);
-						return ActionResult.SUCCESS;
-					}
+		UseItemCallback.EVENT.register(this::onPlayerUseItem);
+
+		MWLogicalServerNetworking.setup();
+	}
+
+	private ActionResult onPlayerUseItem(PlayerEntity player, World world, Hand hand) {
+		ItemStack stack = player.getStackInHand(hand);
+		if (MWConfig.general.enableQuickArmorSwapping && !world.isClient()) {
+			EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
+			if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
+				ItemStack equipmentStack = player.getEquippedStack(equipmentSlot);
+				int index = 5 + (3 - equipmentSlot.getEntitySlotId());
+				if (!equipmentStack.isEmpty() && player.container.getSlot(index).canTakeItems(player)) {
+					player.setStackInHand(hand, equipmentStack);
+					player.equipStack(equipmentSlot, stack);
+					return ActionResult.SUCCESS;
 				}
 			}
-			return ActionResult.PASS;
-		});
+		}
+		return ActionResult.PASS;
 	}
 }

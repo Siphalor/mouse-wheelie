@@ -46,7 +46,7 @@ public abstract class MixinLivingEntity {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerEntity && MWConfig.refill.enable && MWConfig.refill.eat) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
-			MWClient.scheduleRefill(getActiveHand(), playerInventory, activeItemStack.copy());
+			MWClient.scheduleRefillUnchecked(getActiveHand(), playerInventory, activeItemStack.copy());
 		}
 	}
 }
