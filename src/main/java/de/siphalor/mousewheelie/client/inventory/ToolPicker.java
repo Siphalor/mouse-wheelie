@@ -19,6 +19,7 @@ package de.siphalor.mousewheelie.client.inventory;
 
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
+import lombok.RequiredArgsConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -28,13 +29,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 
 @Environment(EnvType.CLIENT)
+@RequiredArgsConstructor
 public class ToolPicker {
-	final PlayerInventory inventory;
+	private final PlayerInventory inventory;
 
 	static int lastToolPickSlot = -1;
 
-	public ToolPicker(PlayerInventory inventory) {
-		this.inventory = inventory;
+	public static synchronized void setLastToolPickSlot(int lastToolPickSlot) {
+		ToolPicker.lastToolPickSlot = lastToolPickSlot;
 	}
 
 	public int findToolFor(BlockState blockState) {
@@ -83,7 +85,8 @@ public class ToolPicker {
 	}
 
 	private boolean pick(int index) {
-		lastToolPickSlot = index;
+		setLastToolPickSlot(index);
+
 		if (index != -1 && index != inventory.selectedSlot) {
 			PickFromInventoryC2SPacket packet = new PickFromInventoryC2SPacket(index);
 			MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
