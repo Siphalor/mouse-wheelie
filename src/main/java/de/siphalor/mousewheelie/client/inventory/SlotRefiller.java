@@ -122,15 +122,28 @@ public class SlotRefiller {
 
 	private static void refillFromInventory(Hand hand, int inventorySlot) {
 		if (hand == Hand.OFF_HAND) {
+			ItemStack mainHandStack = playerInventory.getMainHandStack();
 			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+
+			pickFromInventory(inventorySlot);
+
+			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
+			// Sometimes the swapping visually duplicates the stack on the client,
+			// so we're manually fixing the visuals here
+			InteractionManager.push(() -> {
+				playerInventory.setStack(playerInventory.selectedSlot, mainHandStack);
+				return InteractionManager.DUMMY_WAITER;
+			});
+		} else {
+			pickFromInventory(inventorySlot);
 		}
+	}
+
+	private static void pickFromInventory(int inventorySlot) {
 		InteractionManager.push(new InteractionManager.PacketEvent(
 				new PickFromInventoryC2SPacket(inventorySlot),
 				triggerType -> triggerType == InteractionManager.TriggerType.HELD_ITEM_CHANGE
 		));
-		if (hand == Hand.OFF_HAND) {
-			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
-		}
 	}
 
 	static {
