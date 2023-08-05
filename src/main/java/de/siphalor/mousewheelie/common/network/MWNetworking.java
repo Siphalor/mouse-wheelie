@@ -27,7 +27,7 @@ public class MWNetworking {
 
 	protected static final Identifier REORDER_INVENTORY_C2S_PACKET = new Identifier(MouseWheelie.MOD_ID, "reorder_inventory_c2s");
 
-	protected static PacketByteBuf createBuffer() {
+	public static PacketByteBuf createBuffer() {
 		return new PacketByteBuf(Unpooled.buffer());
 	}
 }

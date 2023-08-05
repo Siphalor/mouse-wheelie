@@ -150,7 +150,10 @@ public class InventorySorter {
 			slotMappings[i * 2] = inventorySlots[sortedIds[i]].id;
 			slotMappings[i * 2 + 1] = inventorySlots[i].id;
 		}
-		MWClientNetworking.send(new ReorderInventoryPacket(containerScreen.getScreenHandler().syncId, slotMappings));
+		InteractionManager.push(() -> {
+			MWClientNetworking.send(new ReorderInventoryPacket(containerScreen.getScreenHandler().syncId, slotMappings));
+			return InteractionManager.TICK_WAITER;
+		});
 	}
 
 	protected void sortOnClient(int[] sortedIds) {

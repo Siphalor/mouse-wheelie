@@ -60,7 +60,7 @@ public abstract class MixinMinecraftClient {
 			refillScheduled = MWClient.scheduleRefillChecked(Hand.MAIN_HAND, player.getInventory(), mainHandStack, player.getMainHandStack());
 		}
 		if (!refillScheduled && offHandStack != null) {
-			MWClient.scheduleRefillChecked(Hand.MAIN_HAND, player.getInventory(), offHandStack, player.getOffHandStack());
+			MWClient.scheduleRefillChecked(Hand.OFF_HAND, player.getInventory(), offHandStack, player.getOffHandStack());
 		}
 		MWClient.performRefill();
 		mainHandStack = null;
