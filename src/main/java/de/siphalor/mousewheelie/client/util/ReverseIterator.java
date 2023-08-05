@@ -19,6 +19,7 @@ package de.siphalor.mousewheelie.client.util;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class ReverseIterator<T> implements Iterator<T> {
 	private final List<T> backingList;
@@ -40,6 +41,10 @@ public class ReverseIterator<T> implements Iterator<T> {
 
 	@Override
 	public T next() {
+		index -= 1;
+		if (index <= 0) {
+			throw new NoSuchElementException("Iterated past beginning of backing list");
+		}
 		return backingList.get(--index);
 	}
 }
