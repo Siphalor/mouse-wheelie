@@ -87,7 +87,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	public void onMouseDragged(double x, double y, int button, double deltaX, double deltaY, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
 			Slot hoveredSlot = getSlotAt(x, y);
-			if (hoveredSlot != null) {
+			if (hoveredSlot != null && !hoveredSlot.getStack().isEmpty()) {
 				if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
 					screenHelper.get().dropStackLocked(hoveredSlot);
 				} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
@@ -99,31 +99,34 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 
 			if (MWConfig.general.betterFastDragging) {
 				double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-				if (dist > 16.0) {
-					List<Slot> slots = new ArrayList<>();
-					for (int i = 0; i < MathHelper.floor(dist / 16.0); i++) {
-						double curX = x + deltaX - deltaX / dist * 16.0 * i;
-						double curY = y + deltaY - deltaY / dist * 16.0 * i;
-						Slot curSlot = getSlotAt(curX, curY);
-						if (curSlot != null) {
-							slots.add(curSlot);
-						}
+				if (dist <= 16.0) {
+					return;
+				}
+				List<Slot> slots = new ArrayList<>();
+				for (int i = 0; i < MathHelper.floor(dist / 16.0); i++) {
+					double curX = x + deltaX - deltaX / dist * 16.0 * i;
+					double curY = y + deltaY - deltaY / dist * 16.0 * i;
+					Slot curSlot = getSlotAt(curX, curY);
+					if (curSlot != null) {
+						slots.add(curSlot);
 					}
+				}
 
-					if (!slots.isEmpty()) {
-						if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
-							for (Slot slot : slots) {
-								screenHelper.get().dropStackLocked(slot);
-							}
-						} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
-							for (Slot slot : slots) {
-								screenHelper.get().sendStackLocked(slot);
-							}
-						} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
-							for (Slot slot : slots) {
-								screenHelper.get().sendAllOfAKind(slot);
-							}
-						}
+				if (slots.isEmpty()) {
+					return;
+				}
+
+				if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
+					for (Slot slot : slots) {
+						screenHelper.get().dropStackLocked(slot);
+					}
+				} else if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+					for (Slot slot : slots) {
+						screenHelper.get().sendStackLocked(slot);
+					}
+				} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
+					for (Slot slot : slots) {
+						screenHelper.get().sendAllOfAKind(slot);
 					}
 				}
 			}
@@ -133,46 +136,41 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void onMouseClick(double x, double y, int button, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (button == 0) {
+			Slot hoveredSlot = getSlotAt(x, y);
+			if (hoveredSlot == null) {
+				return;
+			}
+
+			boolean success = true;
 			if (MWConfig.general.enableDropModifier && MWClient.DROP_MODIFIER.isPressed()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
-					if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
-						if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
-							screenHelper.get().dropAllFrom(hoveredSlot);
-						} else {
-							screenHelper.get().dropAllOfAKind(hoveredSlot);
-						}
+				if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
+					if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+						screenHelper.get().dropAllFrom(hoveredSlot);
 					} else {
-						onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+						screenHelper.get().dropAllOfAKind(hoveredSlot);
 					}
-					callbackInfoReturnable.setReturnValue(true);
+				} else {
+					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
 				}
 			} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
-					if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
-						screenHelper.get().sendAllFrom(hoveredSlot);
-					} else {
-						screenHelper.get().sendAllOfAKind(hoveredSlot);
-					}
-					callbackInfoReturnable.setReturnValue(true);
+				if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+					screenHelper.get().sendAllFrom(hoveredSlot);
+				} else {
+					screenHelper.get().sendAllOfAKind(hoveredSlot);
 				}
 			} else if (MWClient.DEPOSIT_MODIFIER.isPressed()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
-					screenHelper.get().depositAllFrom(hoveredSlot);
-					callbackInfoReturnable.setReturnValue(true);
-				}
+				screenHelper.get().depositAllFrom(hoveredSlot);
 			} else if (MWClient.RESTOCK_MODIFIER.isPressed()) {
-				Slot hoveredSlot = getSlotAt(x, y);
-				if (hoveredSlot != null) {
-					if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
-						screenHelper.get().restockAll(hoveredSlot);
-					} else {
-						screenHelper.get().restockAllOfAKind(hoveredSlot);
-					}
-					callbackInfoReturnable.setReturnValue(true);
+				if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
+					screenHelper.get().restockAll(hoveredSlot);
+				} else {
+					screenHelper.get().restockAllOfAKind(hoveredSlot);
 				}
+			} else {
+				success = false;
+			}
+			if (success) {
+				callbackInfoReturnable.setReturnValue(true);
 			}
 		}
 	}
