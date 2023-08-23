@@ -25,7 +25,7 @@
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.invert": "Scroll-Richtung umkehren",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.invert.description": "Kehre die Scrollrichtung beim Scrollen von Gegenständen um.",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.directional-scrolling": "Richtungsgesteuertes Scrollen",
-    "tweed4_tailor_screen.screen.mousewheelie.scrolling.directional-scrolling.description": "Gegenstände in die Richtung bewegen, in die gescrollt wird.\nAlternativ werden Stacks je nach Scroll-Richtung vergrößert bzw. verkleinert.",
+    "tweed4_tailor_screen.screen.mousewheelie.scrolling.directional-scrolling.description": "Wenn aktiviert, werden Gegenstände basierend auf der visuellen Position auf dem Bildschirm bewegt:\nBeim Scrollen nach oben werden Gegenstände in das höhere Inventar, beim Scrollen nach unten in das niedrigere Inventar bewegt.\nWenn deaktiviert, wird stattdessen die Menge der Gegenstände beeinflusst:\nBeim Scrollen nach oben werden Gegenstände zum Stapel bewegt, beim Srollen nach unten werden Gegenstände in das andere Inventar bewegt.\n\nMit \"Scroll-Richtung umkehren\" kannst du für diese Aktionen das Verhalten beim Hoch- und Runterscrollen umkehren.",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-items": "Gegenstände aus dem Kreativ-Inventar scrollen",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-items.description": "Definiert, ob Gegenstände aus dem Kreativ-Inventar gescrollt werden oder ob das Kreativ-Inventar selbst bewegt werden soll (Vanilla).",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-tabs": "Tabs vom Kreativ-Inventar scrollen",
@@ -81,7 +81,7 @@
     "tweed4_tailor_screen.screen.mousewheelie.general.item-kinds-nbt-match-mode.description": "Ob, Gegenstandstypen die Einteilung nach NBT-Daten vornehmen.\nDies hat beispielsweise Einfluss auf Scrollen oder das Fallenlassen von Gegenständen aus dem Inventar.\nNONE deaktiviert die NBT-Prüfung, ALL prüft auf den exakt gleichen Gegenstand und SOME erlaubt Abweichungen im Gegenstandsschaden und in Verzauberungen.",
     "tweed4_tailor_screen.screen.mousewheelie.general.better-fast-dragging.description": "Dies hilft, wenn du häufig die Maus schneller bewegst als das Spiel dies registrieren kann.\nDiese Option kann allerdings die Leistung beeinflussen.",
     "tweed4_tailor_screen.screen.mousewheelie.sort.description": "Ändert die Sortiermodi. Existierende Modi sind ALPHABET (alphabetisch), RAW_ID (wie Kreativinventar) und QUANTITY (nach Größe und Menge der Stapel).\nAb Version 1.19 gibt es außerdem CREATIVE_SEARCH (wie die Suche im Kreativinventar).",
-    "tweed4_tailor_screen.screen.mousewheelie.refill.description": "Itemauffüllung holt automatisch mehr Gegenstände der gleichen Art aus dem Inventar, wenn der gerade benutzte Stapel leer wird.\nDas ist zum Beispiel nützlich beim Bauen mit sehr vielen Blöcken der gleichen Sorte, so dass du nicht ständig das Inventar öffnen musst.",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.description": "Itemauffüllung holt automatisch mehr Gegenstände der gleichen Art aus dem Inventar, wenn der gerade benutzte Stapel leer wird.\nDas ist zum Beispiel nützlich beim Bauen mit sehr vielen Blöcken der gleichen Sorte, sodass du nicht ständig das Inventar öffnen musst.\n\nDer erste Bereich dieser Einstellungen erlaubt es einzustellen, wann oder unter welchen Bedingungen Gegenstände aufgefüllt werden.\nIm Bereich \"Auffüll-Regeln\" kannst du einstellen, mit welchen Gegenständen der Gegenstand in deiner Hand nachgefüllt wird.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.restore-selected-slot.description": "Stellt sicher, dass Gegenstände in den zuvor gewählten Hotbar-Slot nachgefüllt werden.\nDies kann etwas länger dauern. Bei langsameren Verbindungen sollte dies eventuell deaktiviert werden.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.rules.item-hierarchy.description": "Versuche ähnliche Gegenstände durch die Gegenstandstyphierarchie zu finden.\nDas bedeutet normalerweise eine ähnliche Funktion.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.rules.block-hierarchy.description": "Versuche ähnliche Blöcke durch die Blocktyphierarchie zu finden.\nDas bedeutet normalerweise eine ähnliche Funktion.",
@@ -96,5 +96,10 @@
     "tweed4_tailor_screen.screen.mousewheelie.general.enable-bundle-dragging": "Bündelverschiebung aktivieren",
     "tweed4_tailor_screen.screen.mousewheelie.refill.enable.description": "Aktiviert automatische Gegenstandsauffüllung.\nDeaktiviere dies, um automatisches Auffüllen zu deaktivieren.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.enable": "Aktiviere automatische Gegenstandsauffüllung",
-    "key.mousewheelie.restock_modifier": "Auffüll Modifikator"
+    "key.mousewheelie.restock_modifier": "Auffüll Modifikator",
+    "tweed4_tailor_screen.screen.mousewheelie.sort.server-accelerated-sorting": "Serverbeschleunigtes Sortieren",
+    "tweed4_tailor_screen.screen.mousewheelie.sort.server-accelerated-sorting.description": "Ob im Einzelspieler oder wenn Mouse Wheelie auf dem Server installiert ist, serverbeschleunigtes Sortieren genutzt werden soll.",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes.description": "Füllt Gegenstände in der Hand nach, wenn sie sich verändern.\nDies passiert z. B., wenn man Eimer auffüllt oder ausleert.",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes": "Nachladen, wenn sich der gewählte Gegenstand ändert",
+    "key.mousewheelie.deposit_modifier": "Lager-Modifikator"
 }
