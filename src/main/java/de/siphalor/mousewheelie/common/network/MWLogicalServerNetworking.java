@@ -33,7 +33,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +74,7 @@ public class MWLogicalServerNetworking extends MWNetworking {
 			return;
 		}
 
-		ArrayList<ItemStack> stacks = screenHandler.slots.stream().map(Slot::getStack).collect(Collectors.toCollection(ArrayList::new));
+		List<ItemStack> stacks = screenHandler.slots.stream().map(Slot::getStack).collect(Collectors.toList());
 
 		for (int i = 0; i < slotMapping.length; i += 2) {
 			int originSlotId = slotMapping[i];
@@ -150,7 +150,7 @@ public class MWLogicalServerNetworking extends MWNetworking {
 		}
 
 		if (targetInv != slot.inventory) {
-			log.warn("Reorder inventory packet contains slots from different inventories!");
+			log.warn("Reorder inventory packet contains slots from different inventories, first: {}, now: {}!", targetInv, slot.inventory);
 			return false;
 		}
 		return true;

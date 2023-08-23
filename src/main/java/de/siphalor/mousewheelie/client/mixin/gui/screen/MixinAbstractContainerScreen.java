@@ -25,7 +25,8 @@ import de.siphalor.mousewheelie.client.inventory.sort.InventorySorter;
 import de.siphalor.mousewheelie.client.inventory.sort.SortMode;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -78,7 +79,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Unique
 	private final Supplier<ContainerScreenHelper<HandledScreen<ScreenHandler>>> screenHelper = Suppliers.memoize(
 			() -> ContainerScreenHelper.of((HandledScreen<ScreenHandler>) (Object) this, (slot, data, slotActionType) -> new InteractionManager.CallbackEvent(() -> {
-				onMouseClick(slot, slot.id, data, slotActionType);
+				onMouseClick(slot, ((ISlot) slot).mouseWheelie_getIdInContainer(), data, slotActionType);
 				return InteractionManager.TICK_WAITER;
 			}, true))
 	);
@@ -150,7 +151,7 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 						screenHelper.get().dropAllOfAKind(hoveredSlot);
 					}
 				} else {
-					onMouseClick(hoveredSlot, hoveredSlot.id, 1, SlotActionType.THROW);
+					onMouseClick(hoveredSlot, ((ISlot) hoveredSlot).mouseWheelie_getIdInContainer(), 1, SlotActionType.THROW);
 				}
 			} else if (MWClient.ALL_OF_KIND_MODIFIER.isPressed()) {
 				if (MWClient.WHOLE_STACK_MODIFIER.isPressed()) {
@@ -194,9 +195,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			if (scrollAmount < 0 && (Object) this instanceof InventoryScreen) {
 				EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(hoveredSlot.getStack());
 				if (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					int hoveredSlotId = ((ISlot) hoveredSlot).mouseWheelie_getIdInContainer();
+					InteractionManager.pushClickEvent(handler.syncId, hoveredSlotId, 0, SlotActionType.PICKUP);
 					InteractionManager.pushClickEvent(handler.syncId, 8 - equipmentSlot.getEntitySlotId(), 0, SlotActionType.PICKUP);
-					InteractionManager.pushClickEvent(handler.syncId, hoveredSlot.id, 0, SlotActionType.PICKUP);
+					InteractionManager.pushClickEvent(handler.syncId, hoveredSlotId, 0, SlotActionType.PICKUP);
 					return ScrollAction.SUCCESS;
 				}
 			}

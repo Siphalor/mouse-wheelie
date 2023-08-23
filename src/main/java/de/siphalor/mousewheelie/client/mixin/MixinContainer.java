@@ -19,7 +19,7 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -49,9 +49,9 @@ public abstract class MixinContainer {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.enable && MWConfig.refill.other) {
 			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
-			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
+			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getIndexInInv()) {
 				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getMainHandStack(), itemStacks.get(index));
-			} else if (40 == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
+			} else if (40 == ((ISlot) getSlot(index)).mouseWheelie_getIndexInInv()) {
 				MWClient.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.getStack(40), itemStacks.get(index));
 			}
 		}
