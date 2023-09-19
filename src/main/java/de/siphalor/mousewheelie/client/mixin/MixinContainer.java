@@ -48,11 +48,15 @@ public abstract class MixinContainer {
 	public void onSlotUpdate(List<ItemStack> itemStacks, CallbackInfo callbackInfo, int index) {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.enable && MWConfig.refill.other) {
-			PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
-			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getIndexInInv()) {
-				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getMainHandStack(), itemStacks.get(index));
-			} else if (40 == ((ISlot) getSlot(index)).mouseWheelie_getIndexInInv()) {
-				MWClient.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.getStack(40), itemStacks.get(index));
+			PlayerInventory playerInventory = MinecraftClient.getInstance().player.inventory;
+			Slot targetSlot = getSlot(index);
+			if (targetSlot.inventory != playerInventory) return;
+
+			int indexInInv = ((ISlot) targetSlot).mouseWheelie_getIndexInInv();
+			if (indexInInv == playerInventory.selectedSlot) {
+				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, playerInventory, playerInventory.getMainHandStack(), itemStacks.get(index));
+			} else if (indexInInv == 40) {
+				MWClient.scheduleRefillChecked(Hand.OFF_HAND, playerInventory, playerInventory.getStack(40), itemStacks.get(index));
 			}
 		}
 	}

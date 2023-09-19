@@ -64,6 +64,8 @@
     "tweed4_tailor_screen.screen.mousewheelie.refill.description": "Item refilling is a feature that automatically loads more items from your inventory when your current stack runs out.\nThis is for example useful when building with a lot of the same block, so you don't have to constantly open your inventory.\n\nThe first section of this config concerns which or under which circumstances items will get refilled.\nThe \"Refill rules\" section, allows you to configure how the replacement stack will be determined by searching your inventory.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.enable": "Enable item refilling",
     "tweed4_tailor_screen.screen.mousewheelie.refill.enable.description": "Enables item refilling.\nTurn this off to disable refilling entirely.",
+	"tweed4_tailor_screen.screen.mousewheelie.refill.play-sound": "Play refill sound",
+	"tweed4_tailor_screen.screen.mousewheelie.refill.play-sound.description": "Plays a sound after refilling a stack.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.off-hand": "Refill the off hand",
     "tweed4_tailor_screen.screen.mousewheelie.refill.off-hand.description": "Refills stacks in the off hand.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.restore-selected-slot": "Restore selected slot",
