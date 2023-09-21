@@ -101,5 +101,7 @@
     "tweed4_tailor_screen.screen.mousewheelie.sort.server-accelerated-sorting.description": "Ob im Einzelspieler oder wenn Mouse Wheelie auf dem Server installiert ist, serverbeschleunigtes Sortieren genutzt werden soll.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes.description": "Füllt Gegenstände in der Hand nach, wenn sie sich verändern.\nDies passiert z. B., wenn man Eimer auffüllt oder ausleert.",
     "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes": "Nachladen, wenn sich der gewählte Gegenstand ändert",
-    "key.mousewheelie.deposit_modifier": "Lager-Modifikator"
+    "key.mousewheelie.deposit_modifier": "Lager-Modifikator",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.play-sound": "Spiele Wiederauffüll Sound",
+    "tweed4_tailor_screen.screen.mousewheelie.refill.play-sound.description": "Spielt ein Geräusch nach dem Wiederauffüllen von einem Stack."
 }
