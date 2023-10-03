@@ -19,7 +19,9 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.network.MWClientNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -30,10 +32,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.util.Hand;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,8 +44,6 @@ public class MixinClientPlayNetworkHandler {
 	@Final
 	private MinecraftClient client;
 
-	@Unique
-	private int blockedRefills;
 
 	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmScreenActionS2CPacket packet, CallbackInfo callbackInfo) {
@@ -70,7 +67,7 @@ public class MixinClientPlayNetworkHandler {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.getInventory();
 			if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
-				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getStack(inventory.selectedSlot), packet.getItemStack());
+				SlotRefiller.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getStack(inventory.selectedSlot), packet.getStack());
 			}
 		}
 	}
@@ -81,7 +78,7 @@ public class MixinClientPlayNetworkHandler {
 		if (MWConfig.refill.enable && MWConfig.refill.other && client.player.currentScreenHandler == client.player.playerScreenHandler && packet.getSlot() == 45) {
 			PlayerInventory inventory = client.player.getInventory();
 			if (packet.getSlot() == 45) { // OFF_HAND
-				MWClient.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.offHand.get(0), packet.getItemStack());
+				SlotRefiller.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.offHand.get(0), packet.getStack());
 			}
 		}
 	}
@@ -94,12 +91,11 @@ public class MixinClientPlayNetworkHandler {
 	)
 	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		if (packet.getSyncId() == 0) {
-			if (blockedRefills > 0) {
-				blockedRefills--;
+			if (MWClientNetworking.areGuiUpdateRefillTriggersBlocked()) {
+				MWClientNetworking.decrementGuiUpdateRefillTriggerBlocks();
 				return;
 			}
 
-			MWClient.performRefill();
 		}
 	}
 
@@ -109,6 +105,7 @@ public class MixinClientPlayNetworkHandler {
 			if (((PlayerActionC2SPacket) packet).getAction() == PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
 				blockedRefills = 2;
 			}
+			SlotRefiller.performRefill();
 		}
 	}
 }

@@ -22,6 +22,7 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
@@ -30,11 +31,7 @@ import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -42,14 +39,61 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class SlotRefiller {
+
 	private static PlayerInventory playerInventory;
 	private static ItemStack stack;
 
 	private static final ConcurrentLinkedDeque<Rule> rules = new ConcurrentLinkedDeque<>();
+	private static Hand refillHand = null;
 
 	private SlotRefiller() {}
 
-	public static void set(PlayerInventory playerInventory, ItemStack stack) {
+	/**
+	 * Schedules a refill if a refill scenario is encountered.
+	 * @param hand the hand to potentially refill
+	 * @param inventory the player inventory
+	 * @param oldStack the old stack in the hand
+	 * @param newStack the new stack in the hand
+	 * @return whether a refill has been scheduled
+	 */
+	public static boolean scheduleRefillChecked(Hand hand, PlayerInventory inventory, ItemStack oldStack, ItemStack newStack) {
+		if (MinecraftClient.getInstance().currentScreen != null) {
+			return false;
+		}
+
+		if (!oldStack.isEmpty() && (newStack.isEmpty() || (MWConfig.refill.itemChanges && oldStack.getItem() != newStack.getItem()))) {
+			scheduleRefillUnchecked(hand, inventory, oldStack.copy());
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Unconditionally schedules a refill.
+	 * @param hand the hand to refill
+	 * @param inventory the player inventory
+	 * @param referenceStack the stack to decide the refilling by
+	 */
+	public static void scheduleRefillUnchecked(Hand hand, PlayerInventory inventory, ItemStack referenceStack) {
+		refillHand = hand;
+		setupRefill(inventory, referenceStack);
+	}
+
+	public static boolean performRefill() {
+		if (refillHand == null) return false;
+
+		Hand hand = refillHand;
+		refillHand = null;
+		if (hand == Hand.OFF_HAND && !MWConfig.refill.offHand) {
+			return false;
+		}
+		refill(hand);
+
+		return true;
+	}
+
+
+	public static void setupRefill(PlayerInventory playerInventory, ItemStack stack) {
 		SlotRefiller.playerInventory = playerInventory;
 		SlotRefiller.stack = stack;
 	}
