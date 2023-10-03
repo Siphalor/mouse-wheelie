@@ -15,8 +15,17 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.util.inject;
 
-public interface ISlot {
-	int mouseWheelie_getInvSlot();
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public interface IRecipeBookResults {
+	void mouseWheelie_setCurrentPage(int page);
+
+	int mouseWheelie_getCurrentPage();
+
+	int mouseWheelie_getPageCount();
+
+	void mouseWheelie_refreshResultButtons();
 }

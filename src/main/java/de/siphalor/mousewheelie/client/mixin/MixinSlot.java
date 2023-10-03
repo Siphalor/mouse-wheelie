@@ -17,7 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin;
 
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,8 +29,15 @@ public class MixinSlot implements ISlot {
 	@Final
 	private int index;
 
+	@Shadow public int id;
+
 	@Override
-	public int mouseWheelie_getInvSlot() {
+	public int mouseWheelie_getIndexInInv() {
 		return index;
+	}
+
+	@Override
+	public int mouseWheelie_getIdInContainer() {
+		return id;
 	}
 }

@@ -18,7 +18,7 @@
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.util.accessors.IRecipeBookResults;
+import de.siphalor.mousewheelie.client.util.inject.IRecipeBookResults;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;

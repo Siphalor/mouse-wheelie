@@ -19,11 +19,12 @@ package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.compat.FabricCreativeGuiHelper;
-import de.siphalor.mousewheelie.client.inventory.CreativeContainerScreenHelper;
+import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
+import de.siphalor.mousewheelie.client.util.inject.ISpecialScrollableScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -93,9 +94,9 @@ public abstract class MixinCreativeInventoryScreen extends AbstractInventoryScre
 				return ScrollAction.ABORT;
 			Slot hoverSlot = this.mouseWheelie_getSlotAt(mouseX, mouseY);
 			if (hoverSlot != null) {
-				new CreativeContainerScreenHelper<>((CreativeInventoryScreen) (Object) this, (slot, data, slotActionType) ->
+				ContainerScreenHelper.of(this, (slot, data, slotActionType) ->
 						new InteractionManager.CallbackEvent(() -> {
-							onMouseClick(slot, slot.id, data, slotActionType);
+							onMouseClick(slot, ((ISlot) slot).mouseWheelie_getIdInContainer(), data, slotActionType);
 							return InteractionManager.TICK_WAITER;
 						}, true)
 				).scroll(hoverSlot, scrollAmount < 0);
