@@ -18,7 +18,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -54,16 +54,16 @@ public abstract class MixinContainer {
 
 			int indexInInv = ((ISlot) targetSlot).mouseWheelie_getIndexInInv();
 			if (indexInInv == playerInventory.selectedSlot) {
-				MWClient.scheduleRefillChecked(Hand.MAIN_HAND, playerInventory, playerInventory.getMainHandStack(), itemStacks.get(index));
+				SlotRefiller.scheduleRefillChecked(Hand.MAIN_HAND, playerInventory, playerInventory.getMainHandStack(), itemStacks.get(index));
 			} else if (indexInInv == 40) {
-				MWClient.scheduleRefillChecked(Hand.OFF_HAND, playerInventory, playerInventory.getStack(40), itemStacks.get(index));
+				SlotRefiller.scheduleRefillChecked(Hand.OFF_HAND, playerInventory, playerInventory.getStack(40), itemStacks.get(index));
 			}
 		}
 	}
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdated(List<ItemStack> stacks, CallbackInfo callbackInfo, int index) {
-		MWClient.performRefill();
+		SlotRefiller.performRefill();
 	}
 
 }

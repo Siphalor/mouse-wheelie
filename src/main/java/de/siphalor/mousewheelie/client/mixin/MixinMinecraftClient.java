@@ -18,7 +18,7 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -57,12 +57,12 @@ public abstract class MixinMinecraftClient {
 	public void onItemUsed(CallbackInfo callbackInfo) {
 		boolean refillScheduled = false;
 		if (mainHandStack != null) {
-			refillScheduled = MWClient.scheduleRefillChecked(Hand.MAIN_HAND, player.inventory, mainHandStack, player.getMainHandStack());
+			refillScheduled = SlotRefiller.scheduleRefillChecked(Hand.MAIN_HAND, player.inventory, mainHandStack, player.getMainHandStack());
 		}
 		if (!refillScheduled && offHandStack != null) {
-			MWClient.scheduleRefillChecked(Hand.OFF_HAND, player.inventory, offHandStack, player.getOffHandStack());
+			SlotRefiller.scheduleRefillChecked(Hand.OFF_HAND, player.inventory, offHandStack, player.getOffHandStack());
 		}
-		MWClient.performRefill();
+		SlotRefiller.performRefill();
 		mainHandStack = null;
 		offHandStack = null;
 	}
