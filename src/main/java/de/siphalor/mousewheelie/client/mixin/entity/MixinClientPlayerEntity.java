@@ -19,7 +19,7 @@ package de.siphalor.mousewheelie.client.mixin.entity;
 
 import com.mojang.authlib.GameProfile;
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -49,13 +49,13 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 	public void onDropSelectedItem(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
 		if (MWConfig.refill.enable && MWConfig.refill.drop) {
 			if (!getMainHandStack().isEmpty()) {
-				MWClient.scheduleRefillUnchecked(Hand.MAIN_HAND, getInventory(), getMainHandStack().copy());
+				SlotRefiller.scheduleRefillUnchecked(Hand.MAIN_HAND, getInventory(), getMainHandStack().copy());
 			}
 		}
 	}
 
 	@Inject(method = "dropSelectedItem", at = @At("RETURN"))
 	public void onSelectedItemDropped(boolean all, CallbackInfoReturnable<ItemEntity> callbackInfoReturnable) {
-		MWClient.performRefill();
+		SlotRefiller.performRefill();
 	}
 }
