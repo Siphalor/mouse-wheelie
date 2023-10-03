@@ -22,14 +22,19 @@ import de.siphalor.mousewheelie.client.network.InteractionManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PickFromInventoryC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -42,14 +47,71 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class SlotRefiller {
+	/**
+	 * Indicates the maximum time in milliseconds a refill is expected to take.
+	 * If a refill has been started with no recorded end, it is treated as done after this time.
+	 */
+	private static final long MAX_REFILL_MILLIS = 5000;
+	private static final InteractionManager.InteractionEvent REFILL_END_EVENT = () -> {
+		endRefill();
+		return InteractionManager.DUMMY_WAITER;
+	};
+
 	private static PlayerInventory playerInventory;
 	private static ItemStack stack;
+	private static long refillStartTime = System.currentTimeMillis() - MAX_REFILL_MILLIS;
 
 	private static final ConcurrentLinkedDeque<Rule> rules = new ConcurrentLinkedDeque<>();
+	private static Hand refillHand = null;
 
 	private SlotRefiller() {}
 
-	public static void set(PlayerInventory playerInventory, ItemStack stack) {
+	/**
+	 * Schedules a refill if a refill scenario is encountered.
+	 * @param hand the hand to potentially refill
+	 * @param inventory the player inventory
+	 * @param oldStack the old stack in the hand
+	 * @param newStack the new stack in the hand
+	 * @return whether a refill has been scheduled
+	 */
+	public static boolean scheduleRefillChecked(Hand hand, PlayerInventory inventory, ItemStack oldStack, ItemStack newStack) {
+		if (MinecraftClient.getInstance().currentScreen != null) {
+			return false;
+		}
+
+		if (!oldStack.isEmpty() && (newStack.isEmpty() || (MWConfig.refill.itemChanges && oldStack.getItem() != newStack.getItem()))) {
+			scheduleRefillUnchecked(hand, inventory, oldStack.copy());
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Unconditionally schedules a refill.
+	 * @param hand the hand to refill
+	 * @param inventory the player inventory
+	 * @param referenceStack the stack to decide the refilling by
+	 */
+	public static void scheduleRefillUnchecked(Hand hand, PlayerInventory inventory, ItemStack referenceStack) {
+		refillHand = hand;
+		setupRefill(inventory, referenceStack);
+	}
+
+	public static boolean performRefill() {
+		if (refillHand == null) return false;
+
+		Hand hand = refillHand;
+		refillHand = null;
+		if (hand == Hand.OFF_HAND && !MWConfig.refill.offHand) {
+			return false;
+		}
+		refill(hand);
+
+		return true;
+	}
+
+
+	public static void setupRefill(PlayerInventory playerInventory, ItemStack stack) {
 		SlotRefiller.playerInventory = playerInventory;
 		SlotRefiller.stack = stack;
 	}
@@ -64,6 +126,9 @@ public class SlotRefiller {
 
 	@SuppressWarnings("UnusedReturnValue")
 	public static boolean refill(Hand hand) {
+		if (isRefillInProgress()) {
+			return false;
+		}
 		if (stack.getItem() == Items.TRIDENT && EnchantmentHelper.getLoyalty(stack) > 0) {
 			return false;
 		}
@@ -78,11 +143,39 @@ public class SlotRefiller {
 			int slot = rule.findMatchingStack(playerInventory, stack);
 
 			if (slot != -1) {
+				startRefill();
+
 				refillFromSlot(hand, slot);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private static void startRefill() {
+		refillStartTime = System.currentTimeMillis();
+
+		scheduleRefillSound();
+	}
+
+	private static void endRefill() {
+		refillStartTime = System.currentTimeMillis() - MAX_REFILL_MILLIS;
+	}
+
+	private static boolean isRefillInProgress() {
+		return System.currentTimeMillis() - refillStartTime < MAX_REFILL_MILLIS;
+	}
+
+	private static void scheduleRefillSound() {
+		if (MWConfig.refill.playSound) {
+			InteractionManager.delay(SlotRefiller::playRefillSound, Duration.of(200, ChronoUnit.MILLIS));
+		}
+	}
+
+	private static void playRefillSound() {
+		if (MWConfig.refill.playSound) {
+			MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_ITEM_PICKUP, 0.2F, 1F));
+		}
 	}
 
 	private static void refillFromSlot(Hand hand, int slot) {
@@ -95,6 +188,8 @@ public class SlotRefiller {
 		} else {
 			refillFromInventory(hand, slot);
 		}
+
+		InteractionManager.push(REFILL_END_EVENT);
 	}
 
 	private static void refillFromHotbar(Hand hand, int hotbarSlot) {
@@ -102,7 +197,7 @@ public class SlotRefiller {
 			if (hand == Hand.MAIN_HAND && !playerInventory.offHand.get(0).isEmpty()) {
 				InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
 			}
-			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(hotbarSlot), InteractionManager.TICK_WAITER));
+			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(hotbarSlot), InteractionManager.Waiter.equal(InteractionManager.TriggerType.HELD_ITEM_CHANGE)));
 			InteractionManager.push(InteractionManager.SWAP_WITH_OFFHAND_EVENT);
 			InteractionManager.push(new InteractionManager.PacketEvent(new UpdateSelectedSlotC2SPacket(playerInventory.selectedSlot), InteractionManager.TICK_WAITER));
 			if (hand == Hand.MAIN_HAND) {

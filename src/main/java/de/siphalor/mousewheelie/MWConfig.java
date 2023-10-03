@@ -118,6 +118,8 @@ public class MWConfig {
 	public static class Refill {
 		public boolean enable = true;
 
+		public boolean playSound = true;
+
 		public boolean offHand = true;
 		public boolean restoreSelectedSlot = false;
 
