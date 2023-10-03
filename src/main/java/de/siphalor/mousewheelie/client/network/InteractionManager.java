@@ -28,6 +28,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
+import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Queue;
@@ -53,6 +54,11 @@ public class InteractionManager {
 	);
 
 	private static Waiter waiter = null;
+
+	public static void delay(Runnable action, Duration duration) {
+		scheduledExecutor.schedule(action, duration.toMillis(), TimeUnit.MILLISECONDS);
+	}
+
 
 	public static void push(InteractionEvent interactionEvent) {
 		if (interactionEvent == null) {
@@ -153,6 +159,10 @@ public class InteractionManager {
 	@FunctionalInterface
 	public interface Waiter {
 		boolean trigger(TriggerType triggerType);
+
+		static Waiter equal(TriggerType triggerType) {
+			return triggerType::equals;
+		}
 	}
 
 	@Deprecated
