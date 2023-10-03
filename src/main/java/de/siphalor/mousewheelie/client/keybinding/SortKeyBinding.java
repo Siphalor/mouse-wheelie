@@ -20,7 +20,7 @@ package de.siphalor.mousewheelie.client.keybinding;
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.amecs.api.PriorityKeyBinding;
-import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;

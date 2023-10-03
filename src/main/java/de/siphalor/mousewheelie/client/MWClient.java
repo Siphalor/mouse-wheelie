@@ -20,14 +20,13 @@ package de.siphalor.mousewheelie.client;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.ToolPicker;
 import de.siphalor.mousewheelie.client.keybinding.*;
 import de.siphalor.mousewheelie.client.util.CreativeSearchOrder;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
-import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.IScrollableRecipeBook;
+import de.siphalor.mousewheelie.client.util.inject.ISpecialScrollableScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,9 +37,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -64,7 +61,6 @@ public class MWClient implements ClientModInitializer {
 	public static final ActionModifierKeybinding DEPOSIT_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "deposit_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
 	public static final ActionModifierKeybinding RESTOCK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "restock_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
 
-	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
 
 	@Override
@@ -105,50 +101,6 @@ public class MWClient implements ClientModInitializer {
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			CreativeSearchOrder.refreshItemSearchPositionLookup();
 		});
-	}
-
-	/**
-	 * Schedules a refill if a refill scenario is encountered.
-	 * @param hand the hand to potentially refill
-	 * @param inventory the player inventory
-	 * @param oldStack the old stack in the hand
-	 * @param newStack the new stack in the hand
-	 * @return whether a refill has been scheduled
-	 */
-	public static boolean scheduleRefillChecked(Hand hand, PlayerInventory inventory, ItemStack oldStack, ItemStack newStack) {
-		if (MinecraftClient.getInstance().currentScreen != null) {
-			return false;
-		}
-
-		if (!oldStack.isEmpty() && (newStack.isEmpty() || (MWConfig.refill.itemChanges && oldStack.getItem() != newStack.getItem()))) {
-			scheduleRefillUnchecked(hand, inventory, oldStack.copy());
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Unconditionally schedules a refill.
-	 * @param hand the hand to refill
-	 * @param inventory the player inventory
-	 * @param referenceStack the stack to decide the refilling by
-	 */
-	public static void scheduleRefillUnchecked(Hand hand, PlayerInventory inventory, ItemStack referenceStack) {
-		refillHand = hand;
-		SlotRefiller.set(inventory, referenceStack);
-	}
-
-	public static boolean performRefill() {
-		if (refillHand == null) return false;
-
-		Hand hand = refillHand;
-		refillHand = null;
-		if (hand == Hand.OFF_HAND && !MWConfig.refill.offHand) {
-			return false;
-		}
-		SlotRefiller.refill(hand);
-
-		return true;
 	}
 
 	public static boolean isTool(Item item) {
