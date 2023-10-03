@@ -38,17 +38,24 @@ public class OpenConfigScreenKeybinding extends AmecsKeyBinding implements Prior
 	@Override
 	public boolean onPressedPriority() {
 		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		if (minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof HandledScreen || minecraftClient.currentScreen instanceof TitleScreen) {
-			TweedRegistry.TAILORS.getOrEmpty(new Identifier("tweed4", "coat")).ifPresent(tailor -> {
-				if (tailor instanceof CoatTailor) {
-					ScreenTailorScreenFactory<?> screenFactory = ((CoatTailor) tailor).getScreenFactories().get(MouseWheelie.MOD_ID);
-					if (screenFactory != null) {
-						minecraftClient.openScreen(screenFactory.create(minecraftClient.currentScreen));
-					}
-				}
-			});
-			return true;
+		if (canOpen(minecraftClient)) {
+			ScreenTailorScreenFactory<?> screenFactory = getScreenFactory();
+			if (screenFactory != null) {
+				minecraftClient.openScreen(screenFactory.create(minecraftClient.currentScreen));
+				return true;
+			}
 		}
 		return false;
+	}
+
+	private boolean canOpen(MinecraftClient minecraftClient) {
+		return minecraftClient.currentScreen == null || minecraftClient.currentScreen instanceof HandledScreen || minecraftClient.currentScreen instanceof TitleScreen;
+	}
+
+	private ScreenTailorScreenFactory<?> getScreenFactory() {
+		return TweedRegistry.TAILORS.getOrEmpty(new Identifier("tweed4", "coat"))
+				.filter(tailor -> tailor instanceof CoatTailor)
+				.map(tailor -> ((CoatTailor) tailor).getScreenFactories().get(MouseWheelie.MOD_ID))
+				.orElse(null);
 	}
 }
