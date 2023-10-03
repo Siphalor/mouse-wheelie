@@ -24,7 +24,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookResults;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
-import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,7 +47,7 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 	protected abstract void refreshResultButtons();
 
 	@Shadow
-	private Recipe<?> lastClickedRecipe;
+	private RecipeEntry<?> lastClickedRecipe;
 
 	@Shadow
 	private RecipeResultCollection resultCollection;
@@ -73,8 +73,8 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 	}
 
 	@Inject(method = "mouseClicked", at = @At(value = "JUMP", opcode = 154), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void mouseClicked(double x, double y, int mouseButton, int int2, int int3, int int4, int int5, CallbackInfoReturnable<Boolean> callbackInfoReturnable, Iterator<?> iterator, AnimatedResultButton animatedResultButton) {
-		if (MWConfig.general.enableQuickCraft && mouseButton == 1 && animatedResultButton.hasResults()) {
+	public void mouseClicked(double mouseX, double mouseY, int button, int areaLeft, int areaTop, int areaWidth, int areaHeight, CallbackInfoReturnable<Boolean> cir, Iterator<?> iterator, AnimatedResultButton animatedResultButton) {
+		if (MWConfig.general.enableQuickCraft && button == 1 && animatedResultButton.hasResults()) {
 			lastClickedRecipe = animatedResultButton.currentRecipe();
 			resultCollection = animatedResultButton.getResultCollection();
 		}

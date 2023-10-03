@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_16",
 	"mixins": [],
 	"client": [
+		"MixinClientCommonNetworkHandler",
 		"MixinClientPlayNetworkHandler",
 		"MixinContainer",
 		"MixinCreativeSlot",

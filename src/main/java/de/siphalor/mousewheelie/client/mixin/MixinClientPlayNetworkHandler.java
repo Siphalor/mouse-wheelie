@@ -25,10 +25,11 @@ import de.siphalor.mousewheelie.client.network.MWClientNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientCommonNetworkHandler;
+import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.util.Hand;
@@ -39,10 +40,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
-public class MixinClientPlayNetworkHandler {
-	@Shadow
-	@Final
-	private MinecraftClient client;
+public abstract class MixinClientPlayNetworkHandler extends ClientCommonNetworkHandler {
+	protected MixinClientPlayNetworkHandler(MinecraftClient client, ClientConnection connection, ClientConnectionState connectionState) {
+		super(client, connection, connectionState);
+	}
 
 
 	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
@@ -96,15 +97,6 @@ public class MixinClientPlayNetworkHandler {
 				return;
 			}
 
-		}
-	}
-
-	@Inject(method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"))
-	public void onSend(Packet<?> packet, CallbackInfo callbackInfo) {
-		if (packet instanceof PlayerActionC2SPacket) {
-			if (((PlayerActionC2SPacket) packet).getAction() == PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
-				blockedRefills = 2;
-			}
 			SlotRefiller.performRefill();
 		}
 	}
