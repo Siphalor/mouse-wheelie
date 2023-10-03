@@ -15,3 +15,17 @@
  * permissions and limitations under the License.
  */
 
+package de.siphalor.mousewheelie.client.util.inject;
+
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public interface IRecipeBookResults {
+	void mouseWheelie_setCurrentPage(int page);
+
+	int mouseWheelie_getCurrentPage();
+
+	int mouseWheelie_getPageCount();
+
+	void mouseWheelie_refreshResultButtons();
+}

@@ -15,15 +15,15 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.util.inject;
 
-import de.siphalor.mousewheelie.client.util.ScrollAction;
-import net.minecraft.screen.slot.Slot;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface IContainerScreen {
-	Slot mouseWheelie_getSlotAt(double mouseX, double mouseY);
+@ApiStatus.Internal
+public interface IMerchantScreen {
+	void mouseWheelie_setRecipeId(int id);
 
-	ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount);
+	void mouseWheelie_syncRecipeId();
 
-	boolean mouseWheelie_triggerSort();
+	int getRecipeIdOffset();
 }

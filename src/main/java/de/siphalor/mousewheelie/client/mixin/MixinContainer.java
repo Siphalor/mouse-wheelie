@@ -18,8 +18,8 @@
 package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -47,25 +47,23 @@ public abstract class MixinContainer {
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdate(int i, List<ItemStack> itemStacks, ItemStack cursorStack, CallbackInfo callbackInfo, int index) {
 		//noinspection ConstantConditions
-		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.other) {
-			PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
-			if (inventory.selectedSlot == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
-				ItemStack stack = inventory.getMainHandStack();
-				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {
-					MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
-				}
-			} else if (40 == ((ISlot) getSlot(index)).mouseWheelie_getInvSlot()) {
-				ItemStack stack = inventory.getStack(40);
-				if (!stack.isEmpty() && itemStacks.get(index).isEmpty()) {
-					MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
-				}
+		if ((Object) this instanceof PlayerScreenHandler && MWConfig.refill.enable && MWConfig.refill.other) {
+			PlayerInventory playerInventory = MinecraftClient.getInstance().player.getInventory();
+			Slot targetSlot = getSlot(index);
+			if (targetSlot.inventory != playerInventory) return;
+
+			int indexInInv = ((ISlot) targetSlot).mouseWheelie_getIndexInInv();
+			if (indexInInv == playerInventory.selectedSlot) {
+				SlotRefiller.scheduleRefillChecked(Hand.MAIN_HAND, playerInventory, playerInventory.getMainHandStack(), itemStacks.get(index));
+			} else if (indexInInv == 40) {
+				SlotRefiller.scheduleRefillChecked(Hand.OFF_HAND, playerInventory, playerInventory.getStack(40), itemStacks.get(index));
 			}
 		}
 	}
 
 	@Inject(method = "updateSlotStacks", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onSlotUpdated(int i, List<ItemStack> stacks, ItemStack cursorStack, CallbackInfo callbackInfo, int index) {
-		MWClient.performRefill();
+		SlotRefiller.performRefill();
 	}
 
 }

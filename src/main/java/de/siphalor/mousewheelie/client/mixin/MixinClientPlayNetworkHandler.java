@@ -19,13 +19,16 @@ package de.siphalor.mousewheelie.client.mixin;
 
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.network.MWClientNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.util.Hand;
@@ -42,6 +45,7 @@ public class MixinClientPlayNetworkHandler {
 	@Shadow
 	@Final
 	private MinecraftClient client;
+
 
 	/*@Inject(method = "onConfirmScreenAction", at = @At("RETURN"))
 	public void onGuiActionConfirmed(ConfirmScreenActionS2CPacket packet, CallbackInfo callbackInfo) {
@@ -61,16 +65,11 @@ public class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/PlayerScreenHandler;setStackInSlot(IILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdateHotbar(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		if (MWConfig.refill.other) {
+		if (MWConfig.refill.enable && MWConfig.refill.other) {
 			//noinspection ConstantConditions
 			PlayerInventory inventory = client.player.getInventory();
-			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
-				if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
-					ItemStack stack = inventory.getStack(inventory.selectedSlot);
-					if (!stack.isEmpty()) {
-						MWClient.scheduleRefill(Hand.MAIN_HAND, inventory, stack.copy());
-					}
-				}
+			if (packet.getSlot() - 36 == inventory.selectedSlot) { // MAIN_HAND
+				SlotRefiller.scheduleRefillChecked(Hand.MAIN_HAND, inventory, inventory.getStack(inventory.selectedSlot), packet.getItemStack());
 			}
 		}
 	}
@@ -78,15 +77,10 @@ public class MixinClientPlayNetworkHandler {
 	@Inject(method = "onScreenHandlerSlotUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setStackInSlot(IILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE))
 	public void onGuiSlotUpdateOther(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
 		//noinspection ConstantConditions
-		if (MWConfig.refill.other && client.player.currentScreenHandler == client.player.playerScreenHandler && packet.getSlot() == 45) {
+		if (MWConfig.refill.enable && MWConfig.refill.other && client.player.currentScreenHandler == client.player.playerScreenHandler && packet.getSlot() == 45) {
 			PlayerInventory inventory = client.player.getInventory();
-			if (packet.getItemStack().isEmpty() && MinecraftClient.getInstance().currentScreen == null) {
-				if (packet.getSlot() == 45) {
-					ItemStack stack = inventory.offHand.get(0);
-					if (!stack.isEmpty()) {
-						MWClient.scheduleRefill(Hand.OFF_HAND, inventory, stack.copy());
-					}
-				}
+			if (packet.getSlot() == 45) { // OFF_HAND
+				SlotRefiller.scheduleRefillChecked(Hand.OFF_HAND, inventory, inventory.offHand.get(0), packet.getItemStack());
 			}
 		}
 	}
@@ -98,6 +92,22 @@ public class MixinClientPlayNetworkHandler {
 			}
 	)
 	public void onGuiSlotUpdated(ScreenHandlerSlotUpdateS2CPacket packet, CallbackInfo callbackInfo) {
-		MWClient.performRefill();
+		if (packet.getSyncId() == 0) {
+			if (MWClientNetworking.areGuiUpdateRefillTriggersBlocked()) {
+				MWClientNetworking.decrementGuiUpdateRefillTriggerBlocks();
+				return;
+			}
+
+			SlotRefiller.performRefill();
+		}
+	}
+
+	@Inject(method = "sendPacket", at = @At("HEAD"))
+	public void onSend(Packet<?> packet, CallbackInfo callbackInfo) {
+		if (packet instanceof PlayerActionC2SPacket) {
+			if (((PlayerActionC2SPacket) packet).getAction() == PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
+				MWClientNetworking.blockNextGuiUpdateRefillTriggers(2);
+			}
+		}
 	}
 }

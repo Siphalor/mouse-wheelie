@@ -15,8 +15,10 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.inventory;
 
-public interface ISpecialClickableButtonWidget {
-	boolean mouseClicked(int mouseButton);
+public enum BundleDragMode {
+	PICKING_UP,
+	PUTTING_OUT,
+	AUTO,
 }

@@ -17,13 +17,20 @@
 
 package de.siphalor.mousewheelie.client.network;
 
+import de.siphalor.mousewheelie.client.MWClient;
+import lombok.CustomLog;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
+import java.time.Duration;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -31,8 +38,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
+@CustomLog
 public class InteractionManager {
-	public static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
+	private static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
 	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
 	private static ScheduledFuture<?> tickFuture;
 
@@ -40,15 +48,38 @@ public class InteractionManager {
 	public static final Waiter DUMMY_WAITER = (TriggerType triggerType) -> true;
 	public static final Waiter TICK_WAITER = (TriggerType triggerType) -> triggerType == TriggerType.TICK;
 
+	public static final PacketEvent SWAP_WITH_OFFHAND_EVENT = new PacketEvent(
+			new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN),
+			triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
+	);
+
 	private static Waiter waiter = null;
+
+	public static void delay(Runnable action, Duration duration) {
+		scheduledExecutor.schedule(action, duration.toMillis(), TimeUnit.MILLISECONDS);
+	}
+
 
 	public static void push(InteractionEvent interactionEvent) {
 		if (interactionEvent == null) {
 			return;
 		}
-		interactionEventQueue.add(interactionEvent);
-		if (waiter == null)
-			triggerSend(TriggerType.INITIAL);
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.add(interactionEvent);
+			if (waiter == null)
+				triggerSend(TriggerType.INITIAL);
+		}
+	}
+
+	public static void pushAll(Collection<InteractionEvent> interactionEvents) {
+		if (interactionEvents == null) {
+			return;
+		}
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.addAll(interactionEvents);
+			if (waiter == null)
+				triggerSend(TriggerType.INITIAL);
+		}
 	}
 
 	public static void pushClickEvent(int containerSyncId, int slotId, int buttonId, SlotActionType slotAction) {
@@ -56,45 +87,82 @@ public class InteractionManager {
 	}
 
 	public static void triggerSend(TriggerType triggerType) {
-		if (waiter == null || waiter.trigger(triggerType)) {
-			do {
-				InteractionEvent event = interactionEventQueue.poll();
-				if (event == null) {
-					waiter = null;
-					break;
-				}
-				waiter = event.send();
-			} while (waiter.trigger(TriggerType.INITIAL));
+		synchronized (interactionEventQueue) {
+			if (waiter == null || waiter.trigger(triggerType)) {
+				do {
+					InteractionEvent event = interactionEventQueue.poll();
+					if (event == null) {
+						waiter = null;
+						break;
+					}
+
+					doSendEvent(event);
+				} while (waiter.trigger(TriggerType.INITIAL));
+			}
 		}
+	}
+
+	private static void doSendEvent(InteractionEvent event) {
+		if (event.shouldRunOnMainThread()) {
+			runOnMainThread(event);
+		} else {
+			waiter = event.send();
+		}
+	}
+
+	private static void runOnMainThread(InteractionEvent event) {
+		Waiter blockingWaiter = tt -> false;
+		waiter = blockingWaiter;
+		MinecraftClient.getInstance().execute(() -> {
+			synchronized (interactionEventQueue) {
+				if (waiter == blockingWaiter) {
+					waiter = event.send();
+				}
+			}
+		});
 	}
 
 	public static void setTickRate(long milliSeconds) {
 		if (tickFuture != null) {
-			tickFuture.cancel(true);
+			tickFuture.cancel(false);
 		}
 		tickFuture = scheduledExecutor.scheduleAtFixedRate(InteractionManager::tick, milliSeconds, milliSeconds, TimeUnit.MILLISECONDS);
 	}
 
 	public static void tick() {
-		triggerSend(TriggerType.TICK);
+		try {
+			triggerSend(TriggerType.TICK);
+		} catch (Exception e) {
+			log.error("Error while ticking InteractionManager", e);
+		}
 	}
 
 	public static void setWaiter(Waiter waiter) {
-		InteractionManager.waiter = waiter;
+		synchronized (interactionEventQueue) {
+			InteractionManager.waiter = waiter;
+		}
 	}
 
 	public static void clear() {
-		interactionEventQueue.clear();
-		waiter = null;
+		synchronized (interactionEventQueue) {
+			interactionEventQueue.clear();
+			waiter = null;
+		}
 	}
 
 	public static boolean isReady() {
-		return waiter == null && interactionEventQueue.isEmpty();
+		synchronized (interactionEventQueue) {
+			return waiter == null && interactionEventQueue.isEmpty();
+		}
 	}
 
 	@FunctionalInterface
 	public interface Waiter {
 		boolean trigger(TriggerType triggerType);
+
+		static Waiter equal(TriggerType triggerType) {
+			return triggerType::equals;
+		}
 	}
 
 	@Deprecated
@@ -136,6 +204,9 @@ public class InteractionManager {
 		 * @return the number of inventory packets to wait for
 		 */
 		Waiter send();
+		default boolean shouldRunOnMainThread() {
+			return false;
+		}
 	}
 
 	public static class ClickEvent implements InteractionEvent {
@@ -162,18 +233,34 @@ public class InteractionManager {
 			MinecraftClient.getInstance().interactionManager.clickSlot(containerSyncId, slotId, buttonId, slotAction, MinecraftClient.getInstance().player);
 			return waiter;
 		}
+
+		@Override
+		public boolean shouldRunOnMainThread() {
+			return true;
+		}
 	}
 
 	public static class CallbackEvent implements InteractionEvent {
 		private final Supplier<Waiter> callback;
+		private final boolean shouldRunOnMainThread;
 
 		public CallbackEvent(Supplier<Waiter> callback) {
+			this(callback, false);
+		}
+
+		public CallbackEvent(Supplier<Waiter> callback, boolean shouldRunOnMainThread) {
 			this.callback = callback;
+			this.shouldRunOnMainThread = shouldRunOnMainThread;
 		}
 
 		@Override
 		public Waiter send() {
 			return callback.get();
+		}
+
+		@Override
+		public boolean shouldRunOnMainThread() {
+			return shouldRunOnMainThread;
 		}
 	}
 

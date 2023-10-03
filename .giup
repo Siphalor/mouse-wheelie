@@ -2,7 +2,7 @@
 	"merge-paths": [
 		"1.16",
 		"1.16->1.15->1.14",
-		"1.16->1.17->1.18->unstable"
+		"1.16->1.17->1.18.2->1.19->1.19.3->1.19.4->1.20->unstable"
 	],
 	"commands": [
 		{
@@ -12,13 +12,18 @@
 			"ignore-errors": true
 		},
 		{
-			"title": "Publish & Upload",
-			"run": "./gradlew publish uploadToModSites",
-			"nt": "gradlew publish uploadToModSites"
+			"title": "Build",
+			"run": "./gradlew build",
+			"nt": "gradlew build"
 		},
 		{
 			"title": "Push Changes",
 			"run": "git push"
+		},
+		{
+			"title": "Publish & Upload",
+			"run": "./gradlew publish uploadToModSites",
+			"nt": "gradlew publish uploadToModSites"
 		}
 	]
 }

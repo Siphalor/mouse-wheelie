@@ -15,10 +15,11 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.util.inject;
 
-import de.siphalor.mousewheelie.client.util.ScrollAction;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface ISpecialScrollableScreen {
-	ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount);
+@ApiStatus.Internal
+public interface ISpecialClickableButtonWidget {
+	boolean mouseClicked(int mouseButton);
 }

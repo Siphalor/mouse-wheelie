@@ -15,8 +15,12 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util;
+package de.siphalor.mousewheelie.client.util.inject;
 
-public interface IRecipeBookWidget {
-	ScrollAction mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount);
+import de.siphalor.mousewheelie.client.util.ScrollAction;
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public interface ISpecialScrollableScreen {
+	ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount);
 }

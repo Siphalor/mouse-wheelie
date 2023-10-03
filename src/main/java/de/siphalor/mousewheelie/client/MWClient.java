@@ -20,17 +20,12 @@ package de.siphalor.mousewheelie.client;
 import de.siphalor.amecs.api.KeyModifiers;
 import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import de.siphalor.mousewheelie.client.inventory.ToolPicker;
-import de.siphalor.mousewheelie.client.keybinding.OpenConfigScreenKeybinding;
-import de.siphalor.mousewheelie.client.keybinding.PickToolKeyBinding;
-import de.siphalor.mousewheelie.client.keybinding.ScrollKeyBinding;
-import de.siphalor.mousewheelie.client.keybinding.SortKeyBinding;
-import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.keybinding.*;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import de.siphalor.mousewheelie.client.util.accessors.IContainerScreen;
-import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
-import de.siphalor.mousewheelie.client.util.accessors.ISpecialScrollableScreen;
+import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
+import de.siphalor.mousewheelie.client.util.inject.IScrollableRecipeBook;
+import de.siphalor.mousewheelie.client.util.inject.ISpecialScrollableScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,15 +35,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("WeakerAccess")
@@ -62,8 +53,12 @@ public class MWClient implements ClientModInitializer {
 	public static final KeyBinding SCROLL_UP_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_up"), KEY_BINDING_CATEGORY, false);
 	public static final KeyBinding SCROLL_DOWN_KEY_BINDING = new ScrollKeyBinding(new Identifier(MouseWheelie.MOD_ID, "scroll_down"), KEY_BINDING_CATEGORY, true);
 	public static final KeyBinding PICK_TOOL_KEY_BINDING = new PickToolKeyBinding(new Identifier(MouseWheelie.MOD_ID, "pick_tool"), InputUtil.Type.KEYSYM, -1, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding WHOLE_STACK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "whole_stack_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding ALL_OF_KIND_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "all_of_kind_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_CONTROL, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding DROP_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "drop_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding DEPOSIT_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "deposit_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
+	public static final ActionModifierKeybinding RESTOCK_MODIFIER = new ActionModifierKeybinding(new Identifier(MouseWheelie.MOD_ID, "restock_modifier"), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_SPACE, KEY_BINDING_CATEGORY, new KeyModifiers());
 
-	private static Hand refillHand = null;
 	public static int lastUpdatedSlot = -1;
 
 	@Override
@@ -73,6 +68,12 @@ public class MWClient implements ClientModInitializer {
 		KeyBindingHelper.registerKeyBinding(SCROLL_UP_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN_KEY_BINDING);
 		KeyBindingHelper.registerKeyBinding(PICK_TOOL_KEY_BINDING);
+
+		KeyBindingHelper.registerKeyBinding(WHOLE_STACK_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(ALL_OF_KIND_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DROP_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(DEPOSIT_MODIFIER);
+		KeyBindingHelper.registerKeyBinding(RESTOCK_MODIFIER);
 
 		ClientPickBlockGatherCallback.EVENT.register((player, result) -> {
 			Item item = player.getMainHandStack().getItem();
@@ -94,38 +95,6 @@ public class MWClient implements ClientModInitializer {
 			}
 			return index == -1 || index == player.getInventory().selectedSlot ? ItemStack.EMPTY : player.getInventory().getStack(index);
 		});
-	}
-
-	public static void scheduleRefill(Hand hand, PlayerInventory inventory, ItemStack stack) {
-		refillHand = hand;
-		SlotRefiller.set(inventory, stack);
-	}
-
-	public static boolean performRefill() {
-		if (refillHand == null) return false;
-
-		Hand hand = refillHand;
-		refillHand = null;
-		if (MWConfig.refill.offHand && hand.equals(Hand.OFF_HAND)) {
-			// interaction only gets pushed softly, so it can be removed if the refill was not successful
-			if (!InteractionManager.isReady())
-				return false;
-
-			InteractionManager.PacketEvent swapHandsEvent = new InteractionManager.PacketEvent(
-					new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN),
-					triggerType -> triggerType == InteractionManager.TriggerType.CONTAINER_SLOT_UPDATE && MWClient.lastUpdatedSlot == 45
-			);
-			InteractionManager.push(swapHandsEvent);
-			if (SlotRefiller.refill()) {
-				InteractionManager.push(swapHandsEvent);
-			} else {
-				InteractionManager.clear();
-			}
-		} else {
-			SlotRefiller.refill();
-		}
-
-		return true;
 	}
 
 	public static boolean isTool(Item item) {
