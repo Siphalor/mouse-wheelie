@@ -17,7 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
-import de.siphalor.mousewheelie.client.util.accessors.ISpecialClickableButtonWidget;
+import de.siphalor.mousewheelie.client.util.inject.ISpecialClickableButtonWidget;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

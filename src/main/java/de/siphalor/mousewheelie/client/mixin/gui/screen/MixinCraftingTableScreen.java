@@ -17,9 +17,9 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.screen;
 
-import de.siphalor.mousewheelie.client.util.IRecipeBookWidget;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import de.siphalor.mousewheelie.client.util.accessors.IScrollableRecipeBook;
+import de.siphalor.mousewheelie.client.util.inject.IRecipeBookWidget;
+import de.siphalor.mousewheelie.client.util.inject.IScrollableRecipeBook;
 import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.CraftingTableScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;

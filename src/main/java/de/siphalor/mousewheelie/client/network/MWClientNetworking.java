@@ -24,6 +24,8 @@ import net.minecraft.util.PacketByteBuf;
 
 public class MWClientNetworking extends MWNetworking {
 
+	private static int blockNextGuiUpdateRefillTriggers;
+
 	public static boolean canSendReorderPacket() {
 		return ClientPlayNetworking.canSend(REORDER_INVENTORY_C2S_PACKET);
 	}
@@ -32,5 +34,17 @@ public class MWClientNetworking extends MWNetworking {
 		PacketByteBuf buffer = createBuffer();
 		packet.write(buffer);
 		ClientPlayNetworking.send(REORDER_INVENTORY_C2S_PACKET, buffer);
+	}
+
+	public static synchronized void blockNextGuiUpdateRefillTriggers(int amount) {
+		blockNextGuiUpdateRefillTriggers += amount;
+	}
+
+	public static synchronized boolean areGuiUpdateRefillTriggersBlocked() {
+		return blockNextGuiUpdateRefillTriggers > 0;
+	}
+
+	public static synchronized void decrementGuiUpdateRefillTriggerBlocks() {
+		blockNextGuiUpdateRefillTriggers--;
 	}
 }

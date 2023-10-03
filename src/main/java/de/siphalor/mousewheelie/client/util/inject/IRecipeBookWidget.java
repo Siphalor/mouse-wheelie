@@ -15,15 +15,12 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.util.inject;
 
 import de.siphalor.mousewheelie.client.util.ScrollAction;
-import net.minecraft.container.Slot;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface IContainerScreen {
-	Slot mouseWheelie_getSlotAt(double mouseX, double mouseY);
-
-	ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount);
-
-	boolean mouseWheelie_triggerSort();
+@ApiStatus.Internal
+public interface IRecipeBookWidget {
+	ScrollAction mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount);
 }
