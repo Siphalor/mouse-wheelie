@@ -15,12 +15,11 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.mousewheelie.client.util.accessors;
+package de.siphalor.mousewheelie.client.util.inject;
 
-public interface IMerchantScreen {
-	void mouseWheelie_setRecipeId(int id);
+import org.jetbrains.annotations.ApiStatus;
 
-	void mouseWheelie_syncRecipeId();
-
-	int getRecipeIdOffset();
+@ApiStatus.Internal
+public interface ISpecialClickableButtonWidget {
+	boolean mouseClicked(int mouseButton);
 }

@@ -21,6 +21,7 @@ import de.siphalor.mousewheelie.MWConfig;
 import de.siphalor.mousewheelie.client.inventory.ContainerScreenHelper;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.network.MWClientNetworking;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import de.siphalor.mousewheelie.common.network.ReorderInventoryPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -51,7 +52,7 @@ public class InventorySorter {
 						containerScreen,
 						(slot, action, slotActionType) -> new InteractionManager.ClickEvent(
 								containerScreen.getContainer().syncId,
-								slot.id, action, slotActionType
+								((ISlot) slot).mouseWheelie_getIdInContainer(), action, slotActionType
 						)
 				),
 				containerScreen,
@@ -147,8 +148,10 @@ public class InventorySorter {
 	protected void reorderInventory(int[] sortedIds) {
 		int[] slotMappings = new int[sortedIds.length * 2];
 		for (int i = 0; i < sortedIds.length; i++) {
-			slotMappings[i * 2] = inventorySlots[sortedIds[i]].id;
-			slotMappings[i * 2 + 1] = inventorySlots[i].id;
+			Slot from = inventorySlots[sortedIds[i]];
+			Slot to = inventorySlots[i];
+			slotMappings[i * 2] = ((ISlot) from).mouseWheelie_getIdInContainer();
+			slotMappings[i * 2 + 1] = ((ISlot) to).mouseWheelie_getIdInContainer();
 		}
 		InteractionManager.push(() -> {
 			MWClientNetworking.send(new ReorderInventoryPacket(containerScreen.getContainer().syncId, slotMappings));

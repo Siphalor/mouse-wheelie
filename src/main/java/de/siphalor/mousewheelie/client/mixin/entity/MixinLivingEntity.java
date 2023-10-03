@@ -18,7 +18,7 @@
 package de.siphalor.mousewheelie.client.mixin.entity;
 
 import de.siphalor.mousewheelie.MWConfig;
-import de.siphalor.mousewheelie.client.MWClient;
+import de.siphalor.mousewheelie.client.inventory.SlotRefiller;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.LivingEntity;
@@ -46,7 +46,7 @@ public abstract class MixinLivingEntity {
 		//noinspection ConstantConditions
 		if ((Object) this instanceof PlayerEntity && MWConfig.refill.enable && MWConfig.refill.eat) {
 			PlayerInventory playerInventory = ((PlayerEntity) (Object) this).inventory;
-			MWClient.scheduleRefillUnchecked(getActiveHand(), playerInventory, activeItemStack.copy());
+			SlotRefiller.scheduleRefillUnchecked(getActiveHand(), playerInventory, activeItemStack.copy());
 		}
 	}
 }
