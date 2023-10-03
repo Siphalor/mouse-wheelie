@@ -25,7 +25,7 @@ import de.siphalor.mousewheelie.client.network.ClickEventFactory;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
 import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.mousewheelie.client.util.ReverseIterator;
-import de.siphalor.mousewheelie.client.util.accessors.ISlot;
+import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.EnvType;
@@ -81,7 +81,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		Lock readLock = slotStatesLock.readLock();
 		readLock.lock();
 		try {
-			SlotInteractionState state = slotStates.get(slot.id);
+			SlotInteractionState state = slotStates.get(((ISlot) slot).mouseWheelie_getIdInContainer());
 			if (state == null) {
 				return SlotInteractionState.NORMAL;
 			}
@@ -95,10 +95,11 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 		Lock writeLock = slotStatesLock.writeLock();
 		writeLock.lock();
 		try {
+			int slotId = ((ISlot) slot).mouseWheelie_getIdInContainer();
 			if (state == SlotInteractionState.NORMAL) {
-				slotStates.remove(slot.id);
+				slotStates.remove(slotId);
 			} else {
-				slotStates.put(slot.id, state);
+				slotStates.put(slotId, state);
 			}
 		} finally {
 			writeLock.unlock();
@@ -221,7 +222,7 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public boolean isHotbarSlot(Slot slot) {
-		return ((ISlot) slot).mouseWheelie_getInvSlot() < 9;
+		return ((ISlot) slot).mouseWheelie_getIndexInInv() < 9;
 	}
 
 	public int getScope(Slot slot) {
@@ -229,14 +230,14 @@ public class ContainerScreenHelper<T extends HandledScreen<?>> {
 	}
 
 	public int getScope(Slot slot, boolean preferSmallerScopes) {
-		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getInvSlot() >= slot.inventory.size() || !slot.canInsert(ItemStack.EMPTY)) {
+		if (slot.inventory == null || ((ISlot) slot).mouseWheelie_getIndexInInv() >= slot.inventory.size() || !slot.canInsert(ItemStack.EMPTY)) {
 			return INVALID_SCOPE;
 		}
 		if (screen instanceof AbstractInventoryScreen) {
 			if (slot.inventory instanceof PlayerInventory) {
 				if (isHotbarSlot(slot)) {
 					return 0;
-				} else if (((ISlot) slot).mouseWheelie_getInvSlot() >= 40) {
+				} else if (((ISlot) slot).mouseWheelie_getIndexInInv() >= 40) {
 					return -1;
 				} else {
 					return 1;
