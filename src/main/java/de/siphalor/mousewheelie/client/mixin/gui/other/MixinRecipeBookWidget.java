@@ -95,6 +95,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 			int maxPage = ((IRecipeBookResults) recipesArea).mouseWheelie_getPageCount() - 1;
 			((IRecipeBookResults) recipesArea).mouseWheelie_setCurrentPage(MathHelper.clamp((int) (((IRecipeBookResults) recipesArea).mouseWheelie_getCurrentPage() + Math.round(scrollAmount)), 0, Math.max(maxPage, 0)));
 			((IRecipeBookResults) recipesArea).mouseWheelie_refreshResultButtons();
+			recipesArea.hideAlternates();
 			return ScrollAction.SUCCESS;
 		} else if(mouseX >= left - 30 && mouseX < left) {
 			int index = tabButtons.indexOf(currentTab);
@@ -104,6 +105,7 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 				currentTab = tabButtons.get(newIndex);
 				currentTab.setToggled(true);
 				refreshResults(true);
+				recipesArea.hideAlternates();
 			}
 			return ScrollAction.SUCCESS;
 		}
