@@ -1,12 +1,12 @@
 {
-    "key.mousewheelie.open_config_screen": "Abrir Janela de Configuração",
+    "key.mousewheelie.open_config_screen": "Abrir Janela de Configuração.",
     "key.mousewheelie.whole_stack_modifier": "Modificador de Pilhas Inteiras",
     "key.mousewheelie.all_of_kind_modifier": "Modificador de Todos do Tipo",
     "key.mousewheelie.sort_inventory": "Organizar Inventário",
     "key.mousewheelie.scroll_down": "Rolar Itens para Baixo",
     "key.mousewheelie.pick_tool": "Selecionar a ferramenta certa",
     "mousewheelie.gui.config-screen-unavailable": "Abrir a janela de configuração com a tecla está indisponível.",
-    "mousewheelie.gui.config-screen-unavailable.note": "Por favor use Mod Menu para editar a configuração ou use um aplicativo externo çara editar a configuração diretamente.",
+    "mousewheelie.gui.config-screen-unavailable.note": "Por favor use Mod Menu para editar a configuração ou use um aplicativo externo para editar a configuração diretamente.",
     "mousewheelie.sortmode.alphabet": "Por Alfabeto",
     "mousewheelie.sortmode.creative": "Pesquisar Criativo",
     "mousewheelie.sortmode.quantity": "Por Quantidade",
@@ -97,5 +97,13 @@
     "tweed4_tailor_screen.screen.mousewheelie.tool-picking.pick-from-inventory": "Seleciona de todo o inventário",
     "tweed4_tailor_screen.screen.mousewheelie.tool-picking.pick-from-inventory.description": "Permite selecionar ferramentas do inventário inteiro.\nSe desabilitado, só irá selecionar da hotbar.",
     "key.mousewheelie.restock_modifier": "Modificador de Reabastecimento",
-    "key.mousewheelie.deposit_modifier": "Modificador de Depósito"
+    "key.mousewheelie.deposit_modifier": "Modificador de Depósito",
+    "key.mousewheelie.open_config_screen.amecsapi.description": "Abre a tela de configuração do Mouse Wheelie\ncaso pressionado durante o jogo ou na tela inicial.",
+    "key.mousewheelie.whole_stack_modifier.amecsapi.description": "Segurar este modificador enquanto rolar o scroll do mouse\nenviará toda a pilha.",
+    "key.mousewheelie.all_of_kind_modifier.amecsapi.description": "Segurar este modificador enquanto rolar o scroll do mouse\nirá enviar todas pilhas do mesmo tipo.",
+    "key.mousewheelie.drop_modifier.amecsapi.description": "Segurar este modificador enquanto clica\nirá soltar o item.",
+    "key.mousewheelie.restock_modifier.amecsapi.description": "Segurar este modificador enquanto clica\nirá reabastecer o item do armazenamento aberto.",
+    "key.mousewheelie.deposit_modifier.amecsapi.description": "Segurar este modificador enquanto clica\nirá depositar o item no armazenamento aberto.",
+    "key.mousewheelie.sort_inventory.amecsapi.description": "Ordena o inventário que o mouse está em cima.",
+    "key.mousewheelie.pick_tool.amecsapi.description": "Manualmente aciona qual ferramenta é a correta\npara o atual bloco observado é selecionado."
 }
