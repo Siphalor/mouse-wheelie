@@ -103,5 +103,9 @@
     "tweed4_tailor_screen.screen.mousewheelie.refill.item-changes": "Nachladen, wenn sich der gewählte Gegenstand ändert",
     "key.mousewheelie.deposit_modifier": "Lager-Modifikator",
     "tweed4_tailor_screen.screen.mousewheelie.refill.play-sound": "Spiele Wiederauffüll Sound",
-    "tweed4_tailor_screen.screen.mousewheelie.refill.play-sound.description": "Spielt ein Geräusch nach dem Wiederauffüllen von einem Stack."
+    "tweed4_tailor_screen.screen.mousewheelie.refill.play-sound.description": "Spielt ein Geräusch nach dem Wiederauffüllen von einem Stack.",
+    "key.mousewheelie.whole_stack_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Scrollen,\nwird der ganze Stack übergeben.",
+    "key.mousewheelie.open_config_screen.amecsapi.description": "Öffnet die Mouse Wheelie Einstellungen\nwenn der Knopf im Spiel oder im Hauptmenü gedrückt wird.",
+    "key.mousewheelie.all_of_kind_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Scrollen,\nwerden alle Stack einer Art übergeben.",
+    "key.mousewheelie.drop_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Klicken,\nwird das Item fallengelassen."
 }
