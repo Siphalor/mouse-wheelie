@@ -107,5 +107,9 @@
     "key.mousewheelie.whole_stack_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Scrollen,\nwird der ganze Stack übergeben.",
     "key.mousewheelie.open_config_screen.amecsapi.description": "Öffnet die Mouse Wheelie Einstellungen\nwenn der Knopf im Spiel oder im Hauptmenü gedrückt wird.",
     "key.mousewheelie.all_of_kind_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Scrollen,\nwerden alle Stack einer Art übergeben.",
-    "key.mousewheelie.drop_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Klicken,\nwird das Item fallengelassen."
+    "key.mousewheelie.drop_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Klicken,\nwird das Item fallengelassen.",
+    "key.mousewheelie.deposit_modifier.amecsapi.description": "Das Halten dieses Modifiers legt\nbeim Klicken das Item im offenen Behälter ab.",
+    "key.mousewheelie.restock_modifier.amecsapi.description": "Das Halten dieses Modifiers füllt beim Klicken\ndas Item aus dem offenen Behälter nach.",
+    "key.mousewheelie.sort_inventory.amecsapi.description": "Sortiert das Inventar, über dem sich der Cursor befindet.",
+    "key.mousewheelie.pick_tool.amecsapi.description": "Wählt manuell das richtige Werkzeug\nfür den anvisierten Block aus."
 }
