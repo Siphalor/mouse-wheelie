@@ -110,6 +110,6 @@
     "key.mousewheelie.drop_modifier.amecsapi.description": "Beim gedrückt halten dieser Modifikation während des Klicken,\nwird das Item fallengelassen.",
     "key.mousewheelie.deposit_modifier.amecsapi.description": "Das Halten dieses Modifiers legt\nbeim Klicken das Item im offenen Behälter ab.",
     "key.mousewheelie.restock_modifier.amecsapi.description": "Das Halten dieses Modifiers füllt beim Klicken\ndas Item aus dem offenen Behälter nach.",
-    "key.mousewheelie.sort_inventory.amecsapi.description": "Sortiert das Inventar, über dem sich der Cursor befindet.",
+    "key.mousewheelie.sort_inventory.amecsapi.description": "Sortiert das Inventar, über dem sich die Maus aktuell befindet.",
     "key.mousewheelie.pick_tool.amecsapi.description": "Wählt manuell das richtige Werkzeug\nfür den anvisierten Block aus."
 }
