@@ -1,1 +1,22 @@
-{}
+{
+    "key.mousewheelie.open_config_screen.amecsapi.description": "Öppnar Mushjuls konfigurationsmeny\nom den trycks på i spelet eller på huvudmenyn.",
+    "key.mousewheelie.open_config_screen": "Öppna Konfigurationsmenyn",
+    "key.mousewheelie.drop_modifier": "Droppmodifierare",
+    "key.mousewheelie.all_of_kind_modifier": "Alla av samma sort modifierare",
+    "key.mousewheelie.whole_stack_modifier": "Helstacksmodifierare",
+    "key.mousewheelie.deposit_modifier": "Deponeringsmodifierare",
+    "key.mousewheelie.drop_modifier.amecsapi.description": "Håll ned denna modifierare medans du klickar\nför att droppa föremålet.",
+    "key.mousewheelie.whole_stack_modifier.amecsapi.description": "Håll ned denna modifierare medans du skrollar\nså skickas hela stacken.",
+    "key.mousewheelie.restock_modifier": "Påfyllningsmodifierare",
+    "key.mousewheelie.restock_modifier.amecsapi.description": "Håll ned denna modifierare medans du klickar\nför att fylla på med föremålet från den öppna behållaren.",
+    "key.mousewheelie.sort_inventory": "Sortera Förråd",
+    "key.mousewheelie.sort_inventory.amecsapi.description": "Sorterar förrådet som musen för nuvarande är över.",
+    "key.mousewheelie.scroll_up": "Scrolla Upp Föremål",
+    "key.mousewheelie.scroll_down": "Skrolla ned Föremål",
+    "key.mousewheelie.pick_tool": "Välj rätt verktyg",
+    "key.mousewheelie.pick_tool.amecsapi.description": "Byter manuellt till rätt verktyg\nför det aktuella blocket.",
+    "mousewheelie.gui.config-screen-unavailable": "Öppnande av konfigurationsskärmen med knappbindingen är för nuvarande otillgängligt.",
+    "key.categories.mousewheelie": "Mushjul",
+    "key.mousewheelie.deposit_modifier.amecsapi.description": "Håll ned denna modifierare medans du klickar\nför att föremålet skall deponeras i den öppna behållaren.",
+    "key.mousewheelie.all_of_kind_modifier.amecsapi.description": "Håll ned denna modifierare medans du skrollar\nför att skicka alla stacks av samma sort."
+}
