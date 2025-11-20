@@ -29,6 +29,7 @@ import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.inject.IContainerScreen;
 import de.siphalor.mousewheelie.client.util.inject.ISlot;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ItemSlotMouseAction;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -60,6 +61,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("WeakerAccess")
@@ -96,6 +98,13 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	private @Nullable Slot clickedSlot;
 	@Shadow
 	protected boolean isQuickCrafting;
+
+	//# if MC_VERSION_NUMBER >= 12103
+	@Shadow
+	@Final
+	private List<ItemSlotMouseAction> itemSlotMouseActions;
+	//# end
+
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
 	@Unique
 	private final Supplier<ContainerScreenHelper<AbstractContainerScreen<AbstractContainerMenu>>> screenHelper = Suppliers.memoize(
@@ -292,8 +301,27 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Override
 	public ScrollAction mouseWheelie_onMouseScroll(double mouseX, double mouseY, double scrollAmount) {
 		if (MouseWheelie.config.scrolling.enable) {
-			if (MWClient.isScrollModeToggled()) return ScrollAction.FAILURE;
+			//# if MC_VERSION_NUMBER >= 12103
 			Slot hoveredSlot = findSlot(mouseX, mouseY);
+
+			if (MouseWheelie.config.scrolling.preferStackSpecialScrollActions) {
+				if (!MWClient.isScrollModeToggled()) {
+					for (ItemSlotMouseAction slotMouseAction : itemSlotMouseActions) {
+						if (slotMouseAction.matches(hoveredSlot)) {
+							return ScrollAction.ABORT;
+						}
+					}
+				}
+			} else if (MWClient.isScrollModeToggled()) {
+				return ScrollAction.FAILURE;
+			}
+			//# else
+			//- if (MWClient.isScrollModeToggled()) {
+			//- 	return ScrollAction.FAILURE;
+			//- }
+			//- Slot hoveredSlot = findSlot(mouseX, mouseY);
+			//# end
+
 			if (hoveredSlot == null)
 				return ScrollAction.PASS;
 			if (hoveredSlot.getItem().isEmpty())

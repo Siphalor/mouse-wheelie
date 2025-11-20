@@ -92,6 +92,9 @@ public class MWConfig {
 		public boolean enable = true;
 		public boolean invert = false;
 		public boolean directionalScrolling = true;
+		//# if MC_VERSION_NUMBER >= 12103
+		public boolean preferStackSpecialScrollActions = true;
+		//# end
 		public boolean scrollCreativeMenuItems = true;
 		public boolean scrollCreativeMenuTabs = true;
 	}

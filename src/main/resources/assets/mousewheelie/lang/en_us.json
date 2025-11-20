@@ -52,6 +52,8 @@
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.invert.description": "Invert the scroll direction when scrolling items.",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.directional-scrolling": "Directional Scrolling",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.directional-scrolling.description": "If enabled, items will be moved based on the visual position on the screen:\nWhen scrolling up, items will be sent to the upper inventory, when scrolling down to the lower inventory.\nIf disabled, scrolling will instead affect the amount of items:\nWhen scrolling up, items will be moved towards the stack, when scrolling down items will be sent to the opposite inventory.\n\nUsing \"Invert scroll direction\", you can swap the up and down behavior for these actions.",
+    "tweed4_tailor_screen.screen.mousewheelie.scrolling.prefer-stack-special-scroll-actions": "Prefer special scroll actions",
+    "tweed4_tailor_screen.screen.mousewheelie.scrolling.prefer-stack-special-scroll-actions.description": "With this enabled, items with special scrolling interactions, like bundles, will have their special behavior by default.\nYou can press the alt key and scroll to actually move the stack instead.",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-items": "Scroll creative menu items",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-items.description": "Sets whether to by default scroll items out of the creative menu.",
     "tweed4_tailor_screen.screen.mousewheelie.scrolling.scroll-creative-menu-tabs": "Scroll creative menu tabs",
