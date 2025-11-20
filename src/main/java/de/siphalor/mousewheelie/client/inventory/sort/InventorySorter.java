@@ -140,13 +140,13 @@ public class InventorySorter {
 		sortIds = sortMode.sort(sortIds, stacks, new SortContext(containerScreen, Arrays.asList(inventorySlots)));
 
 		if (MouseWheelie.config.sort.serverAcceleratedSorting && MWClientNetworking.canSendReorderPacket()) {
-			this.reorderInventory(sortIds);
+			this.reorderServerAccelerated(sortIds);
 		} else {
-			this.sortOnClient(sortIds);
+			this.reorderOnClient(sortIds);
 		}
 	}
 
-	protected void reorderInventory(int[] sortedIds) {
+	protected void reorderServerAccelerated(int[] sortedIds) {
 		int[] slotMappings = new int[sortedIds.length * 2];
 		for (int i = 0; i < sortedIds.length; i++) {
 			Slot from = inventorySlots[sortedIds[i]];
@@ -160,7 +160,7 @@ public class InventorySorter {
 		});
 	}
 
-	protected void sortOnClient(int[] sortedIds) {
+	protected void reorderOnClient(int[] sortedIds) {
 		ItemStack currentStack;
 		final int slotCount = stacks.length;
 
@@ -228,11 +228,17 @@ public class InventorySorter {
 				}
 
 				// swap the current stack with the target stack
-				InteractionManager.push(screenHelper.createClickEvent(inventorySlots[id], 0, ClickType.PICKUP));
+				boolean targetIsEmpty = doneSlashEmpty.get(slotCount + id);
+				InteractionManager.push(screenHelper.createClickEvent(
+						inventorySlots[id],
+						// special logic for bundles, full stacks have to be swapped with right-click, empty ones with left-click
+						targetIsEmpty ? 0 : 1,
+						ClickType.PICKUP
+				));
 				currentStack = stacks[id];
 				doneSlashEmpty.set(id); // mark the current target as done
 				// If the target that we just swapped with was empty before, then this breaks the chain.
-				if (doneSlashEmpty.get(slotCount + id)) {
+				if (targetIsEmpty) {
 					break;
 				}
 				id = origin2Target[id];
