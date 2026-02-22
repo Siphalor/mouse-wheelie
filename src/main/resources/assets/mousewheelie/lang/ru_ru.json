@@ -54,8 +54,6 @@
     "mousewheelie.config.refill.play-sound.description": "Воспроизводит звук после пополнения стака.",
     "mousewheelie.config.refill.off-hand": "Пополнять вторую руку",
     "mousewheelie.config.refill.off-hand.description": "Пополняет стак во второй руке.",
-    "mousewheelie.config.refill.restore-selected-slot": "Восстановить выбранный слот",
-    "mousewheelie.config.refill.restore-selected-slot.description": "Возвращать пополненный элемент в первоначально выбранный слот.\nЭто займет немного больше времени. Возможно, вы захотите отключить эту функцию при медленном подключении.",
     "mousewheelie.config.refill.item-changes": "Пополнять при изменении текущего предмета",
     "mousewheelie.config.refill.item-changes.description": "Пополнять, когда только что использованный товар заменяется на другой.\nЭто срабатывает, например, при наполнении или опорожнении вёдер воды.",
     "mousewheelie.config.refill.eat": "Пополнять при поедании пищи",

@@ -74,8 +74,6 @@
     "mousewheelie.config.refill.description": "Le remplissage d'items est une fonctionnalité qui charge automatiquement plus d'items de votre inventaire lorsque votre pile actuelle est épuisée.\nCeci est par exemple utile lors de la construction avec beaucoup de fois le même bloc afin que vous n'ayez pas à ouvrir constamment l'inventaire.\n\nLa première section de cette config concerne dans quelle circonstance les items se font remplire.\nLa section \"Règles de rechargement\" permet de configurer comment le stack de remplacement sera déterminé en cherchant l'inventaire.",
     "mousewheelie.config.refill.off-hand": "Recharger la main secondaire",
     "mousewheelie.config.refill.off-hand.description": "Recharger les piles dans la main secondaire.",
-    "mousewheelie.config.refill.restore-selected-slot": "Restaurer l'emplacement sélectionné",
-    "mousewheelie.config.refill.restore-selected-slot.description": "Restaure l'item rechargé dans l'emplacement sélectionné à l'origine.\nCela prendra un peu plus de temps. Vous voudrez probablement désactiver cette option lorsque vous avez une connexion lente.",
     "mousewheelie.config.refill.eat": "Recharger en mangeant de la nourriture",
     "mousewheelie.config.refill.eat.description": "Recharger quand le dernier aliment dans la main a été consommé.",
     "mousewheelie.config.refill.drop": "Recharger en lâchant des items",

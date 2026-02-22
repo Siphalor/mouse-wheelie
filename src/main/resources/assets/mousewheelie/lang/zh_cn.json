@@ -90,7 +90,6 @@
     "mousewheelie.config.general.item-kinds-nbt-match-mode.description": "项目类型是否应检查 NBT 数据。\n 例如，这可以通过滚动和单击来使用。 \nNONE 禁用此功能，ALL 检查完全相同的 NBT，而 SOME 则允许伤害和附魔方面的差异。",
     "mousewheelie.config.general.enable-bundle-dragging": "启用成组物品拖动",
     "mousewheelie.config.general.hotbar-scoping.description": "允许您定义在滚动或整理物品时热键栏的处理方式。\nHARD：快捷物品栏始终被单独处理。\nSOFT：快捷物品栏被作为物品栏的一部分。在发送整个物品栏（ctrl+shift）时不适用。\nNONE：快捷物品栏被作为物品栏的一部分。在发送整个物品栏（ctrl+shift）时也适用。",
-    "mousewheelie.config.refill.restore-selected-slot.description": "将补充的物品恢复到最初选择的槽位。\n这会花费更多时间。在网络连接较慢时建议关闭此选项。",
     "mousewheelie.config.refill.rules.description": "配置用哪种新物品来自动补充之前的物品。",
     "mousewheelie.config.sort.server-accelerated-sorting.description": "在单人游戏或在服务器上安装了 Mouse Wheelie 时是否使用接近即时的排序。",
     "mousewheelie.config.general.enable-bundle-dragging.description": "允许点击并拖动物品栏中的成组物品，以轻松放入或取出多组。"

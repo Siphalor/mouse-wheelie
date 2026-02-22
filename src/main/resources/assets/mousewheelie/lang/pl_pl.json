@@ -83,8 +83,6 @@
     "mousewheelie.config.refill.play-sound": "Odtwórz dźwięk uzupełniania",
     "mousewheelie.config.refill.play-sound.description": "Ustala, czy odtwarzany będzie dźwięk przy uzupełnianiu.",
     "mousewheelie.config.refill.off-hand.description": "Uzupełnia stacki w drugiej ręce.",
-    "mousewheelie.config.refill.restore-selected-slot": "Przywróć wybrane pole",
-    "mousewheelie.config.refill.restore-selected-slot.description": "Przywraca uzupełniony przedmiot to oryginalnie wybranego pola.\nZajmuje to trochę więcej czasu. Możesz chcieć to wyłączyć, jeśli masz powolne połączenie.",
     "mousewheelie.config.refill.eat.description": "Uzupełnij, gdy ostatnie jedzenie w ręce zostało spożyte.",
     "mousewheelie.config.refill.drop.description": "Uzupełnianie przy wyrzucaniu przedmiotów z paska szybkiego wyboru.",
     "mousewheelie.config.refill.use.description": "Uzupełnij przy zużyciu przedmiotów, np. narzędzi lub broni.",

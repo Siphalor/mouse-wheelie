@@ -26,8 +26,6 @@
     "mousewheelie.config.scrolling.enable": "Ota esineen selaus käyttöön",
     "mousewheelie.config.sort.shift-sort": "Shift + hiiren keskipainikkeen klikkaus",
     "mousewheelie.config.sort.shift-sort.description": "Asettaa lajittelutilan lajittelua varten, kun painetaan shift-näppäintä.",
-    "mousewheelie.config.refill.restore-selected-slot": "Palauta valittu pikanäppäin",
-    "mousewheelie.config.refill.restore-selected-slot.description": "Palauta uudelleen täytetty esine alun perin valittuun pikanäppäimeen.\nTämä vie hieman enemmän aikaa. Tämä kannattaa ehkä kytkeä pois päältä, jos yhteys on hidas.",
     "mousewheelie.config.refill.item-changes": "Täytä, kun nykyinen esine muuttuu",
     "mousewheelie.config.general.interaction-rate": "Käsittely nopeus",
     "mousewheelie.config.general.interaction-rate.description": "Asettaa millisekunneissa aikavälin että kuinka usein käsittelyt lähetetään palvelimelle.\nPienemmät luvut lisäävät nopeutta, mutta palvelimet saattavat hylätä ne.",
