@@ -131,6 +131,9 @@ public class MWConfig {
 		public boolean use = true;
 		public boolean other = true;
 
+		// Refill exclusions
+		public boolean ignoreBuckets = false;
+
 		public Rules rules = new Rules();
 
 		@CompoundWeaving

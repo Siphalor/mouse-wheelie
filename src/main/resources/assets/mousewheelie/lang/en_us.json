@@ -100,6 +100,8 @@
     "mousewheelie.config.refill.use.description": "Refill when using up items, like tools or weapons.",
     "mousewheelie.config.refill.other": "Refill on other occasions",
     "mousewheelie.config.refill.other.description": "Refill on other occasions.",
+    "mousewheelie.config.refill.ignore-buckets": "Ignore buckets",
+    "mousewheelie.config.refill.ignore-buckets.description": "Never refill buckets (e.g. empty, water and lava buckets).\nThis prevents accidentally placing fluids after emptying or filling a bucket.",
     "mousewheelie.config.refill.rules": "Refill rules",
     "mousewheelie.config.refill.rules.description": "Configure with which new item the previous stack will be refilled.",
     "mousewheelie.config.refill.rules.any-block": "Refill with any blocks",
