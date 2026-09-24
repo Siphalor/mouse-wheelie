@@ -23,6 +23,7 @@ import de.siphalor.mousewheelie.MouseWheelie;
 import java.awt.*;
 import java.util.*;
 import lombok.CustomLog;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 //- import net.minecraft.client.Minecraft;
@@ -285,29 +286,44 @@ public class ItemStackUtils {
 				//- return stack.hashCode();
 				//# end
 			case SOME:
-				HashCodeBuilder hashCodeBuilder = new HashCodeBuilder()
-						.append(stack.getItem());
-				//# if MC_VERSION_NUMBER >= 12006
-				stack.getComponentsPatch().entrySet().stream()
-						.filter(entry -> entry.getKey() != DataComponents.DAMAGE && entry.getKey() != DataComponents.ENCHANTMENTS)
-						.sorted(Comparator.comparing(entry -> entry.getKey().hashCode()))
-						.forEachOrdered(entry -> hashCodeBuilder.append(entry.getKey()).append(entry.getValue()));
-				//# else
-				//- CompoundTag nbt = stack.getTag();
-				//- if (nbt == null) {
-				//- 	return hashCodeBuilder.toHashCode();
-				//- }
-
-				//- nbt.getAllKeys().stream().sorted().forEachOrdered(key -> {
-				//- 	if (key.equals("Damage") || key.equals("Enchantments")) {
-				//- 		return;
-				//- 	}
-				//- 	hashCodeBuilder.append(key).append(nbt.get(key));
-				//- });
-				//# end
-				return hashCodeBuilder.toHashCode();
+				return hashStackWithSomeNbt(stack);
+			default:
+				return 0; // unreachable
 		}
-		return 0; // unreachable
+	}
+
+	private static int hashStackWithSomeNbt(ItemStack stack) {
+		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder()
+				.append(stack.getItem());
+		//# if MC_VERSION_NUMBER >= 260300
+		net.minecraft.core.component.DataComponentPatch.SplitResult split = stack.getComponentsPatch().split();
+		split.added().stream()
+				.filter(component -> component.type() != DataComponents.DAMAGE && component.type() != DataComponents.ENCHANTMENTS)
+				.sorted(Comparator.comparing(component -> component.type().hashCode()))
+				.forEachOrdered(component -> hashCodeBuilder.append(component.type()).append(component.value()));
+		split.removed().stream()
+				.filter(type -> type != DataComponents.DAMAGE && type != DataComponents.ENCHANTMENTS)
+				.sorted(Comparator.comparing(Object::hashCode))
+				.forEachOrdered(hashCodeBuilder::append);
+		//# elif MC_VERSION_NUMBER >= 12006
+		//- stack.getComponentsPatch().entrySet().stream()
+		//- 		.filter(entry -> entry.getKey() != DataComponents.DAMAGE && entry.getKey() != DataComponents.ENCHANTMENTS)
+		//- 		.sorted(Comparator.comparing(entry -> entry.getKey().hashCode()))
+		//- 		.forEachOrdered(entry -> hashCodeBuilder.append(entry.getKey()).append(entry.getValue()));
+		//# else
+		//- CompoundTag nbt = stack.getTag();
+		//- if (nbt == null) {
+		//- 	return hashCodeBuilder.toHashCode();
+		//- }
+
+		//- nbt.getAllKeys().stream().sorted().forEachOrdered(key -> {
+		//- 	if (key.equals("Damage") || key.equals("Enchantments")) {
+		//- 		return;
+		//- 	}
+		//- 	hashCodeBuilder.append(key).append(nbt.get(key));
+		//- });
+		//# end
+		return hashCodeBuilder.toHashCode();
 	}
 
 	public enum NbtMatchMode {

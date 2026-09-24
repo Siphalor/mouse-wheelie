@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.mousewheelie.MouseWheelie;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,13 +34,20 @@ public class MixinRecipeBookChoicesOverlay {
 			at = @At("HEAD"),
 			argsOnly = true
 	)
-	//# if MC_VERSION_NUMBER >= 12109
+	//# if MC_VERSION_NUMBER >= 260300
 	public MouseButtonEvent modifyMouseClickedEvent(MouseButtonEvent event) {
-		if (event.button() == 1 && MouseWheelie.config.general.enableQuickCraft) {
-			return new MouseButtonEvent(event.x(), event.y(), new MouseButtonInfo(0, event.modifiers()));
+		if (event.button() == InputConstants.MOUSE_BUTTON_RIGHT && MouseWheelie.config.general.enableQuickCraft) {
+			return new MouseButtonEvent(event.x(), event.y(), new MouseButtonInfo(InputConstants.MOUSE_BUTTON_LEFT, event.modifiers()));
 		}
 		return event;
 	}
+	//# elif MC_VERSION_NUMBER >= 12109
+	//- public MouseButtonEvent modifyMouseClickedEvent(MouseButtonEvent event) {
+	//- 	if (event.button() == 1 && MouseWheelie.config.general.enableQuickCraft) {
+	//- 		return new MouseButtonEvent(event.x(), event.y(), new MouseButtonInfo(0, event.modifiers()));
+	//- 	}
+	//- 	return event;
+	//- }
 	//# else
 	//- public int modifyMouseClickedButton(int button) {
 	//- 	if (button == 1 && MouseWheelie.config.general.enableQuickCraft) {

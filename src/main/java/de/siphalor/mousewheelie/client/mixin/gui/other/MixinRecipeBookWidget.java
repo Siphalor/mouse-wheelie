@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.mixin.StackedItemContentsAccessor;
@@ -226,7 +227,11 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	//# else
 	//- public void mouseClicked(double x, double y, int mouseButton, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 	//# end
-		if (MouseWheelie.config.general.enableQuickCraft && mouseButton == 1) {
+		//# if MC_VERSION_NUMBER >= 260300
+		if (MouseWheelie.config.general.enableQuickCraft && mouseButton == InputConstants.MOUSE_BUTTON_RIGHT) {
+		//# else
+		//- if (MouseWheelie.config.general.enableQuickCraft && mouseButton == 1) {
+		//# end
 			int resSlot = getResultSlotIndex();
 			//# if MC_VERSION_NUMBER >= 12103
 			RecipeDisplayEntry recipeEntry = getLastClickedRecipeEntry();
