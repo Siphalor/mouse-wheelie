@@ -110,27 +110,27 @@ public class MWClient implements ClientModInitializer {
 	);
 	public static final ActionModifierKeybinding WHOLE_STACK_MODIFIER = new ActionModifierKeybinding(
 			"whole_stack_modifier",
-			InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LSHIFT),
+			getKey(InputConstants.KEY_LSHIFT),
 			KEY_BINDING_CATEGORY
 	);
 	public static final ActionModifierKeybinding ALL_OF_KIND_MODIFIER = new ActionModifierKeybinding(
 			"all_of_kind_modifier",
-			InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LCONTROL),
+			getKey(InputConstants.KEY_LCONTROL),
 			KEY_BINDING_CATEGORY
 	);
 	public static final ActionModifierKeybinding DROP_MODIFIER = new ActionModifierKeybinding(
 			"drop_modifier",
-			InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_LALT),
+			getKey(InputConstants.KEY_LALT),
 			KEY_BINDING_CATEGORY
 	);
 	public static final ActionModifierKeybinding DEPOSIT_MODIFIER = new ActionModifierKeybinding(
 			"deposit_modifier",
-			InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_SPACE),
+			getKey(InputConstants.KEY_SPACE),
 			KEY_BINDING_CATEGORY
 	);
 	public static final ActionModifierKeybinding RESTOCK_MODIFIER = new ActionModifierKeybinding(
 			"restock_modifier",
-			InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_SPACE),
+			getKey(InputConstants.KEY_SPACE),
 			KEY_BINDING_CATEGORY
 	);
 
@@ -164,6 +164,14 @@ public class MWClient implements ClientModInitializer {
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			MouseWheelie.endFeatureSession();
 		});
+	}
+
+	private static InputConstants.Key getKey(int code) {
+		//# if MC_VERSION_NUMBER >= 260300
+		return InputConstants.Type.KEYBOARD.getOrCreate(code);
+		//# else
+		//- return InputConstants.Type.KEYSYM.getOrCreate(code);
+		//# end
 	}
 
 	//# if MC_VERSION_NUMBER >= 260100

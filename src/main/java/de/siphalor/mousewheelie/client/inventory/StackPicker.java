@@ -74,11 +74,16 @@ public class StackPicker {
 		BundleContents bundleContents = player.getInventory().getItem(bundleLocation.getInventorySlotId())
 				.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
 		ItemStack refillStack =
-				//# if MC_VERSION_NUMBER >= 260100
-				bundleContents.itemCopyStream()
+				//# if MC_VERSION_NUMBER >= 260300
+				bundleContents.itemCopies()
 						.skip(bundleLocation.getIndexInBundle())
 						.findFirst()
 						.orElse(ItemStack.EMPTY);
+				//# elif MC_VERSION_NUMBER >= 260100
+				//- bundleContents.itemCopyStream()
+				//- 		.skip(bundleLocation.getIndexInBundle())
+				//- 		.findFirst()
+				//- 		.orElse(ItemStack.EMPTY);
 				//# else
 				//- bundleContents.getItemUnsafe(bundleLocation.getIndexInBundle());
 				//# end

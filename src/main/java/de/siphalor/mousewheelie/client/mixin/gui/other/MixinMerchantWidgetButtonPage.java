@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.MWClient;
 import de.siphalor.mousewheelie.client.network.InteractionManager;
@@ -43,7 +44,11 @@ public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWid
 
 	@Override
 	public boolean mouseWheelie_mouseClickedSpecial(int mouseButton) {
-		if (mouseButton != 1 || !MouseWheelie.config.general.enableQuickCraft) return false;
+		//# if MC_VERSION_NUMBER >= 260300
+		if (mouseButton != InputConstants.MOUSE_BUTTON_RIGHT || !MouseWheelie.config.general.enableQuickCraft) return false;
+		//# else
+		//- if (mouseButton != 1 || !MouseWheelie.config.general.enableQuickCraft) return false;
+		//# end
 		Screen screen = MWClient.getOpenScreen();
 		if (screen instanceof IMerchantScreen) {
 			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.index + ((IMerchantScreen) screen).mouseWheelie_getRecipeIdOffset());

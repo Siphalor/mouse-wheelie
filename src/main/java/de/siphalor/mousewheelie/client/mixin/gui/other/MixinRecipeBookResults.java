@@ -17,6 +17,7 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.mousewheelie.MouseWheelie;
 import de.siphalor.mousewheelie.client.util.inject.IRecipeBookResults;
 import java.util.Iterator;
@@ -110,7 +111,11 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 		//# if MC_VERSION_NUMBER >= 12109
 		int button = event.button();
 		//# end
-		if (MouseWheelie.config.general.enableQuickCraft && button == 1 && recipeButton.isOnlyOption()) {
+		//# if MC_VERSION_NUMBER >= 260300
+		if (MouseWheelie.config.general.enableQuickCraft && button == InputConstants.MOUSE_BUTTON_RIGHT && recipeButton.isOnlyOption()) {
+		//# else
+		//- if (MouseWheelie.config.general.enableQuickCraft && button == 1 && recipeButton.isOnlyOption()) {
+		//# end
 			//# if MC_VERSION_NUMBER >= 12103
 			lastClickedRecipe = recipeButton.getCurrentRecipe();
 			//# else
