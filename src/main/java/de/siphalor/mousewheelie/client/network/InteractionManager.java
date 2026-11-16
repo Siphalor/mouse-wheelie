@@ -42,7 +42,12 @@ import net.minecraft.world.inventory.ContainerInput;
 @CustomLog
 public class InteractionManager {
 	private static final Queue<InteractionEvent> interactionEventQueue = new ArrayDeque<>();
-	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1);
+	private static final ScheduledThreadPoolExecutor scheduledExecutor = new ScheduledThreadPoolExecutor(1, runnable -> {
+		Thread thread = new Thread(runnable, "Mouse Wheelie Interaction Manager");
+		// Daemon, so that this executor never keeps the JVM alive after the game shuts down.
+		thread.setDaemon(true);
+		return thread;
+	});
 	private static ScheduledFuture<?> tickFuture;
 
 
