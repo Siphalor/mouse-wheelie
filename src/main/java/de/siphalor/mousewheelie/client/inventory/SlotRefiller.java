@@ -132,6 +132,9 @@ public class SlotRefiller {
 		if (isRefillInProgress()) {
 			return;
 		}
+		if (MouseWheelie.config.refill.ignoreBuckets && stack.getItem() instanceof BucketItem) {
+			return;
+		}
 		//# if MC_VERSION_NUMBER >= 12101
 		if (!stack.getOrDefault(
 				EnchantmentEffectComponents.TRIDENT_RETURN_ACCELERATION,
