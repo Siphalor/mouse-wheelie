@@ -7,6 +7,7 @@ plugins {
 	`maven-publish`
 	alias(mcLibs.plugins.smcmtk)
 	alias(mcLibs.plugins.fabric.loom)
+	alias(libs.plugins.changelog)
 	alias(libs.plugins.licenser)
 	alias(libs.plugins.jcyo)
 	alias(libs.plugins.modPublisher)
@@ -222,9 +223,11 @@ publisher {
 	gameVersions = smcmtk.mcProps.getting("mc.version.supported").map { it.split(", ") }
 
 	displayName = "[${smcmtk.mcProps.getting("mc.version.title").get()}] $shortVersion"
-	changelog.set(providers.exec {
-		commandLine("git", "log", "-1", "--format=format:##%x20%s%n%n%b", "--grep", "Version")
-	}.standardOutput.asText.map { it.trim() })
+
+	changelog.set(
+		providers.fileContents(project.layout.projectDirectory.file("CHANGELOG.md")).asText.map
+			{ _ -> project.changelog.renderItem(project.changelog.get("${project.version}")) }
+	)
 
 	curseDepends {
 		required("fabric-api")

@@ -1,4 +1,5 @@
 [versions]
+changelogPlugin = "2.5.0"
 fabric-loader = "0.18.5"
 jcyo = "0.6.0"
 jspecify = "1.0.0"
@@ -8,6 +9,7 @@ modPublisher = "2.1.8"
 modrinth = "2.8.10"
 
 [plugins]
+changelog = { id = "org.jetbrains.changelog", version.ref = "changelogPlugin" }
 jcyo = { id = "de.siphalor.jcyo", version.ref = "jcyo" }
 licenser = { id = "dev.yumi.gradle.licenser", version.ref = "licenser" }
 modPublisher = { id = "com.hypherionmc.modutils.modpublisher", version.ref = "modPublisher" }
