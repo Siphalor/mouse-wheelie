@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Fix language file names
         run: |
@@ -20,7 +20,7 @@ jobs:
           done
 
       - name: Commit
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v11
         with:
           add: 'src/main/resources/assets'
           default_author: github_actions
@@ -28,19 +28,19 @@ jobs:
           push: false
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 24
+          java-version: 25
       - name: Set execution rights
         run: chmod +x ./gradlew
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
       - name: Update license headers
         run: ./gradlew applyLicenses
 
       - name: Commit
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v11
         with:
           add: 'src/main/java'
           default_author: github_actions
