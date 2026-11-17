@@ -14,8 +14,8 @@ plugins {
 }
 
 group = "de.siphalor.${project.name}"
-val archivesBaseName = "${project.name}-mc${properties["minecraft.version.descriptor"]}"
-val shortVersion = "${properties["version"]}"
+val archivesBaseName = "${project.name}-mc${property("minecraft.version.descriptor")}"
+val shortVersion = "${property("version")}"
 version = "${shortVersion}+mc${mcLibs.versions.minecraft.get()}"
 
 license {
