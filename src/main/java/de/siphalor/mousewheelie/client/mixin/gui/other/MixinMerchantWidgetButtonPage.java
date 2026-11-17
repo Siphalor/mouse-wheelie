@@ -34,13 +34,20 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 //- import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.trading.MerchantOffer;
 
 @Environment(EnvType.CLIENT)
 @Mixin(targets = "net/minecraft/client/gui/screens/inventory/MerchantScreen$TradeOfferButton")
 public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWidget {
+	//# if MC_VERSION_NUMBER >= 260400
 	@Shadow
 	@Final
-	int index;
+	private MerchantOffer offer;
+	//# else
+	//- @Shadow
+	//- @Final
+	//- int index;
+	//# end
 
 	@Override
 	public boolean mouseWheelie_mouseClickedSpecial(int mouseButton) {
@@ -51,8 +58,11 @@ public class MixinMerchantWidgetButtonPage implements ISpecialClickableButtonWid
 		//# end
 		Screen screen = MWClient.getOpenScreen();
 		if (screen instanceof IMerchantScreen) {
-			((IMerchantScreen) screen).mouseWheelie_setRecipeId(this.index + ((IMerchantScreen) screen).mouseWheelie_getRecipeIdOffset());
-			((IMerchantScreen) screen).mouseWheelie_syncRecipeId();
+			//# if MC_VERSION_NUMBER >= 260400
+			((IMerchantScreen) screen).mouseWheelie_setOfferAndSync(this.offer);
+			//# else
+			//- ((IMerchantScreen) screen).mouseWheelie_setRecipeIdAndSync(this.index);
+			//# end
 			if (screen instanceof AbstractContainerScreen) {
 				if (MWClient.WHOLE_STACK_MODIFIER.isDown())
 					InteractionManager.pushClickEvent(

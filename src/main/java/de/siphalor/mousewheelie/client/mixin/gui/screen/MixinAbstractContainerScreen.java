@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 //- import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,7 +46,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ItemSlotMouseAction;
+//- import net.minecraft.client.gui.ItemSlotMouseAction;
+import net.minecraft.client.gui.components.inventory.SlotGroup;
+import net.minecraft.client.gui.components.inventory.SlotWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -80,22 +83,55 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 		super(textComponent_1);
 	}
 
-	//# if MC_VERSION_NUMBER >= 12103
+	//# if MC_VERSION_NUMBER >= 260400
 	@Shadow
-	protected abstract Slot getHoveredSlot(double x, double y);
+	@Final
+	private List<SlotGroup> slotGroups;
 
 	@Unique
 	private @Nullable Slot findSlot(double x, double y) {
-		return getHoveredSlot(x, y);
+		for (SlotGroup slotGroup : slotGroups) {
+			for (SlotWidget slotWidget : slotGroup.children()) {
+				if (slotWidget.isMouseOver(x, y)) {
+					return slotWidget.slot();
+				}
+			}
+		}
+		return null;
 	}
+	//# elif MC_VERSION_NUMBER >= 12103
+	//- @Shadow
+	//- protected abstract Slot getHoveredSlot(double x, double y);
+
+	//- @Unique
+	//- private @Nullable Slot findSlot(double x, double y) {
+	//- 	return getHoveredSlot(x, y);
+	//- }
 	//# else
 	//- @Shadow
 	//- protected abstract Slot findSlot(double x, double y);
 	//# end
 
+	//# if MC_VERSION_NUMBER >= 260400
+	@Shadow
+	protected int leftPos;
+	@Shadow
+	protected int topPos;
+
+	@Unique
+	private void slotClicked(Slot slot, int slotId, int button, ContainerInput slotAction) {
+		// This is pretty silly, but it's the easiest escape hatch to mimic a SlotWidget,
+		// considering everything else is based on slots
+		slotClicked(new SlotWidget(slot, minecraft, width, leftPos, topPos), slotId, button, slotAction);
+	}
+	//# end
 	@Shadow
 	protected abstract void slotClicked(
-			Slot slot,
+			//# if MC_VERSION_NUMBER >= 260400
+			SlotWidget slotWidget,
+			//# else
+			//- Slot slot,
+			//# end
 			int slotId,
 			int button,
 			//# if MC_VERSION_NUMBER >= 260100
@@ -109,19 +145,41 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@Final
 	protected AbstractContainerMenu menu;
 
+	//# if MC_VERSION_NUMBER >= 260400
 	@Shadow
-	protected Slot hoveredSlot;
+	protected abstract @Nullable SlotWidget getHoveredSlot();
+
+	@Unique
+	private @Nullable Slot getCurrentlyHoveredSlot() {
+		SlotWidget slotWidget = getHoveredSlot();
+		return slotWidget == null ? null : slotWidget.slot();
+	}
+	//# else
+	//- @Shadow
+	//- protected @Nullable Slot hoveredSlot;
+
+	//- @Unique
+	//- private @Nullable Slot getCurrentlyHoveredSlot() {
+	//- 	return hoveredSlot;
+	//- }
+
+	//- //# if MC_VERSION_NUMBER >= 260200
+	//- @Shadow
+	//- private @Nullable Slot lastClickSlot;
+	//- //# else
+	//- @Shadow
+	//- private @Nullable Slot clickedSlot;
+	//- //# end
+	//# end
 
 	@Shadow
-	private @Nullable Slot /*# if MC_VERSION_NUMBER >= 260200 */lastClickSlot/*# else *//*- clickedSlot *//*# end */;
+	/*# if MC_VERSION_NUMBER >= 260400 */private/*# else *//*- protected *//*# end */
+	boolean isQuickCrafting;
 
-	@Shadow
-	protected boolean isQuickCrafting;
-
-	//# if MC_VERSION_NUMBER >= 12103
-	@Shadow
-	@Final
-	private List<ItemSlotMouseAction> itemSlotMouseActions;
+	//# if MC_VERSION_NUMBER >= 12103 && MC_VERSION_NUMBER < 260400
+	//- @Shadow
+	//- @Final
+	//- private List<ItemSlotMouseAction> itemSlotMouseActions;
 	//# end
 
 	@SuppressWarnings({"ConstantConditions", "unchecked"})
@@ -371,8 +429,9 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	//- public void onMouseRelease(double x, double y, int button, CallbackInfoReturnable<Boolean> cir) {
 	//# end
 		if (bundleDragMode != null && bundleDragMode != BundleDragMode.AUTO) {
-			//# if MC_VERSION_NUMBER >= 260200
-			lastClickSlot = null;
+			//# if MC_VERSION_NUMBER >= 260400
+			//# elif MC_VERSION_NUMBER >= 260200
+			//- lastClickSlot = null;
 			//# else
 			//- clickedSlot = null;
 			//# end
@@ -399,11 +458,18 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 			//# if MC_VERSION_NUMBER >= 12103
 			if (MouseWheelie.config.scrolling.preferStackSpecialScrollActions) {
 				if (!MWClient.isScrollModeToggled()) {
-					for (ItemSlotMouseAction slotMouseAction : itemSlotMouseActions) {
-						if (slotMouseAction.matches(hoveredSlot)) {
-							return ScrollAction.ABORT;
-						}
+					//# if MC_VERSION_NUMBER >= 260400
+					SlotWidget hoveredSlotWidget = getHoveredSlot();
+					if (hoveredSlotWidget != null && hoveredSlotWidget.mouseScrolled(mouseX, mouseY, 0, scrollAmount)) {
+						return ScrollAction.ABORT;
 					}
+					//# else
+					//- for (ItemSlotMouseAction slotMouseAction : itemSlotMouseActions) {
+					//- 	if (slotMouseAction.matches(hoveredSlot)) {
+					//- 		return ScrollAction.ABORT;
+					//- 	}
+					//- }
+					//# end
 				}
 			}
 			//# end
@@ -463,12 +529,13 @@ public abstract class MixinAbstractContainerScreen extends Screen implements ICo
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public boolean mouseWheelie_triggerSort() {
+		Slot hoveredSlot = getCurrentlyHoveredSlot();
 		if (hoveredSlot == null)
 			return false;
 		Player player = Minecraft.getInstance().player;
 		if (player.getAbilities().instabuild
 				//# if MC_VERSION_NUMBER >= 260300
-				&& minecraft.mouseHandler.isMiddlePressed()
+				&& (SDLMouse.nSDL_GetMouseState(0L, 0L) & SDLMouse.SDL_BUTTON_MIDDLE) != 0
 				//# elif MC_VERSION_NUMBER >= 12109
 				//- && GLFW.glfwGetMouseButton(minecraft.getWindow().handle(), GLFW.GLFW_MOUSE_BUTTON_MIDDLE) != 0
 				//# else

@@ -31,10 +31,11 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.client.gui.components.inventory.SlotWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+//- import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 //- import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerInput;
@@ -53,7 +54,11 @@ public abstract class MixinCreativeInventoryScreen extends AbstractContainerScre
 
 	@Shadow
 	protected abstract void slotClicked(
-			Slot slot,
+			//# if MC_VERSION_NUMBER >= 260400
+			SlotWidget slotWidget,
+			//# else
+			//- Slot slot,
+			//# end
 			int invSlot,
 			int button,
 			//# if MC_VERSION_NUMBER >= 260100
@@ -101,11 +106,17 @@ public abstract class MixinCreativeInventoryScreen extends AbstractContainerScre
 				//- 	return ScrollAction.SUCCESS;
 				//- }
 				//# end
-				selectTab(groupsToDisplay.get(Mth.clamp(
-						(int) (selectedTabIndex + Math.signum(scrollAmount)),
-						0,
-						groupsToDisplay.size() - 1)
-				));
+				selectTab(groupsToDisplay.get(
+						//# if MC_VERSION_NUMBER >= 260400
+						Math.clamp(
+						//# else
+						//- Mth.clamp(
+						//# end
+								(int) (selectedTabIndex + Math.signum(scrollAmount)),
+								0,
+								groupsToDisplay.size() - 1)
+						)
+				);
 				return ScrollAction.SUCCESS;
 			}
 		}
@@ -117,7 +128,16 @@ public abstract class MixinCreativeInventoryScreen extends AbstractContainerScre
 			if (hoverSlot != null) {
 				ContainerScreenHelper.of(this, (slot, data, slotActionType) ->
 						new InteractionManager.CallbackEvent(() -> {
-							slotClicked(slot, ((ISlot) slot).mouseWheelie_getIdInContainer(), data, slotActionType);
+							slotClicked(
+									//# if MC_VERSION_NUMBER >= 260400
+									new SlotWidget(slot, minecraft, width, leftPos, topPos),
+									//# else
+									//- slot,
+									//# end
+									((ISlot) slot).mouseWheelie_getIdInContainer(),
+									data,
+									slotActionType
+							);
 							return InteractionManager.TICK_WAITER;
 						}, true)
 				).scroll(hoverSlot, scrollAmount < 0);

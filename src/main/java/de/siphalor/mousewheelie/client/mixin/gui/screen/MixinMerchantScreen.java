@@ -21,30 +21,46 @@ import de.siphalor.mousewheelie.client.util.inject.IMerchantScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.item.trading.MerchantOffer;
 
 @Mixin(MerchantScreen.class)
-public abstract class MixinMerchantScreen implements IMerchantScreen {
+public abstract class MixinMerchantScreen extends AbstractContainerScreen<MerchantMenu> implements IMerchantScreen {
+	public MixinMerchantScreen(
+			MerchantMenu menu,
+			Inventory inventory,
+			Component title
+	) {
+		super(menu, inventory, title);
+	}
 
-	@Shadow private int shopItem;
-
-	@Shadow protected abstract void postButtonClick();
-
+	//# if MC_VERSION_NUMBER >= 260400
 	@Shadow
-	int scrollOff;
+	protected abstract void selectTrade(int index);
 
 	@Override
-	public void mouseWheelie_setRecipeId(int id) {
-		shopItem = id;
+	public void mouseWheelie_setOfferAndSync(MerchantOffer offer) {
+		int index = menu.getOffers().indexOf(offer);
+		if (index >= 0) {
+			selectTrade(index);
+		}
 	}
+	//# else
+	//- @Shadow private int shopItem;
 
-	@Override
-	public void mouseWheelie_syncRecipeId() {
-		postButtonClick();
-	}
+	//- @Shadow protected abstract void postButtonClick();
 
-	@Override
-	public int mouseWheelie_getRecipeIdOffset() {
-		return scrollOff;
-	}
+	//- @Shadow
+	//- int scrollOff;
+
+	//- @Override
+	//- public void mouseWheelie_setRecipeIdAndSync(int id) {
+	//- 	shopItem = id + scrollOff;
+	//- 	postButtonClick();
+	//- }
+	//# end
 }

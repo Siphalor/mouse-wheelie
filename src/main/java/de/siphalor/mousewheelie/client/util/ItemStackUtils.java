@@ -23,7 +23,6 @@ import de.siphalor.mousewheelie.MouseWheelie;
 import java.awt.*;
 import java.util.*;
 import lombok.CustomLog;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 //- import net.minecraft.client.Minecraft;

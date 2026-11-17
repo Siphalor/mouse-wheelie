@@ -29,6 +29,7 @@ public class MixinCreativeSlot implements ISlot {
 
 	@Shadow
 	@Final
+	/*# if MC_VERSION_NUMBER >= 260100*/private/*# end */
 	Slot target;
 
 	@Override

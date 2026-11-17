@@ -205,11 +205,21 @@ public class MWClient implements ClientModInitializer {
 	}
 
 	public static double getMouseX() {
-		return CLIENT.mouseHandler.xpos() * (double) CLIENT.getWindow().getGuiScaledWidth() / (double) CLIENT.getWindow().getScreenWidth();
+		//# if MC_VERSION_NUMBER >= 260400
+		return CLIENT.mouseHandler.getScaledXPos(CLIENT.getWindow());
+		//# else
+		//- return CLIENT.mouseHandler.xpos()
+		//- 		* (double) CLIENT.getWindow().getGuiScaledWidth() / (double) CLIENT.getWindow().getScreenWidth();
+		//# end
 	}
 
 	public static double getMouseY() {
-		return CLIENT.mouseHandler.ypos() * (double) CLIENT.getWindow().getGuiScaledHeight() / (double) CLIENT.getWindow().getScreenHeight();
+		//# if MC_VERSION_NUMBER >= 260400
+		return CLIENT.mouseHandler.getScaledYPos(CLIENT.getWindow());
+		//# else
+		//- return CLIENT.mouseHandler.ypos()
+		//- 		* (double) CLIENT.getWindow().getGuiScaledHeight() / (double) CLIENT.getWindow().getScreenHeight();
+		//# end
 	}
 
 	public static boolean isScrollModeToggled() {

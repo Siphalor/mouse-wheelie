@@ -51,7 +51,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
-import net.minecraft.util.Mth;
+//- import net.minecraft.util.Mth;
 //- import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.entity.player.StackedItemContents;
 //- import net.minecraft.world.inventory.ClickType;
@@ -159,11 +159,17 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 			// Ugly approach since assigning the casted value causes a runtime mixin error
 			IRecipeBookResults castedBookPage = (IRecipeBookResults) recipeBookPage;
 			int maxPage = castedBookPage.mouseWheelie_getPageCount() - 1;
-			castedBookPage.mouseWheelie_setCurrentPage(Mth.clamp(
-					(int) (castedBookPage.mouseWheelie_getCurrentPage() + Math.signum(scrollAmount)),
-					0,
-					Math.max(maxPage, 0)
-			));
+			castedBookPage.mouseWheelie_setCurrentPage(
+					//# if MC_VERSION_NUMBER >= 260400
+					Math.clamp(
+					//# else
+					//- Mth.clamp(
+					//# end
+							(int) (castedBookPage.mouseWheelie_getCurrentPage() + Math.signum(scrollAmount)),
+							0,
+							Math.max(maxPage, 0)
+					)
+			);
 			castedBookPage.mouseWheelie_refreshResultButtons();
 			return ScrollAction.SUCCESS;
 		} else if(mouseX >= left - 30 && mouseX < left) {
@@ -175,7 +181,11 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 					return ScrollAction.PASS;
 				}
 				RecipeBookTabButton tab = tabButtons.get(index);
-				if (tab.visible) {
+				//# if MC_VERSION_NUMBER >= 260400
+				if (tab.isVisible()) {
+				//# else
+				//- if (tab.visible) {
+				//# end
 					if (tab != selectedTab) {
 						//# if MC_VERSION_NUMBER >= 12111
 						selectedTab.unselect();

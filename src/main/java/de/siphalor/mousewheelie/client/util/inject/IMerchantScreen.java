@@ -19,11 +19,13 @@ package de.siphalor.mousewheelie.client.util.inject;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.world.item.trading.MerchantOffer;
+
 @ApiStatus.Internal
 public interface IMerchantScreen {
-	void mouseWheelie_setRecipeId(int id);
-
-	void mouseWheelie_syncRecipeId();
-
-	int mouseWheelie_getRecipeIdOffset();
+	//# if MC_VERSION_NUMBER >= 260400
+	void mouseWheelie_setOfferAndSync(MerchantOffer offer);
+	//# else
+	//- void mouseWheelie_setRecipeIdAndSync(int id);
+	//# end
 }
