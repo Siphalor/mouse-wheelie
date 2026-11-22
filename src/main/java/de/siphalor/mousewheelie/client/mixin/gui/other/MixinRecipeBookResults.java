@@ -17,28 +17,35 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import de.siphalor.mousewheelie.MouseWheelie;
+//- import com.mojang.blaze3d.platform.InputConstants;
+//- import de.siphalor.mousewheelie.MouseWheelie;
+import de.siphalor.mousewheelie.client.recipe_book.RecipeBookQuickCraftHandler;
+import de.siphalor.mousewheelie.client.util.inject.IRecipeBookRecipeButton;
 import de.siphalor.mousewheelie.client.util.inject.IRecipeBookResults;
-import java.util.Iterator;
+//- import java.util.Iterator;
+import java.util.List;
+//- import java.util.function.Predicate;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+//- import org.spongepowered.asm.mixin.injection.At;
+//- import org.spongepowered.asm.mixin.injection.Inject;
+//- import org.spongepowered.asm.mixin.injection.Slice;
+//- import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//- import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+//- import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
 import net.minecraft.client.gui.screens.recipebook.RecipeButton;
-import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.util.context.ContextMap;
+//- import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+//- import net.minecraft.client.gui.screens.recipebook.SlotSelectTime;
+//- import net.minecraft.client.input.MouseButtonEvent;
+//- import net.minecraft.util.context.ContextMap;
 //- import net.minecraft.world.item.crafting.Recipe;
 //- import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.display.RecipeDisplayId;
+//- import net.minecraft.world.item.crafting.display.RecipeDisplayId;
 
 @Environment(EnvType.CLIENT)
 @Mixin(RecipeBookPage.class)
@@ -52,19 +59,32 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 	@Shadow
 	protected abstract void updateButtonsForPage();
 
-	//# if MC_VERSION_NUMBER >= 12103
-	@Shadow
-	private RecipeDisplayId lastClickedRecipe;
-	//# elif MC_VERSION_NUMBER >= 12002
+	//# if MC_VERSION_NUMBER < 260400
+	//- //# if MC_VERSION_NUMBER >= 12103
+	//- @Shadow
+	//- private RecipeDisplayId lastClickedRecipe;
+	//- //# elif MC_VERSION_NUMBER >= 12002
 	//- @Shadow
 	//- private RecipeHolder<?> lastClickedRecipe;
-	//# else
+	//- //# else
 	//- @Shadow
 	//- private Recipe<?> lastClickedRecipe;
-	//# end
+	//- //# end
 
+	//- @Shadow
+	//- private RecipeCollection lastClickedRecipeCollection;
+	//# else
 	@Shadow
-	private RecipeCollection lastClickedRecipeCollection;
+	@Final
+	private List<RecipeButton> buttons;
+
+	@Override
+	public void mouseWheelie_setQuickCraftHandler(RecipeBookQuickCraftHandler quickCraftHandler) {
+		for (RecipeButton button : buttons) {
+			((IRecipeBookRecipeButton) button).mouseWheelie_setQuickCraftHandler(quickCraftHandler);
+		}
+	}
+	//# end
 
 	@Override
 	public void mouseWheelie_setCurrentPage(int page) {
@@ -86,42 +106,44 @@ public abstract class MixinRecipeBookResults implements IRecipeBookResults {
 		updateButtonsForPage();
 	}
 
-	@Inject(
-			method = "mouseClicked",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeButton;isOnlyOption()Z")),
-			at = @At(value = "CONSTANT", args = "intValue=1"),
-			locals = LocalCapture.CAPTURE_FAILSOFT
-	)
-	public void mouseClicked(
-			//# if MC_VERSION_NUMBER >= 12109
-			MouseButtonEvent event,
-			//# else
-			//- double mouseX, double mouseY, int button,
-			//# end
-			int areaLeft, int areaTop, int areaWidth, int areaHeight,
-			//# if MC_VERSION_NUMBER >= 12109
-			boolean doubleClick,
-			//# end
-			CallbackInfoReturnable<Boolean> cir,
-			//# if MC_VERSION_NUMBER >= 12103
-			ContextMap contextMap,
-			//# end
-			Iterator<?> iterator, RecipeButton recipeButton
-	) {
-		//# if MC_VERSION_NUMBER >= 12109
-		int button = event.button();
-		//# end
-		//# if MC_VERSION_NUMBER >= 260300
-		if (MouseWheelie.config.general.enableQuickCraft && button == InputConstants.MOUSE_BUTTON_RIGHT && recipeButton.isOnlyOption()) {
-		//# else
-		//- if (MouseWheelie.config.general.enableQuickCraft && button == 1 && recipeButton.isOnlyOption()) {
-		//# end
-			//# if MC_VERSION_NUMBER >= 12103
-			lastClickedRecipe = recipeButton.getCurrentRecipe();
-			//# else
-			//- lastClickedRecipe = recipeButton.getRecipe();
-			//# end
-			lastClickedRecipeCollection = recipeButton.getCollection();
-		}
-	}
+	//# if MC_VERSION_NUMBER < 260400
+	//- @Inject(
+	//- 		method = "mouseClicked",
+	//- 		slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeButton;isOnlyOption()Z")),
+	//- 		at = @At(value = "CONSTANT", args = "intValue=1"),
+	//- 		locals = LocalCapture.CAPTURE_FAILSOFT
+	//- )
+	//- public void mouseClicked(
+	//- 		//# if MC_VERSION_NUMBER >= 12109
+	//- 		MouseButtonEvent event,
+	//- 		//# else
+	//- 		double mouseX, double mouseY, int button,
+	//- 		//# end
+	//- 		int areaLeft, int areaTop, int areaWidth, int areaHeight,
+	//- 		//# if MC_VERSION_NUMBER >= 12109
+	//- 		boolean doubleClick,
+	//- 		//# end
+	//- 		CallbackInfoReturnable<Boolean> cir,
+	//- 		//# if MC_VERSION_NUMBER >= 12103
+	//- 		ContextMap contextMap,
+	//- 		//# end
+	//- 		Iterator<?> iterator, RecipeButton recipeButton
+	//- ) {
+	//- 	//# if MC_VERSION_NUMBER >= 12109
+	//- 	int button = event.button();
+	//- 	//# end
+	//- 	//# if MC_VERSION_NUMBER >= 260300
+	//- 	if (MouseWheelie.config.general.enableQuickCraft && button == InputConstants.MOUSE_BUTTON_RIGHT && recipeButton.isOnlyOption()) {
+	//- 	//# else
+	//- 	if (MouseWheelie.config.general.enableQuickCraft && button == 1 && recipeButton.isOnlyOption()) {
+	//- 	//# end
+	//- 		//# if MC_VERSION_NUMBER >= 12103
+	//- 		lastClickedRecipe = recipeButton.getCurrentRecipe();
+	//- 		//# else
+	//- 		lastClickedRecipe = recipeButton.getRecipe();
+	//- 		//# end
+	//- 		lastClickedRecipeCollection = recipeButton.getCollection();
+	//- 	}
+	//- }
+	//# end
 }

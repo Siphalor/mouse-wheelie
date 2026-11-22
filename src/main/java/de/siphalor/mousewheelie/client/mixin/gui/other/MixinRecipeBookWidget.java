@@ -17,21 +17,22 @@
 
 package de.siphalor.mousewheelie.client.mixin.gui.other;
 
-import com.mojang.blaze3d.platform.InputConstants;
+//- import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.mousewheelie.MouseWheelie;
-import de.siphalor.mousewheelie.client.MWClient;
-import de.siphalor.mousewheelie.client.mixin.StackedItemContentsAccessor;
-import de.siphalor.mousewheelie.client.network.InteractionManager;
-import de.siphalor.mousewheelie.client.util.ItemStackUtils;
+//- import de.siphalor.mousewheelie.client.MWClient;
+//- import de.siphalor.mousewheelie.client.mixin.StackedItemContentsAccessor;
+//- import de.siphalor.mousewheelie.client.network.InteractionManager;
+import de.siphalor.mousewheelie.client.recipe_book.RecipeBookQuickCraftHandler;
+//- import de.siphalor.mousewheelie.client.util.ItemStackUtils;
 import de.siphalor.mousewheelie.client.util.ScrollAction;
 import de.siphalor.mousewheelie.client.util.inject.IRecipeBookResults;
 import de.siphalor.mousewheelie.client.util.inject.IRecipeBookWidget;
-import de.siphalor.mousewheelie.client.util.inject.ISlot;
-import java.util.List;
-import lombok.CustomLog;
+//- import de.siphalor.mousewheelie.client.util.inject.ISlot;
+//- import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,37 +40,45 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 //- import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractContainerWidget;
 //- import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookPage;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookTabButton;
+//- import net.minecraft.client.gui.screens.recipebook.RecipeBookTabButton;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
-import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
+//- import net.minecraft.client.input.MouseButtonEvent;
+//- import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.network.chat.Component;
+//- import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
 //- import net.minecraft.util.Mth;
 //- import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.entity.player.StackedItemContents;
 //- import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.ContainerInput;
+//- import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.PlacementInfo;
+//- import net.minecraft.world.item.ItemStack;
+//- import net.minecraft.world.item.crafting.PlacementInfo;
 //- import net.minecraft.world.item.crafting.Recipe;
 //- import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+//- import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import net.minecraft.world.item.crafting.display.RecipeDisplayId;
-import net.minecraft.world.item.crafting.display.SlotDisplayContext;
+//- import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 
 @Environment(EnvType.CLIENT)
 @Mixin(RecipeBookComponent.class)
-@CustomLog
-public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
+public abstract class MixinRecipeBookWidget
+		//# if MC_VERSION_NUMBER >= 260400
+		extends AbstractContainerWidget
+		//# end
+		implements IRecipeBookWidget {
 	@Unique
 	private static final int WIDGET_HEIGHT = RecipeBookComponent.IMAGE_HEIGHT;
 	@Unique
@@ -78,16 +87,25 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	@Shadow @Final
 	private RecipeBookPage recipeBookPage;
 
-	@Shadow private int width;
+	//# if MC_VERSION_NUMBER >= 260400
+	@Shadow private TabNavigationBar tabBar;
 
 	@Shadow
-	private int height;
+	private @Nullable RecipeCollection lastRecipeCollection;
 
-	@Shadow private int xOffset;
+	@Shadow
+	private @Nullable RecipeDisplayId lastPlacedRecipe;
+	//# else
+	//- @Shadow private int width;
 
-	@Shadow @Final private List<RecipeBookTabButton> tabButtons;
+	//- @Shadow private int height;
 
-	@Shadow private RecipeBookTabButton selectedTab;
+	//- @Shadow private int xOffset;
+
+	//- @Shadow @Final private List<RecipeBookTabButton> tabButtons;
+
+	//- @Shadow private RecipeBookTabButton selectedTab;
+	//# end
 
 	@Shadow
 	//# if MC_VERSION_NUMBER >= 12103
@@ -99,8 +117,10 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	//- protected abstract void updateCollections(boolean resetPageNumber);
 	//# end
 
-	@Shadow
-	public abstract boolean isVisible();
+	//# if MC_VERSION_NUMBER < 260400
+	//- @Shadow
+	//- public abstract boolean isVisible();
+	//# end
 
 	@Shadow
 	private boolean ignoreTextInput;
@@ -139,13 +159,56 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 	//- }
 	//# end
 
-	//# if MC_VERSION_NUMBER >= 12102
-	@Shadow
-	protected abstract int getXOrigin();
+	//# if MC_VERSION_NUMBER >= 12102 && MC_VERSION_NUMBER < 260400
+	//- @Shadow
+	//- protected abstract int getXOrigin();
 
-	@Shadow
-	protected abstract int getYOrigin();
+	//- @Shadow
+	//- protected abstract int getYOrigin();
 	//# end
+
+	@Unique
+	private RecipeBookQuickCraftHandler quickCraftHandler;
+
+	//# if MC_VERSION_NUMBER >= 260400
+	public MixinRecipeBookWidget(int x, int y, int width, int height, Component message) {
+		super(x, y, width, height, message);
+	}
+	//# end
+
+	//# if MC_VERSION_NUMBER >= 12103
+	@Inject(method = "<init>", at = @At("RETURN"))
+	//# else
+	//- @Inject(method = "init", at = @At("RETURN"))
+	//# end
+	public void onInit(CallbackInfo ci) {
+		quickCraftHandler = new RecipeBookQuickCraftHandler(
+				this::isCraftingSlot,
+				() -> new ScreenRectangle(
+						getLeft(),
+						getTop(),
+						147,
+						166
+				),
+				//# if MC_VERSION_NUMBER >= 12103
+				() -> updateCollections(false, isFiltering()),
+				//# else
+				//- () -> updateCollections(false),
+				//# end
+				//# if MC_VERSION_NUMBER >= 260400
+				() -> Pair.of(lastRecipeCollection, lastPlacedRecipe),
+				//# else
+				//- () -> Pair.of(recipeBookPage.getLastClickedRecipeCollection(), recipeBookPage.getLastClickedRecipe()),
+				//# end
+				menu,
+				recipeBookPage,
+				stackedContents
+		);
+
+		//# if MC_VERSION_NUMBER >= 260400
+		((IRecipeBookResults) recipeBookPage).mouseWheelie_setQuickCraftHandler(quickCraftHandler);
+		//# end
+	}
 
 	@Override
 	public ScrollAction mouseWheelie_scrollRecipeBook(double mouseX, double mouseY, double scrollAmount) {
@@ -172,108 +235,97 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 			);
 			castedBookPage.mouseWheelie_refreshResultButtons();
 			return ScrollAction.SUCCESS;
-		} else if(mouseX >= left - 30 && mouseX < left) {
-			int index = tabButtons.indexOf(selectedTab);
+		} else if (mouseX >= left - 30 && mouseX < left) {
 			int inc = (int) Math.signum(scrollAmount);
-			while (true) {
-				index += inc;
-				if (index < 0 || index >= tabButtons.size()) {
-					return ScrollAction.PASS;
-				}
-				RecipeBookTabButton tab = tabButtons.get(index);
-				//# if MC_VERSION_NUMBER >= 260400
-				if (tab.isVisible()) {
-				//# else
-				//- if (tab.visible) {
-				//# end
-					if (tab != selectedTab) {
-						//# if MC_VERSION_NUMBER >= 12111
-						selectedTab.unselect();
-						selectedTab = tab;
-						selectedTab.select();
-						//# else
-						//- selectedTab.setStateTriggered(false);
-						//- selectedTab = tab;
-						//- selectedTab.setStateTriggered(true);
-						//# end
-						//# if MC_VERSION_NUMBER >= 12103
-						updateCollections(true, isFiltering());
-						//# else
-						//- updateCollections(true);
-						//# end
-					}
-					break;
-				}
+			//# if MC_VERSION_NUMBER >= 260400
+			var currentTabButton = tabBar.currentTabButton();
+			int index = currentTabButton == null ? 0 : tabBar.getTabs().indexOf(currentTabButton.tab());
+			index += inc;
+			if (index < 0 || index >= tabBar.getTabs().size()) {
+				return ScrollAction.PASS;
 			}
+			tabBar.selectTab(index, false);
+			//# else
+			//- int index = tabButtons.indexOf(selectedTab);
+			//- while (true) {
+			//- 	index += inc;
+			//- 	if (index < 0 || index >= tabButtons.size()) {
+			//- 		return ScrollAction.PASS;
+			//- 	}
+			//- 	RecipeBookTabButton tab = tabButtons.get(index);
+			//- 	//# if MC_VERSION_NUMBER >= 260400
+			//- 	if (tab.isVisible()) {
+			//- 	//# else
+			//- 	if (tab.visible) {
+			//- 	//# end
+			//- 		if (tab != selectedTab) {
+			//- 			//# if MC_VERSION_NUMBER >= 12111
+			//- 			selectedTab.unselect();
+			//- 			selectedTab = tab;
+			//- 			selectedTab.select();
+			//- 			//# else
+			//- 			selectedTab.setStateTriggered(false);
+			//- 			selectedTab = tab;
+			//- 			selectedTab.setStateTriggered(true);
+			//- 			//# end
+			//- 			//# if MC_VERSION_NUMBER >= 12103
+			//- 			updateCollections(true, isFiltering());
+			//- 			//# else
+			//- 			updateCollections(true);
+			//- 			//# end
+			//- 		}
+			//- 		break;
+			//- 	}
+			//- }
+			//# end
 			return ScrollAction.SUCCESS;
 		}
 		return ScrollAction.PASS;
 	}
 
-	@Inject(
-			method = "mouseClicked",
-			//# if MC_VERSION_NUMBER >= 12103
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;isOffsetNextToMainGUI()Z"
-			)
-			//# elif MC_VERSION_NUMBER >= 12002
-			//- at = @At(
-			//- 		value = "INVOKE",
-			//- 		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePlaceRecipe(ILnet/minecraft/world/item/crafting/RecipeHolder;Z)V",
-			//- 		shift = At.Shift.AFTER
-			//- )
-			//# else
-			//- at = @At(
-			//- 		value = "INVOKE",
-			//- 		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePlaceRecipe(ILnet/minecraft/world/item/crafting/Recipe;Z)V",
-			//- 		shift = At.Shift.AFTER
-			//- )
-			//# end
-	)
-	//# if MC_VERSION_NUMBER >= 12109
-	public void mouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		int mouseButton = event.button();
-	//# else
+	//# if MC_VERSION_NUMBER < 260400
+	//- @Inject(
+	//- 		method = "mouseClicked",
+	//- 		//# if MC_VERSION_NUMBER >= 12103
+	//- 		at = @At(
+	//- 				value = "INVOKE",
+	//- 				target = "Lnet/minecraft/client/gui/screens/recipebook/RecipeBookComponent;isOffsetNextToMainGUI()Z"
+	//- 		)
+	//- 		//# elif MC_VERSION_NUMBER >= 12002
+	//- 		at = @At(
+	//- 				value = "INVOKE",
+	//- 				target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePlaceRecipe(ILnet/minecraft/world/item/crafting/RecipeHolder;Z)V",
+	//- 				shift = At.Shift.AFTER
+	//- 		)
+	//- 		//# else
+	//- 		at = @At(
+	//- 				value = "INVOKE",
+	//- 				target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handlePlaceRecipe(ILnet/minecraft/world/item/crafting/Recipe;Z)V",
+	//- 				shift = At.Shift.AFTER
+	//- 		)
+	//- 		//# end
+	//- )
+	//- //# if MC_VERSION_NUMBER >= 12109
+	//- public void mouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+	//- 	int mouseButton = event.button();
+	//- //# else
 	//- public void mouseClicked(double x, double y, int mouseButton, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+	//- //# end
+	//- 	//# if MC_VERSION_NUMBER >= 260300
+	//- 	if (MouseWheelie.config.general.enableQuickCraft && mouseButton == InputConstants.MOUSE_BUTTON_RIGHT) {
+	//- 	//# else
+	//- 	if (MouseWheelie.config.general.enableQuickCraft && mouseButton == 1) {
+	//- 	//# end
+	//- 		quickCraftHandler.triggerQuickCraft();
+	//- 	}
+	//- }
 	//# end
-		//# if MC_VERSION_NUMBER >= 260300
-		if (MouseWheelie.config.general.enableQuickCraft && mouseButton == InputConstants.MOUSE_BUTTON_RIGHT) {
-		//# else
-		//- if (MouseWheelie.config.general.enableQuickCraft && mouseButton == 1) {
-		//# end
-			int resSlot = getResultSlotIndex();
-			//# if MC_VERSION_NUMBER >= 12103
-			RecipeDisplayEntry recipeEntry = getLastClickedRecipeEntry();
-			//# elif MC_VERSION_NUMBER >= 12002
-			//- RecipeHolder<?> recipeEntry = recipeBookPage.getLastClickedRecipe();
-			//# else
-			//- Recipe<?> recipeEntry = recipeBookPage.getLastClickedRecipe();
-			//# end
-			if (recipeEntry != null && canCraftMore(recipeEntry)) {
-				InteractionManager.clear();
-				InteractionManager.setWaiter((InteractionManager.TriggerType triggerType) ->
-						MWClient.lastUpdatedSlot != -1
-								&& !isCraftingSlot(menu.slots.get(MWClient.lastUpdatedSlot))
-				);
-			}
-			InteractionManager.pushClickEvent(
-					menu.containerId,
-					resSlot,
-					0,
-					//# if MC_VERSION_NUMBER >= 260100
-					MWClient.WHOLE_STACK_MODIFIER.isDown() ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP
-					//# else
-					//- MWClient.WHOLE_STACK_MODIFIER.isDown() ? ClickType.QUICK_MOVE : ClickType.PICKUP
-					//# end
-			);
-		}
-	}
 
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	//# if MC_VERSION_NUMBER >= 12109
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	public void keyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 	//# else
+	//- @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	//- public void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 	//# end
 		if (MouseWheelie.config.general.enableQuickCraft && isVisible() && !minecraft.player.isSpectator()) {
@@ -283,227 +335,19 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 			//- if (Minecraft.getInstance().options.keyDrop.matches(keyCode, scanCode)) {
 			//# end
 				ignoreTextInput = false;
-				//# if MC_VERSION_NUMBER >= 12103
-				RecipeDisplayEntry oldRecipeEntry = getLastClickedRecipeEntry();
-				//# elif MC_VERSION_NUMBER >= 12002
-				//- RecipeHolder<?> oldRecipeEntry = recipeBookPage.getLastClickedRecipe();
-				//# else
-				//- Recipe<?> oldRecipeEntry = recipeBookPage.getLastClickedRecipe();
-				//# end
-				if (this.recipeBookPage.mouseClicked(
-						//# if MC_VERSION_NUMBER >= 12109
-						new MouseButtonEvent(MWClient.getMouseX(), MWClient.getMouseY(), new MouseButtonInfo(0, 0)),
-						//# else
-						//- MWClient.getMouseX(),
-						//- MWClient.getMouseY(),
-						//- 0,
-						//# end
-						getLeft(),
-						getTop(),
-						147, 166 // width, height
-						//# if MC_VERSION_NUMBER >= 12109
-						, false
-						//# end
-				)) {
-					RecipeCollection resultCollection = recipeBookPage.getLastClickedRecipeCollection();
-					//# if MC_VERSION_NUMBER >= 12103
-					RecipeDisplayEntry recipeEntry = getLastClickedRecipeEntry();
-					if (!resultCollection.isCraftable(recipeEntry.id())) {
-					//# elif MC_VERSION_NUMBER >= 12002
-					//- RecipeHolder<?> recipeEntry = recipeBookPage.getLastClickedRecipe();
-					//- if (!resultCollection.isCraftable(recipeEntry)) {
-					//# else
-					//- Recipe<?> recipeEntry = recipeBookPage.getLastClickedRecipe();
-					//- if (!resultCollection.isCraftable(recipeEntry)) {
-					//# end
-						return;
-					}
-					int resSlot = getResultSlotIndex();
-					if (MWClient.ALL_OF_KIND_MODIFIER.isDown()) {
-						if (oldRecipeEntry != recipeEntry || menu.slots.get(resSlot).getItem().isEmpty() || canCraftMore(recipeEntry)) {
-							InteractionManager.push(new InteractionManager.PacketEvent(
-									//# if MC_VERSION_NUMBER >= 12103
-									new ServerboundPlaceRecipePacket(menu.containerId, recipeEntry.id(), true),
-									//# else
-									//- new ServerboundPlaceRecipePacket(menu.containerId, recipeEntry, true),
-									//# end
-									(triggerType) -> !isCraftingSlot(menu.slots.get(MWClient.lastUpdatedSlot))
-							));
-						}
-						int cnt = getMaxCraftsCount(recipeEntry);
-						for (int i = 1; i < cnt; i++) {
-							//# if MC_VERSION_NUMBER >= 260100
-							InteractionManager.pushClickEvent(menu.containerId, resSlot, 1, ContainerInput.THROW);
-							//# else
-							//- InteractionManager.pushClickEvent(menu.containerId, resSlot, 1, ClickType.THROW);
-							//# end
-						}
-					} else {
-						if (oldRecipeEntry != recipeEntry || menu.slots.get(resSlot).getItem().isEmpty()) {
-							InteractionManager.push(new InteractionManager.PacketEvent(
-									//# if MC_VERSION_NUMBER >= 12103
-									new ServerboundPlaceRecipePacket(menu.containerId, recipeEntry.id(), true),
-									//# else
-									//- new ServerboundPlaceRecipePacket(menu.containerId, recipeEntry, true),
-									//# end
-									(triggerType) -> !isCraftingSlot(menu.slots.get(MWClient.lastUpdatedSlot))
-							));
-						}
-					}
-					InteractionManager.push(new InteractionManager.CallbackEvent(() -> {
-						//# if MC_VERSION_NUMBER >= 260100
-						minecraft.gameMode.handleContainerInput(
-								menu.containerId,
-								getResultSlotIndex(),
-								0,
-								ContainerInput.THROW,
-								minecraft.player
-						);
-						//# else
-						//- minecraft.gameMode.handleInventoryMouseClick(
-						//- 		menu.containerId,
-						//- 		getResultSlotIndex(),
-						//- 		0,
-						//- 		ClickType.THROW,
-						//- 		minecraft.player
-						//- );
-						//# end
-						//# if MC_VERSION_NUMBER >= 12103
-						updateCollections(false, isFiltering());
-						//# else
-						//- updateCollections(false);
-						//# end
-						return InteractionManager.TICK_WAITER;
-					}, true));
+				if (quickCraftHandler.triggerDropCraft()) {
 					callbackInfoReturnable.setReturnValue(true);
 				}
 			}
 		}
 	}
 
-	//# if MC_VERSION_NUMBER >= 12103
-	@Unique
-	private @Nullable RecipeDisplayEntry getLastClickedRecipeEntry() {
-		RecipeCollection recipeCollection = recipeBookPage.getLastClickedRecipeCollection();
-		RecipeDisplayId recipeId = recipeBookPage.getLastClickedRecipe();
-		if (recipeCollection == null || recipeId == null) return null;
-
-		for (RecipeDisplayEntry recipe : recipeCollection.getRecipes()) {
-			if (recipe.id().equals(recipeId)) return recipe;
-		}
-		return null;
-	}
-
-	@Unique
-	private boolean canCraftMore(RecipeDisplayEntry recipeEntry) {
-		if (recipeEntry.craftingRequirements().isEmpty()) return false;
-		int biggestCraftingStackSize = getBiggestCraftingStackSize();
-		int maxCraftsCount = ((StackedItemContentsAccessor) stackedContents).getRaw().tryPickAll(
-				//# if MC_VERSION_NUMBER >= 12104
-				PlacementInfo.create(recipeEntry.craftingRequirements().get()).ingredients(),
-				//# else
-				//- recipeEntry.craftingRequirements().get().stream()
-				//- 		.map(PlacementInfo::ingredientToContents)
-				//- 		.toList(),
-				//# end
-				biggestCraftingStackSize + 1,
-				null
-		);
-		return maxCraftsCount > biggestCraftingStackSize;
-	}
-
-	@Unique
-	private int getMaxCraftsCount(RecipeDisplayEntry recipeEntry) {
-		if (recipeEntry.craftingRequirements().isEmpty()) return 0;
-		List<ItemStack> results = recipeEntry.resultItems(SlotDisplayContext.fromLevel(minecraft.level));
-		if (results.isEmpty()) return 0;
-		return ((StackedItemContentsAccessor) stackedContents).getRaw().tryPickAll(
-				//# if MC_VERSION_NUMBER >= 12104
-				PlacementInfo.create(recipeEntry.craftingRequirements().get()).ingredients(),
-				//# else
-				//- recipeEntry.craftingRequirements().get().stream()
-				//- .map(PlacementInfo::ingredientToContents)
-				//- .toList(),
-				//# end
-				ItemStackUtils.getMaxStackSize(results.get(0)),
-				null
-		);
-	}
-	//# elif MC_VERSION_NUMBER >= 12002
-	//- @Unique
-	//- private boolean canCraftMore(RecipeHolder<?> recipeEntry) {
-	//- 	return getBiggestCraftingStackSize() < getMaxCraftsCount(recipeEntry);
-	//- }
-
-	//- @Unique
-	//- private int getMaxCraftsCount(RecipeHolder<?> recipeEntry) {
-	//- 	return stackedContents.getBiggestCraftableStack(
-	//- 			recipeEntry,
-	//- 			recipeEntry.value().getResultItem(minecraft.level.registryAccess()).getMaxStackSize(),
-	//- 			null
-	//- 	);
-	//- }
-	//# else
-	//- @Unique
-	//- private boolean canCraftMore(Recipe<?> recipeEntry) {
-	//- 	return getBiggestCraftingStackSize() < getMaxCraftsCount(recipeEntry);
-	//- }
-
-	//- @Unique
-	//- private int getMaxCraftsCount(Recipe<?> recipeEntry) {
-	//- 	return stackedContents.getBiggestCraftableStack(
-	//- 			recipeEntry,
-	//- 			recipeEntry.getResultItem(minecraft.level.registryAccess()).getMaxStackSize(),
-	//- 			null
-	//- 	);
-	//- }
-	//# end
-
-	@Unique
-	private int getBiggestCraftingStackSize() {
-		int resSlot = getResultSlotIndex();
-		int cnt = 0;
-		for (int i = 0; i < menu.slots.size(); i++) {
-			if (i == resSlot || !isCraftingSlot(menu.slots.get(i))) continue;
-			cnt = Math.max(cnt, menu.slots.get(i).getItem().getCount());
-		}
-		return cnt;
-	}
-
-	//# if MC_VERSION_NUMBER >= 12103
-	@Unique
-	private int resultSlotIndex = Integer.MAX_VALUE;
-	@Unique
-	private int getResultSlotIndex() {
-		if (resultSlotIndex != Integer.MAX_VALUE) {
-			return resultSlotIndex;
-		}
-
-		Slot candidate = null;
-		for (Slot slot : menu.slots) {
-			if (!isCraftingSlot(slot) || slot.mayPlace(ItemStack.EMPTY)) {
-				continue;
-			}
-			candidate = slot;
-		}
-
-		if (candidate == null) {
-			log.warn("Failed to find result slot of recipe book");
-			return resultSlotIndex = -1;
-		}
-		return ((ISlot) candidate).mouseWheelie_getIdInContainer();
-	}
-	//# else
-	//- @Unique
-	//- private int getResultSlotIndex() {
-	//- 	return menu.getResultSlotIndex();
-	//- }
-	//# end
-
 	@Unique
 	private int getLeft() {
-		//# if MC_VERSION_NUMBER >= 12102
-		return getXOrigin();
+		//# if MC_VERSION_NUMBER >= 260400
+		return getX();
+		//# elif MC_VERSION_NUMBER >= 12102
+		//- return getXOrigin();
 		//# else
 		//- // we try to position by the search box, so we can keep compatible with other mods that move stuff around
 		//- if (searchBox != null) {
@@ -516,8 +360,10 @@ public abstract class MixinRecipeBookWidget implements IRecipeBookWidget {
 
 	@Unique
 	private int getTop() {
-		//# if MC_VERSION_NUMBER >= 12102
-		return getYOrigin();
+		//# if MC_VERSION_NUMBER >= 260400
+		return getY();
+		//# elif MC_VERSION_NUMBER >= 12102
+		//- return getYOrigin();
 		//# else
 		//- // we try to position by the search box, so we can keep compatible with other mods that move stuff around
 		//- if (searchBox != null) {

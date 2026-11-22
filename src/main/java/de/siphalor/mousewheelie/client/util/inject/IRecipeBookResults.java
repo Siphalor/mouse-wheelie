@@ -17,10 +17,15 @@
 
 package de.siphalor.mousewheelie.client.util.inject;
 
+import de.siphalor.mousewheelie.client.recipe_book.RecipeBookQuickCraftHandler;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface IRecipeBookResults {
+	//# if MC_VERSION_NUMBER >= 260400
+	void mouseWheelie_setQuickCraftHandler(RecipeBookQuickCraftHandler quickCraftHandler);
+	//# end
+
 	void mouseWheelie_setCurrentPage(int page);
 
 	int mouseWheelie_getCurrentPage();

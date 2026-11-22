@@ -23,9 +23,14 @@ import de.siphalor.mousewheelie.client.util.inject.ISpecialScrollableScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.input.KeyEvent;
 
 //# if MC_VERSION_NUMBER >= 12103
 @Mixin(AbstractRecipeBookScreen.class)
@@ -38,5 +43,17 @@ public class MixinAbstractRecipeBookScreen implements ISpecialScrollableScreen {
 	public ScrollAction mouseWheelie_onMouseScrolledSpecial(double mouseX, double mouseY, double scrollAmount) {
 		return ((IRecipeBookWidget) recipeBookComponent).mouseWheelie_scrollRecipeBook(mouseX, mouseY, scrollAmount);
 	}
+
+	//# if MC_VERSION_NUMBER >= 260400
+	@Inject(method = "keyPressed", at = @At("TAIL"), cancellable = true)
+	public void keyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+		// Pass the drop key through as it happened in older MC versions
+		if (recipeBookComponent.isVisible()
+				&& Minecraft.getInstance().options.keyDrop.matches(event)
+				&& recipeBookComponent.keyPressed(event)) {
+			cir.setReturnValue(true);
+		}
+	}
+	//# end
 }
 //# end
