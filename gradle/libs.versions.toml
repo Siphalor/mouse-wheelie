@@ -5,7 +5,7 @@ jcyo = "0.6.0"
 jspecify = "1.0.0"
 licenser = "2.2.1"
 lombok = "1.18.44"
-modPublisher = "2.1.8"
+modPublisher = "2.2.1"
 modrinth = "2.8.10"
 
 [plugins]
