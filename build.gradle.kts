@@ -226,7 +226,7 @@ publisher {
 
 	changelog.set(
 		providers.fileContents(project.layout.projectDirectory.file("CHANGELOG.md")).asText.map
-			{ _ -> project.changelog.renderItem(project.changelog.get("${project.version}")) }
+			{ _ -> project.changelog.renderItem(project.changelog.get(shortVersion)) }
 	)
 
 	curseDepends {
